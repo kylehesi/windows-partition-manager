@@ -154,8 +154,10 @@ Select a row and use the toolbar, or use the row's **Actions** menu (also on rig
 ### Appearance
 
 The **Settings** window lets you pick one of three colour themes — **White** (light), **Dark**
-and **Night** (blue) — and a UI font (Segoe UI, Arial, Calibri, Consolas or Times New Roman).
-Changing either takes effect immediately and is remembered on the next launch. Log and analysis
+and **Night** (blue) — a UI font (Segoe UI, Arial, Calibri, Consolas or Times New Roman), and a
+UI language (English or Turkish). Changing any of them takes effect immediately and is remembered
+on the next launch. The language sets the culture used for dates and numbers — in the app and in
+the `wpm` command-line tool — but the interface strings are not yet translated. Log and analysis
 output stay in a monospace font; the partition colours in the disk map and table are not changed
 by the theme.
 

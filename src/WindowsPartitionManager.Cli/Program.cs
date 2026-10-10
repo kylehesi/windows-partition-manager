@@ -15,6 +15,7 @@ if (!OperatingSystem.IsWindows())
 }
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
+LanguagePreference.Apply(LanguagePreference.LoadLanguage());
 var command = args.Length == 0 ? "list" : args[0].ToLowerInvariant();
 
 return command switch
@@ -478,7 +479,7 @@ static async Task<int> UnblockAsync(string[] args)
             return 0;
         }
 
-        Console.WriteLine($"Restoring settings changed on {state.AppliedAt:yyyy-MM-dd HH:mm} for {state.Volume}:" +
+        Console.WriteLine($"Restoring settings changed on {LanguagePreference.FormatTimestamp(state.AppliedAt)} for {state.Volume}:" +
                           (state.HibernationWasEnabled ? " hibernation on;" : string.Empty) +
                           (state.RemovedPageFile is not null || state.PageFileWasAutomatic ? " page file setting;" : string.Empty));
         await runner.RestoreAsync(progress);

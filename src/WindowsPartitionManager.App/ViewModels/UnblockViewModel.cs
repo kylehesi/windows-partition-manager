@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using WindowsPartitionManager.Core.Abstractions;
 using WindowsPartitionManager.Core.Formatting;
 using WindowsPartitionManager.Core.Operations;
+using WindowsPartitionManager.Platform.Windows;
 
 namespace WindowsPartitionManager.App.ViewModels;
 
@@ -91,7 +92,7 @@ public sealed class UnblockViewModel : INotifyPropertyChanged
     public bool HasPendingRestore => _operations.LoadState() is { HasSomethingToRestore: true };
 
     public string RestoreText => _operations.LoadState() is { } s
-        ? $"Windows Partition Manager changed settings on {s.AppliedAt:yyyy-MM-dd HH:mm} for {s.Volume}: and can restore them."
+        ? $"Windows Partition Manager changed settings on {LanguagePreference.FormatTimestamp(s.AppliedAt)} for {s.Volume}: and can restore them."
         : "No settings to restore.";
 
     public bool IsBusy

@@ -6,15 +6,17 @@ using System.Runtime.CompilerServices;
 using WindowsPartitionManager.App.Theming;
 using WindowsPartitionManager.Core.Abstractions;
 using WindowsPartitionManager.Core.Operations;
+using WindowsPartitionManager.Platform.Windows;
 
 namespace WindowsPartitionManager.App.ViewModels;
 
-/// <summary>Log locations, pending restores, version, and the appearance settings (theme and UI font).</summary>
+/// <summary>Log locations, pending restores, version, and the appearance settings (theme, UI font and language).</summary>
 public sealed class SettingsViewModel : INotifyPropertyChanged
 {
     private string _restoreStatus = string.Empty;
     private string _selectedTheme;
     private string _selectedFont;
+    private string _selectedLanguage;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -31,6 +33,7 @@ public sealed class SettingsViewModel : INotifyPropertyChanged
         var current = SettingsStore.Load();
         _selectedTheme = current.Theme;
         _selectedFont = current.Font;
+        _selectedLanguage = current.Language;
 
         OpenLogCommand = new RelayCommand(() => Open(LogPath), () => File.Exists(LogPath));
         OpenLogFolderCommand = new RelayCommand(() => Open(Path.GetDirectoryName(LogPath)!), () => Directory.Exists(Path.GetDirectoryName(LogPath)));
@@ -54,6 +57,8 @@ public sealed class SettingsViewModel : INotifyPropertyChanged
 
     public static IReadOnlyList<string> AvailableFonts => SettingsStore.AvailableFonts;
 
+    public static IReadOnlyList<string> AvailableLanguages => SettingsStore.AvailableLanguages;
+
     public string SelectedTheme
     {
         get => _selectedTheme;
@@ -62,7 +67,7 @@ public sealed class SettingsViewModel : INotifyPropertyChanged
             if (SetField(ref _selectedTheme, value))
             {
                 ThemeManager.ApplyTheme(value);
-                SettingsStore.Save(new AppSettings(SelectedTheme, SelectedFont));
+                SettingsStore.Save(new AppSettings(SelectedTheme, SelectedFont, SelectedLanguage));
             }
         }
     }
@@ -75,7 +80,21 @@ public sealed class SettingsViewModel : INotifyPropertyChanged
             if (SetField(ref _selectedFont, value))
             {
                 ThemeManager.ApplyFont(value);
-                SettingsStore.Save(new AppSettings(SelectedTheme, SelectedFont));
+                SettingsStore.Save(new AppSettings(SelectedTheme, SelectedFont, SelectedLanguage));
+            }
+        }
+    }
+
+    public string SelectedLanguage
+    {
+        get => _selectedLanguage;
+        set
+        {
+            if (SetField(ref _selectedLanguage, value))
+            {
+                ThemeManager.ApplyLanguage(value);
+                SettingsStore.Save(new AppSettings(SelectedTheme, SelectedFont, SelectedLanguage));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RestoreText)));
             }
         }
     }
@@ -83,7 +102,7 @@ public sealed class SettingsViewModel : INotifyPropertyChanged
     public bool HasPendingRestore => _unblock.LoadState() is { HasSomethingToRestore: true };
 
     public string RestoreText => _unblock.LoadState() is { } s
-        ? $"Settings changed on {s.AppliedAt:yyyy-MM-dd HH:mm} for {s.Volume}: can be restored (hibernation and page file)."
+        ? $"Settings changed on {LanguagePreference.FormatTimestamp(s.AppliedAt)} for {s.Volume}: can be restored (hibernation and page file)."
         : "No settings are waiting to be restored.";
 
     public RelayCommand OpenLogCommand { get; }

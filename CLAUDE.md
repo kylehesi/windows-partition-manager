@@ -59,6 +59,7 @@ write-through to `%LOCALAPPDATA%\WindowsPartitionManager\test-trace.log`; read i
 - Sizes are `ulong` bytes in the model; format only at the UI edge with `ByteSize.Format`.
 - Keep the UI dependency-free until there is a concrete need for an MVVM or theming library.
 - The UI and all code stay in English (user requirement); no Turkish strings or identifiers.
+- How to add a language setting: see `docs/ADDING_A_LANGUAGE.md`.
 - Partition colours live in `PartitionColors`; the disk map and the table swatches must share them.
 
 ## Packaging

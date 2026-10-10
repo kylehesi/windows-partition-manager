@@ -21,6 +21,8 @@ public partial class App : Application
         var settings = SettingsStore.Load();
         ThemeManager.ApplyTheme(settings.Theme);
         ThemeManager.ApplyFont(settings.Font);
+        ThemeManager.ApplyLanguage(settings.Language);
+        ThemeManager.InitializeFrameworkLanguage();
 
         var storage = new WmiStorageProvider();
         MainWindow? window = null;

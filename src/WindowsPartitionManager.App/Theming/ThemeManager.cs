@@ -1,5 +1,8 @@
+using System.Globalization;
 using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Media;
+using WindowsPartitionManager.Platform.Windows;
 
 namespace WindowsPartitionManager.App.Theming;
 
@@ -39,4 +42,45 @@ public static class ThemeManager
     {
         Application.Current!.Resources["UiFontFamily"] = new FontFamily(fontName);
     }
+
+    public static void ApplyLanguage(string languageName)
+    {
+        LanguagePreference.Apply(languageName);
+        ApplyLanguageToOpenWindows(LanguagePreference.ResolveCulture(languageName));
+    }
+
+    /// <summary>
+    /// Points WPF's default element <c>Language</c> at the current UI culture, so binding string
+    /// formatting follows it. Called once at startup: the metadata can only be overridden a single
+    /// time per process, so later language changes only update the open windows' <c>Language</c>
+    /// (below) and the thread cultures.
+    /// </summary>
+    public static void InitializeFrameworkLanguage()
+    {
+        if (_frameworkLanguageInitialized)
+        {
+            return;
+        }
+
+        FrameworkElement.LanguageProperty.OverrideMetadata(
+            typeof(FrameworkElement),
+            new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(CultureInfo.CurrentUICulture.IetfLanguageTag)));
+        _frameworkLanguageInitialized = true;
+    }
+
+    private static void ApplyLanguageToOpenWindows(string cultureName)
+    {
+        if (Application.Current is not { } app)
+        {
+            return;
+        }
+
+        var language = XmlLanguage.GetLanguage(CultureInfo.GetCultureInfo(cultureName).IetfLanguageTag);
+        foreach (Window window in app.Windows)
+        {
+            window.Language = language;
+        }
+    }
+
+    private static bool _frameworkLanguageInitialized;
 }

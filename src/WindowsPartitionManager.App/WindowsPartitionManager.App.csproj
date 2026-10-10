@@ -22,4 +22,8 @@
     <ProjectReference Include="..\WindowsPartitionManager.Platform.Windows\WindowsPartitionManager.Platform.Windows.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="WindowsPartitionManager.App.Tests" />
+  </ItemGroup>
+
 </Project>

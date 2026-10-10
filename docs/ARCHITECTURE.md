@@ -150,6 +150,7 @@ Tests implement these with fakes; the platform layer implements them for real.
 | `VirtualDisk` | Creates, opens, attaches and detaches VHDX files through `virtdisk.dll`. Detaching takes the disk offline first, waits until it is gone and lets device-removal notifications settle (see [Windows behaviours](#windows-behaviours-worth-knowing)). Used by `wpm vhd` and the integration tests. |
 | `PowerStatusProvider`, `KeepAwake` | `GetSystemPowerStatus` for battery rules; `SetThreadExecutionState` keeps the computer from sleeping during a write. |
 | `OperationLog` | Appends one line per write attempt with its outcome; written through to disk so it survives a crash. |
+| `LanguagePreference` | Reads the `language` field from `settings.json`, maps it to a culture and applies it, and formats dates; shared by the app and the CLI. |
 | `PartitionTypes` | GPT type GUIDs and MBR type bytes to `PartitionKind`, bus type codes to names. |
 | `Interop/` | `LibraryImport` declarations (kernel32, advapi32) and privilege handling (`SeManageVolumePrivilege` for permanent VHD attach). |
 
@@ -186,7 +187,7 @@ available width would make a content-sized window as wide as the screen.
 | `DestructiveActionWindow` | Delete and format; the button only enables after the partition name is typed. |
 | `ShrinkAnalysisWindow` | Runs the analysis with progress and cancellation; opens the unblock wizard. |
 | `UnblockWindow` | Lists the unblock steps with their consequences; applies and restores. |
-| `SettingsWindow` | Theme (White / Dark / Night) and UI font, operation log location, pending restore, version. |
+| `SettingsWindow` | Theme (White / Dark / Night), UI font, UI language, operation log location, pending restore, version. |
 
 After every write attempt, successful or not, the dialog raises `AttemptFinished` and the main
 window refreshes from Windows.
@@ -198,11 +199,17 @@ window refreshes from Windows.
 without a restart. Three `ResourceDictionary` files under `Themes/` define the same brush keys for
 **White**, **Dark** and **Night**; `ThemeManager` swaps the dictionary in
 `Application.Current.Resources.MergedDictionaries`, while the font is a single `UiFontFamily`
-resource. `SettingsStore` reads and writes
-`%LOCALAPPDATA%\WindowsPartitionManager\settings.json` (atomically, temp file then replace),
-falling back to White + Segoe UI when the file is missing or malformed. The choice applies
-immediately and is applied on startup. `PartitionColors` (the disk map / table swatch palette) and
-the toolbar action-glyph / status-indicator colours are deliberately untouched by themes.
+resource. The language choice is read from the same settings file by `LanguagePreference` in the
+platform layer (shared with the CLI), which maps English to `en` and Turkish to `tr`, sets the
+ambient and current-thread culture, and formats dates — English keeps the ISO `yyyy-MM-dd HH:mm`
+form, other cultures use their short date/time. There are no resource files yet, so the strings
+stay in English. At startup `ThemeManager` also points WPF's default element `Language` at the UI
+culture, and changing the language updates the open windows' `Language` immediately. `SettingsStore`
+reads and writes `%LOCALAPPDATA%\WindowsPartitionManager\settings.json` (atomically, temp file
+then replace), falling back to White + Segoe UI + English when the file is missing or malformed.
+The choices apply immediately and are applied on startup. `PartitionColors` (the disk map / table
+swatch palette) and the toolbar action-glyph / status-indicator colours are deliberately untouched
+by themes.
 
 **Developer aid.** `--screenshot file.png [--size 1020x700]` loads the disks, renders the main
 window to PNG and exits; it is used to check the layout without a human (1020 px is the minimum
@@ -211,7 +218,9 @@ window width and the table must fit there).
 ## Command-line tool (`WindowsPartitionManager.Cli`)
 
 The executable is `wpm`. Every write command prints a plan and the validation issues, refuses on
-errors and asks for a typed confirmation unless `--yes` is given.
+errors and asks for a typed confirmation unless `--yes` is given. On start-up it applies the same
+language preference as the desktop app (`LanguagePreference`), so numbers and dates in its output
+follow the chosen culture.
 
 | Command | Purpose |
 |---|---|
@@ -285,7 +294,7 @@ All under `%LOCALAPPDATA%\WindowsPartitionManager\`:
 |---|---|
 | `operations.log` | One line per write attempt: time, operation, parameters, outcome. Written through to disk. |
 | `unblock-state.json` | What the unblock wizard changed, until it is restored. |
-| `settings.json` | The selected theme and UI font. |
+| `settings.json` | The selected theme, UI font and language. |
 | `test-trace.log` | Integration tests only: a write-through breadcrumb per step, for diagnosing crashes. |
 
 ## Testing
