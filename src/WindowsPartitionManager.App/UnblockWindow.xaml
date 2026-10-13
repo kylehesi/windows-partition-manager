@@ -54,9 +54,15 @@
         </StackPanel>
 
         <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+<<<<<<< HEAD
+            <Button Content="{DynamicResource Common_RestorePrevious}" Command="{Binding RestoreCommand}" Margin="0,0,8,0" />
+            <Button Content="{DynamicResource Common_Close}" Click="Close_Click" Margin="0,0,8,0" />
+            <Button Content="{DynamicResource Unblock_ApplySelected}" Command="{Binding ApplyCommand}" IsDefault="True" FontWeight="SemiBold" />
+=======
             <Button Content="Restore previous settings" Command="{Binding RestoreCommand}" Margin="0,0,8,0" />
             <Button Content="Close" Click="Close_Click" Margin="0,0,8,0" />
             <Button Content="Apply selected" Command="{Binding ApplyCommand}" IsDefault="True" FontWeight="SemiBold" />
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         </StackPanel>
     </Grid>
 </Window>

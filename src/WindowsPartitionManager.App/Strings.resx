@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="Common_Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Common_FileSystem" xml:space="preserve"><value>File system</value></data>
+  <data name="Common_Label" xml:space="preserve"><value>Label</value></data>
+  <data name="Common_QuickFormat" xml:space="preserve"><value>Quick format (recommended)</value></data>
+  <data name="Common_Size" xml:space="preserve"><value>Size</value></data>
+  <data name="Common_RestorePrevious" xml:space="preserve"><value>Restore previous settings</value></data>
+  <data name="Common_Unallocated" xml:space="preserve"><value>Unallocated</value></data>
+  <data name="Common_Unknown" xml:space="preserve"><value>unknown</value></data>
+  <data name="Common_BadSize" xml:space="preserve"><value>Could not understand the size '{0}'. Try 500GB, 1.5TB or 20480MB.</value></data>
+  <data name="Common_RestoreConfirm" xml:space="preserve"><value>Restore hibernation and page file settings to what they were before Windows Partition Manager changed them?</value></data>
+
+  <data name="Main_Refresh" xml:space="preserve"><value>Refresh</value></data>
+  <data name="Main_Analyze" xml:space="preserve"><value>Analyze</value></data>
+  <data name="Main_Resize" xml:space="preserve"><value>Resize</value></data>
+  <data name="Main_NewPartition" xml:space="preserve"><value>New partition</value></data>
+  <data name="Main_Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Main_Format" xml:space="preserve"><value>Format</value></data>
+  <data name="Main_Settings" xml:space="preserve"><value>Settings</value></data>
+  <data name="Main_RefreshTip" xml:space="preserve"><value>Read the disks again</value></data>
+  <data name="Main_AnalyzeTip" xml:space="preserve"><value>Explain how far the selected NTFS volume can shrink</value></data>
+  <data name="Main_ResizeTip" xml:space="preserve"><value>Shrink or extend the selected partition</value></data>
+  <data name="Main_NewPartitionTip" xml:space="preserve"><value>Create a partition in the selected unallocated space</value></data>
+  <data name="Main_DeleteTip" xml:space="preserve"><value>Delete the selected partition</value></data>
+  <data name="Main_FormatTip" xml:space="preserve"><value>Reformat the selected partition in place</value></data>
+  <data name="Main_SettingsTip" xml:space="preserve"><value>Logs, pending restores and version</value></data>
+  <data name="Main_PartitionsFreeSpace" xml:space="preserve"><value>Partitions and free space on this disk</value></data>
+  <data name="Main_Actions" xml:space="preserve"><value>Actions ▾</value></data>
+  <data name="Main_Ready" xml:space="preserve"><value>Ready</value></data>
+  <data name="Main_SelectionSelected" xml:space="preserve"><value>Selected: {0} on disk {1}</value></data>
+  <data name="Main_SelectionNone" xml:space="preserve"><value>Select a row to enable the toolbar, or use its Actions menu.</value></data>
+  <data name="Main_InitializePrompt" xml:space="preserve"><value>Disk {0} ({1}, {2}) has no partition table that Windows recognises.</value></data>
+  <data name="Main_InitializePromptBody" xml:space="preserve"><value>Initialize it as GPT? If the disk is new or was wiped, nothing is lost. If it holds data in a format Windows cannot read (a damaged partition table, or a Linux or Mac disk), that data becomes unreachable.</value></data>
+  <data name="Main_Initializing" xml:space="preserve"><value>Initializing disk {0} as GPT…</value></data>
+  <data name="Main_ReadingDisks" xml:space="preserve"><value>Reading disks…</value></data>
+  <data name="Main_Refreshed" xml:space="preserve"><value>{0} disk(s) · refreshed in {1} ms</value></data>
+  <data name="Main_ReadFailed" xml:space="preserve"><value>Failed to read disks</value></data>
+
+  <data name="Col_Partition" xml:space="preserve"><value>Partition</value></data>
+  <data name="Col_Type" xml:space="preserve"><value>Type</value></data>
+  <data name="Col_FileSystem" xml:space="preserve"><value>File system</value></data>
+  <data name="Col_Label" xml:space="preserve"><value>Label</value></data>
+  <data name="Col_Offset" xml:space="preserve"><value>Offset</value></data>
+  <data name="Col_Size" xml:space="preserve"><value>Size</value></data>
+  <data name="Col_Used" xml:space="preserve"><value>Used</value></data>
+  <data name="Col_Free" xml:space="preserve"><value>Free</value></data>
+  <data name="Col_Actions" xml:space="preserve"><value>Actions</value></data>
+
+  <data name="Settings_Title" xml:space="preserve"><value>Settings</value></data>
+  <data name="Settings_Theme" xml:space="preserve"><value>Theme</value></data>
+  <data name="Settings_Font" xml:space="preserve"><value>Font</value></data>
+  <data name="Settings_Language" xml:space="preserve"><value>Language</value></data>
+  <data name="Settings_ColourScheme" xml:space="preserve"><value>Colour scheme</value></data>
+  <data name="Settings_UiFont" xml:space="preserve"><value>UI font</value></data>
+  <data name="Settings_UiLanguage" xml:space="preserve"><value>UI language</value></data>
+  <data name="Settings_OperationLog" xml:space="preserve"><value>Operation log</value></data>
+  <data name="Settings_UnblockWizard" xml:space="preserve"><value>Unblock wizard</value></data>
+  <data name="Settings_LogDescription" xml:space="preserve"><value>Every change the program asks Windows to make is recorded here, with its outcome.</value></data>
+  <data name="Settings_OpenLog" xml:space="preserve"><value>Open log</value></data>
+  <data name="Settings_OpenFolder" xml:space="preserve"><value>Open folder</value></data>
+  <data name="Settings_Version" xml:space="preserve"><value> version </value></data>
+  <data name="Settings_About" xml:space="preserve"><value>Open source under the MIT license. Every disk change goes through the Windows Storage Management API; no raw sectors are ever written.</value></data>
+  <data name="Settings_RestoreText" xml:space="preserve"><value>Settings changed on {0} for {1}: can be restored (hibernation and page file).</value></data>
+  <data name="Settings_NoRestore" xml:space="preserve"><value>No settings are waiting to be restored.</value></data>
+
+  <data name="Disk_System" xml:space="preserve"><value>System</value></data>
+  <data name="Disk_Boot" xml:space="preserve"><value>Boot</value></data>
+  <data name="Disk_ReadOnly" xml:space="preserve"><value>Read-only</value></data>
+  <data name="Disk_Offline" xml:space="preserve"><value>Offline</value></data>
+  <data name="Disk_NotInitialized" xml:space="preserve"><value>not initialized</value></data>
+
+  <data name="Segment_FreeSpace" xml:space="preserve"><value>Free space</value></data>
+  <data name="Segment_InitializeGpt" xml:space="preserve"><value>Initialize disk (GPT)</value></data>
+  <data name="Segment_NewPartition" xml:space="preserve"><value>New partition…</value></data>
+  <data name="Segment_Partition" xml:space="preserve"><value>Partition {0}</value></data>
+  <data name="Segment_AnalyzeShrink" xml:space="preserve"><value>Analyze shrink…</value></data>
+  <data name="Segment_Resize" xml:space="preserve"><value>Resize…</value></data>
+  <data name="Segment_Format" xml:space="preserve"><value>Format…</value></data>
+  <data name="Segment_Delete" xml:space="preserve"><value>Delete…</value></data>
+
+  <data name="NewPartition_Title" xml:space="preserve"><value>New partition · Disk {0}</value></data>
+  <data name="NewPartition_UseAll" xml:space="preserve"><value>Use all</value></data>
+  <data name="NewPartition_DriveLetter" xml:space="preserve"><value>Drive letter</value></data>
+  <data name="NewPartition_Create" xml:space="preserve"><value>Create partition</value></data>
+  <data name="NewPartition_Automatic" xml:space="preserve"><value>Automatic</value></data>
+  <data name="NewPartition_Region" xml:space="preserve"><value>{0} · unallocated space at {1}, {2} available</value></data>
+  <data name="NewPartition_Summary" xml:space="preserve"><value>Create a {0} {1} partition{2} at {3} on disk {4}{5}.</value></data>
+  <data name="NewPartition_AsLetter" xml:space="preserve"><value> as {0}:</value></data>
+  <data name="NewPartition_AutomaticLetter" xml:space="preserve"><value> with an automatic drive letter</value></data>
+  <data name="NewPartition_ConfirmBody" xml:space="preserve"><value>This writes to the partition table of disk {0} ({1}). Existing partitions are not touched. Continue?</value></data>
+  <data name="NewPartition_Done" xml:space="preserve"><value>Done: {0}: {1} {2}{3}</value></data>
+  <data name="NewPartition_Failed" xml:space="preserve"><value>Failed. The disk list has been refreshed to show the current state.</value></data>
+
+  <data name="Resize_NewSize" xml:space="preserve"><value>New size</value></data>
+  <data name="Resize_Smallest" xml:space="preserve"><value>Smallest</value></data>
+  <data name="Resize_Largest" xml:space="preserve"><value>Largest</value></data>
+  <data name="Resize_SmallestTip" xml:space="preserve"><value>The smallest size Windows and the data allow</value></data>
+  <data name="Resize_LargestTip" xml:space="preserve"><value>Fill the free space right after the partition</value></data>
+  <data name="Resize_Action" xml:space="preserve"><value>Resize</value></data>
+  <data name="Resize_Title" xml:space="preserve"><value>Resize · {0} on disk {1}</value></data>
+  <data name="Resize_Info" xml:space="preserve"><value>{0} · {1}{2} · current size {3}, {4} in use</value></data>
+  <data name="Resize_LimitsLoading" xml:space="preserve"><value>Asking Windows how far this volume can shrink or grow…</value></data>
+  <data name="Resize_LimitsUnreported" xml:space="preserve"><value> (Windows did not report its own limits; using data size and free space only)</value></data>
+  <data name="Resize_PossibleRange" xml:space="preserve"><value>Possible range: {0} to {1}</value></data>
+  <data name="Resize_CanShrinkOnly" xml:space="preserve"><value>Can shrink to {0}; cannot extend (no free space right after the partition)</value></data>
+  <data name="Resize_ShrinkChange" xml:space="preserve"><value>Shrink from {0} to {1}; frees {2} right after the partition for a new drive.</value></data>
+  <data name="Resize_ExtendChange" xml:space="preserve"><value>Extend from {0} to {1} (+{2}).</value></data>
+  <data name="Resize_NoChange" xml:space="preserve"><value>No change.</value></data>
+  <data name="Resize_ConfirmBody" xml:space="preserve"><value>Windows moves files as needed and keeps your data, but any resize carries risk: make sure important files are backed up and do not power off during the operation. Continue?</value></data>
+  <data name="Resize_Done" xml:space="preserve"><value>Done: the partition is now {0}.</value></data>
+  <data name="Resize_DoneHint" xml:space="preserve"><value> Use "New partition" on the freed space to create a drive.</value></data>
+  <data name="Resize_Failed" xml:space="preserve"><value>Failed. Nothing is lost: Windows applies a resize only when it can complete it. The disk list has been refreshed.</value></data>
+  <data name="Resize_CreateAfterShrink" xml:space="preserve"><value>Create a partition in the freed space</value></data>
+  <data name="Resize_ActionCombined" xml:space="preserve"><value>Resize and create</value></data>
+  <data name="Resize_ShrinkAndCreateChange" xml:space="preserve"><value>Shrink from {0} to {1} and turn the freed {2} into a new partition.</value></data>
+  <data name="Resize_ShrinkAndCreateConfirmBody" xml:space="preserve"><value>The partition is shrunk first; if that succeeds, a new partition is created and formatted in the freed space. Windows moves files as needed and keeps your data, but any resize carries risk: make sure important files are backed up and do not power off during the operation. Continue?</value></data>
+  <data name="Resize_ShrinkAndCreateDone" xml:space="preserve"><value>Done: the partition is now {0} and a new partition was created in the freed space.</value></data>
+
+  <data name="Destructive_FormatTitle" xml:space="preserve"><value>Format · {0} on disk {1}</value></data>
+  <data name="Destructive_DeleteTitle" xml:space="preserve"><value>Delete · {0} on disk {1}</value></data>
+  <data name="Destructive_InUse" xml:space="preserve"><value>, {0} in use</value></data>
+  <data name="Destructive_FormatExplanation" xml:space="preserve"><value>Erases the file system on this partition and writes a new, empty one. The partition itself, its size and its drive letter stay. Choose NTFS if you want to be able to shrink or extend it later.</value></data>
+  <data name="Destructive_DeleteExplanation" xml:space="preserve"><value>Removes the partition from the partition table. The space becomes unallocated and can be used for new partitions. Files are not wiped, but they are no longer reachable without recovery tools.</value></data>
+  <data name="Destructive_ConfirmPrompt" xml:space="preserve"><value>Type {0} to confirm:</value></data>
+  <data name="Destructive_DeleteAction" xml:space="preserve"><value>Delete partition</value></data>
+  <data name="Destructive_FormatAction" xml:space="preserve"><value>Format</value></data>
+  <data name="Destructive_DoneFormat" xml:space="preserve"><value>Done: {0}: is now {1}{2}.</value></data>
+  <data name="Destructive_Deleting" xml:space="preserve"><value>Deleting partition…</value></data>
+  <data name="Destructive_Deleted" xml:space="preserve"><value>Done: the partition was deleted and its space is unallocated.</value></data>
+
+  <data name="ShrinkAnalysis_Subtitle" xml:space="preserve"><value>Finds the files Windows refuses to move and shows how far this volume can really shrink. Read-only: nothing is changed.</value></data>
+  <data name="ShrinkAnalysis_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="ShrinkAnalysis_Unblock" xml:space="preserve"><value>Unblock…</value></data>
+  <data name="ShrinkAnalysis_Analyze" xml:space="preserve"><value>Analyze</value></data>
+  <data name="ShrinkAnalysis_TargetSize" xml:space="preserve"><value>Target size</value></data>
+  <data name="ShrinkAnalysis_TargetTip" xml:space="preserve"><value>Volume size you would like to reach, e.g. 300GB. Leave empty for used data + 10 %.</value></data>
+  <data name="ShrinkAnalysis_Title" xml:space="preserve"><value>Shrink analysis · {0}:</value></data>
+  <data name="ShrinkAnalysis_Start" xml:space="preserve"><value>Press Analyze to start.</value></data>
+  <data name="ShrinkAnalysis_Opening" xml:space="preserve"><value>Opening volume…</value></data>
+  <data name="ShrinkAnalysis_Analysed" xml:space="preserve"><value>Analysed in {0} s. Waiting for Windows' own shrink estimate…</value></data>
+  <data name="ShrinkAnalysis_Done" xml:space="preserve"><value>Done in {0} s.</value></data>
+  <data name="ShrinkAnalysis_Cancelled" xml:space="preserve"><value>Cancelled.</value></data>
+  <data name="ShrinkAnalysis_AdminHint" xml:space="preserve"><value> Start Windows Partition Manager as administrator.</value></data>
+  <data name="ShrinkAnalysis_Failed" xml:space="preserve"><value>Failed.</value></data>
+
+  <data name="Unblock_Title" xml:space="preserve"><value>Unblock shrink · {0}:</value></data>
+  <data name="Unblock_PastTarget" xml:space="preserve"><value>{0} past the target</value></data>
+  <data name="Unblock_NeedsReboot" xml:space="preserve"><value>needs a reboot</value></data>
+  <data name="Unblock_CanUndo" xml:space="preserve"><value>Windows Partition Manager can undo this</value></data>
+  <data name="Unblock_CannotUndo" xml:space="preserve"><value>cannot be undone</value></data>
+  <data name="Unblock_MoreFiles" xml:space="preserve"><value>… and {0} more</value></data>
+  <data name="Unblock_RestoreText" xml:space="preserve"><value>Windows Partition Manager changed settings on {0} for {1}: and can restore them.</value></data>
+  <data name="Unblock_NoRestore" xml:space="preserve"><value>No settings to restore.</value></data>
+  <data name="Unblock_ApplyTitle" xml:space="preserve"><value>Apply these steps on {0}:?</value></data>
+  <data name="Unblock_Irreversible" xml:space="preserve"><value>Deleting restore points cannot be undone.</value></data>
+  <data name="Unblock_RebootNote" xml:space="preserve"><value>The page file change takes effect after a reboot.</value></data>
+  <data name="Unblock_DoneReboot" xml:space="preserve"><value>Done. Reboot, then run the shrink. Afterwards come back here and press Restore to put the settings back.</value></data>
+  <data name="Unblock_DoneRestore" xml:space="preserve"><value>Done. Run the shrink now; afterwards press Restore to put the settings back.</value></data>
+  <data name="Unblock_Done" xml:space="preserve"><value>Done. Run the shrink now.</value></data>
+  <data name="Unblock_Failed" xml:space="preserve"><value>Failed. Settings that were already changed are recorded and can be restored.</value></data>
+  <data name="Unblock_ApplySelected" xml:space="preserve"><value>Apply selected</value></data>
+</root>

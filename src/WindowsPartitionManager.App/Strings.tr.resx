@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="Common_Close" xml:space="preserve"><value>Kapat</value></data>
+  <data name="Common_FileSystem" xml:space="preserve"><value>Dosya sistemi</value></data>
+  <data name="Common_Label" xml:space="preserve"><value>Etiket</value></data>
+  <data name="Common_QuickFormat" xml:space="preserve"><value>Hızlı biçimlendir (önerilir)</value></data>
+  <data name="Common_Size" xml:space="preserve"><value>Boyut</value></data>
+  <data name="Common_RestorePrevious" xml:space="preserve"><value>Önceki ayarları geri yükle</value></data>
+  <data name="Common_Unallocated" xml:space="preserve"><value>Ayrılmamış</value></data>
+  <data name="Common_Unknown" xml:space="preserve"><value>bilinmiyor</value></data>
+  <data name="Common_BadSize" xml:space="preserve"><value>'{0}' boyutu anlaşılamadı. 500GB, 1.5TB veya 20480MB deneyin.</value></data>
+  <data name="Common_RestoreConfirm" xml:space="preserve"><value>Hazırda bekletme ve sayfa dosyası ayarları, Windows Partition Manager bunları değiştirmeden önceki durumuna geri yüklensin mi?</value></data>
+
+  <data name="Main_Refresh" xml:space="preserve"><value>Yenile</value></data>
+  <data name="Main_Analyze" xml:space="preserve"><value>Analiz Et</value></data>
+  <data name="Main_Resize" xml:space="preserve"><value>Yeniden Boyutlandır</value></data>
+  <data name="Main_NewPartition" xml:space="preserve"><value>Yeni bölüm</value></data>
+  <data name="Main_Delete" xml:space="preserve"><value>Sil</value></data>
+  <data name="Main_Format" xml:space="preserve"><value>Biçimlendir</value></data>
+  <data name="Main_Settings" xml:space="preserve"><value>Ayarlar</value></data>
+  <data name="Main_RefreshTip" xml:space="preserve"><value>Diskleri yeniden oku</value></data>
+  <data name="Main_AnalyzeTip" xml:space="preserve"><value>Seçili NTFS biriminin ne kadar küçülebileceğini açıkla</value></data>
+  <data name="Main_ResizeTip" xml:space="preserve"><value>Seçili bölümü küçült veya genişlet</value></data>
+  <data name="Main_NewPartitionTip" xml:space="preserve"><value>Seçili ayrılmamış alanda bölüm oluştur</value></data>
+  <data name="Main_DeleteTip" xml:space="preserve"><value>Seçili bölümü sil</value></data>
+  <data name="Main_FormatTip" xml:space="preserve"><value>Seçili bölümü yerinde yeniden biçimlendir</value></data>
+  <data name="Main_SettingsTip" xml:space="preserve"><value>Günlükler, bekleyen geri yüklemeler ve sürüm</value></data>
+  <data name="Main_PartitionsFreeSpace" xml:space="preserve"><value>Bu diskteki bölümler ve boş alan</value></data>
+  <data name="Main_Actions" xml:space="preserve"><value>Eylemler ▾</value></data>
+  <data name="Main_Ready" xml:space="preserve"><value>Hazır</value></data>
+  <data name="Main_SelectionSelected" xml:space="preserve"><value>Seçili: {0}, disk {1}</value></data>
+  <data name="Main_SelectionNone" xml:space="preserve"><value>Araç çubuğunu etkinleştirmek için bir satır seçin veya Eylemler menüsünü kullanın.</value></data>
+  <data name="Main_InitializePrompt" xml:space="preserve"><value>Disk {0} ({1}, {2}) üzerinde Windows'un tanıdığı bir bölüm tablosu yok.</value></data>
+  <data name="Main_InitializePromptBody" xml:space="preserve"><value>GPT olarak başlatılsın mı? Disk yeniyse veya silindiyse hiçbir şey kaybolmaz. Windows'un okuyamayacağı bir biçimde veri içeriyorsa (bozuk bir bölüm tablosu veya Linux/Mac diski), bu verilere ulaşılamaz hale gelir.</value></data>
+  <data name="Main_Initializing" xml:space="preserve"><value>Disk {0} GPT olarak başlatılıyor…</value></data>
+  <data name="Main_ReadingDisks" xml:space="preserve"><value>Diskler okunuyor…</value></data>
+  <data name="Main_Refreshed" xml:space="preserve"><value>{0} disk · {1} ms'de yenilendi</value></data>
+  <data name="Main_ReadFailed" xml:space="preserve"><value>Diskler okunamadı</value></data>
+
+  <data name="Col_Partition" xml:space="preserve"><value>Bölüm</value></data>
+  <data name="Col_Type" xml:space="preserve"><value>Tür</value></data>
+  <data name="Col_FileSystem" xml:space="preserve"><value>Dosya sistemi</value></data>
+  <data name="Col_Label" xml:space="preserve"><value>Etiket</value></data>
+  <data name="Col_Offset" xml:space="preserve"><value>Konum</value></data>
+  <data name="Col_Size" xml:space="preserve"><value>Boyut</value></data>
+  <data name="Col_Used" xml:space="preserve"><value>Kullanılan</value></data>
+  <data name="Col_Free" xml:space="preserve"><value>Boş</value></data>
+  <data name="Col_Actions" xml:space="preserve"><value>Eylemler</value></data>
+
+  <data name="Settings_Title" xml:space="preserve"><value>Ayarlar</value></data>
+  <data name="Settings_Theme" xml:space="preserve"><value>Tema</value></data>
+  <data name="Settings_Font" xml:space="preserve"><value>Yazı tipi</value></data>
+  <data name="Settings_Language" xml:space="preserve"><value>Dil</value></data>
+  <data name="Settings_ColourScheme" xml:space="preserve"><value>Renk düzeni</value></data>
+  <data name="Settings_UiFont" xml:space="preserve"><value>Arayüz yazı tipi</value></data>
+  <data name="Settings_UiLanguage" xml:space="preserve"><value>Arayüz dili</value></data>
+  <data name="Settings_OperationLog" xml:space="preserve"><value>İşlem günlüğü</value></data>
+  <data name="Settings_UnblockWizard" xml:space="preserve"><value>Engel kaldırma sihirbazı</value></data>
+  <data name="Settings_LogDescription" xml:space="preserve"><value>Programın Windows'a yapmasını istediği her değişiklik, sonucuyla birlikte buraya kaydedilir.</value></data>
+  <data name="Settings_OpenLog" xml:space="preserve"><value>Günlüğü aç</value></data>
+  <data name="Settings_OpenFolder" xml:space="preserve"><value>Klasörü aç</value></data>
+  <data name="Settings_Version" xml:space="preserve"><value> sürüm </value></data>
+  <data name="Settings_About" xml:space="preserve"><value>MIT lisansı altında açık kaynaklıdır. Her disk değişikliği Windows Depolama Yönetimi API'si üzerinden yapılır; ham sektörlere asla yazılmaz.</value></data>
+  <data name="Settings_RestoreText" xml:space="preserve"><value>Ayarlar {0} tarihinde {1} için değiştirildi: geri yüklenebilir (hazırda bekletme ve sayfa dosyası).</value></data>
+  <data name="Settings_NoRestore" xml:space="preserve"><value>Geri yüklenmeyi bekleyen ayar yok.</value></data>
+
+  <data name="Disk_System" xml:space="preserve"><value>Sistem</value></data>
+  <data name="Disk_Boot" xml:space="preserve"><value>Önyükleme</value></data>
+  <data name="Disk_ReadOnly" xml:space="preserve"><value>Salt okunur</value></data>
+  <data name="Disk_Offline" xml:space="preserve"><value>Çevrimdışı</value></data>
+  <data name="Disk_NotInitialized" xml:space="preserve"><value>başlatılmamış</value></data>
+
+  <data name="Segment_FreeSpace" xml:space="preserve"><value>Boş alan</value></data>
+  <data name="Segment_InitializeGpt" xml:space="preserve"><value>Diski başlat (GPT)</value></data>
+  <data name="Segment_NewPartition" xml:space="preserve"><value>Yeni bölüm…</value></data>
+  <data name="Segment_Partition" xml:space="preserve"><value>Bölüm {0}</value></data>
+  <data name="Segment_AnalyzeShrink" xml:space="preserve"><value>Küçültmeyi analiz et…</value></data>
+  <data name="Segment_Resize" xml:space="preserve"><value>Yeniden boyutlandır…</value></data>
+  <data name="Segment_Format" xml:space="preserve"><value>Biçimlendir…</value></data>
+  <data name="Segment_Delete" xml:space="preserve"><value>Sil…</value></data>
+
+  <data name="NewPartition_Title" xml:space="preserve"><value>Yeni bölüm · Disk {0}</value></data>
+  <data name="NewPartition_UseAll" xml:space="preserve"><value>Tümünü kullan</value></data>
+  <data name="NewPartition_DriveLetter" xml:space="preserve"><value>Sürücü harfi</value></data>
+  <data name="NewPartition_Create" xml:space="preserve"><value>Bölüm oluştur</value></data>
+  <data name="NewPartition_Automatic" xml:space="preserve"><value>Otomatik</value></data>
+  <data name="NewPartition_Region" xml:space="preserve"><value>{0} · {1} konumunda ayrılmamış alan, {2} kullanılabilir</value></data>
+  <data name="NewPartition_Summary" xml:space="preserve"><value>Disk {4} üzerinde {3} konumunda {0} boyutunda {1} bölümü{2} oluştur{5}.</value></data>
+  <data name="NewPartition_AsLetter" xml:space="preserve"><value> {0}: olarak</value></data>
+  <data name="NewPartition_AutomaticLetter" xml:space="preserve"><value> otomatik sürücü harfiyle</value></data>
+  <data name="NewPartition_ConfirmBody" xml:space="preserve"><value>Bu işlem, disk {0} ({1}) bölüm tablosuna yazar. Mevcut bölümlere dokunulmaz. Devam edilsin mi?</value></data>
+  <data name="NewPartition_Done" xml:space="preserve"><value>Tamam: {0}: {1} {2}{3}</value></data>
+  <data name="NewPartition_Failed" xml:space="preserve"><value>Başarısız. Disk listesi geçerli durumu gösterecek şekilde yenilendi.</value></data>
+
+  <data name="Resize_NewSize" xml:space="preserve"><value>Yeni boyut</value></data>
+  <data name="Resize_Smallest" xml:space="preserve"><value>En küçük</value></data>
+  <data name="Resize_Largest" xml:space="preserve"><value>En büyük</value></data>
+  <data name="Resize_SmallestTip" xml:space="preserve"><value>Windows'un ve verilerin izin verdiği en küçük boyut</value></data>
+  <data name="Resize_LargestTip" xml:space="preserve"><value>Bölümden hemen sonraki boş alanı doldur</value></data>
+  <data name="Resize_Action" xml:space="preserve"><value>Yeniden Boyutlandır</value></data>
+  <data name="Resize_Title" xml:space="preserve"><value>Yeniden boyutlandır · disk {1} üzerinde {0}</value></data>
+  <data name="Resize_Info" xml:space="preserve"><value>{0} · {1}{2} · geçerli boyut {3}, {4} kullanımda</value></data>
+  <data name="Resize_LimitsLoading" xml:space="preserve"><value>Windows'a bu birimin ne kadar küçülüp büyüyebileceği soruluyor…</value></data>
+  <data name="Resize_LimitsUnreported" xml:space="preserve"><value> (Windows kendi sınırlarını bildirmedi; yalnızca veri boyutu ve boş alan kullanılıyor)</value></data>
+  <data name="Resize_PossibleRange" xml:space="preserve"><value>Olası aralık: {0} ile {1}</value></data>
+  <data name="Resize_CanShrinkOnly" xml:space="preserve"><value>{0} boyutuna küçültülebilir; genişletilemez (bölümden hemen sonra boş alan yok)</value></data>
+  <data name="Resize_ShrinkChange" xml:space="preserve"><value>{0} boyutundan {1} boyutuna küçült; bölümden hemen sonra yeni bir sürücü için {2} alan boşaltır.</value></data>
+  <data name="Resize_ExtendChange" xml:space="preserve"><value>{0} boyutundan {1} boyutuna genişlet (+{2}).</value></data>
+  <data name="Resize_NoChange" xml:space="preserve"><value>Değişiklik yok.</value></data>
+  <data name="Resize_ConfirmBody" xml:space="preserve"><value>Windows gerektiğinde dosyaları taşır ve verilerinizi korur; ancak her yeniden boyutlandırma risk taşır: önemli dosyalarınızın yedeklendiğinden emin olun ve işlem sırasında gücü kesmeyin. Devam edilsin mi?</value></data>
+  <data name="Resize_Done" xml:space="preserve"><value>Tamam: bölüm artık {0}.</value></data>
+  <data name="Resize_DoneHint" xml:space="preserve"><value> Boşalan alanda sürücü oluşturmak için "Yeni bölüm"ü kullanın.</value></data>
+  <data name="Resize_Failed" xml:space="preserve"><value>Başarısız. Hiçbir şey kaybolmadı: Windows bir yeniden boyutlandırmayı yalnızca tamamlayabildiğinde uygular. Disk listesi yenilendi.</value></data>
+  <data name="Resize_CreateAfterShrink" xml:space="preserve"><value>Boşalan alanda bir bölüm oluştur</value></data>
+  <data name="Resize_ActionCombined" xml:space="preserve"><value>Küçült ve oluştur</value></data>
+  <data name="Resize_ShrinkAndCreateChange" xml:space="preserve"><value>{0} boyutundan {1} boyutuna küçült ve boşalan {2} alanı yeni bir bölüme dönüştür.</value></data>
+  <data name="Resize_ShrinkAndCreateConfirmBody" xml:space="preserve"><value>Önce bölüm küçültülür; bu başarılı olursa boşalan alanda yeni bir bölüm oluşturulur ve biçimlendirilir. Windows gerektiğinde dosyaları taşır ve verilerinizi korur; ancak her yeniden boyutlandırma risk taşır: önemli dosyalarınızın yedeklendiğinden emin olun ve işlem sırasında gücü kesmeyin. Devam edilsin mi?</value></data>
+  <data name="Resize_ShrinkAndCreateDone" xml:space="preserve"><value>Tamam: bölüm artık {0} ve boşalan alanda yeni bir bölüm oluşturuldu.</value></data>
+
+  <data name="Destructive_FormatTitle" xml:space="preserve"><value>Biçimlendir · disk {1} üzerinde {0}</value></data>
+  <data name="Destructive_DeleteTitle" xml:space="preserve"><value>Sil · disk {1} üzerinde {0}</value></data>
+  <data name="Destructive_InUse" xml:space="preserve"><value>, {0} kullanımda</value></data>
+  <data name="Destructive_FormatExplanation" xml:space="preserve"><value>Bu bölümdeki dosya sistemini siler ve yeni, boş bir dosya sistemi yazar. Bölümün kendisi, boyutu ve sürücü harfi korunur. Daha sonra küçültüp genişletebilmek için NTFS seçin.</value></data>
+  <data name="Destructive_DeleteExplanation" xml:space="preserve"><value>Bölümü bölüm tablosundan kaldırır. Alan ayrılmamış hale gelir ve yeni bölümler için kullanılabilir. Dosyalar silinmez, ancak kurtarma araçları olmadan ulaşılamaz hale gelir.</value></data>
+  <data name="Destructive_ConfirmPrompt" xml:space="preserve"><value>Onaylamak için {0} yazın:</value></data>
+  <data name="Destructive_DeleteAction" xml:space="preserve"><value>Bölümü sil</value></data>
+  <data name="Destructive_FormatAction" xml:space="preserve"><value>Biçimlendir</value></data>
+  <data name="Destructive_DoneFormat" xml:space="preserve"><value>Tamam: {0}: artık {1}{2}.</value></data>
+  <data name="Destructive_Deleting" xml:space="preserve"><value>Bölüm siliniyor…</value></data>
+  <data name="Destructive_Deleted" xml:space="preserve"><value>Tamam: bölüm silindi ve alanı ayrılmamış durumda.</value></data>
+
+  <data name="ShrinkAnalysis_Subtitle" xml:space="preserve"><value>Windows'un taşımayı reddettiği dosyaları bulur ve bu birimin gerçekte ne kadar küçülebileceğini gösterir. Salt okunur: hiçbir şey değiştirilmez.</value></data>
+  <data name="ShrinkAnalysis_Cancel" xml:space="preserve"><value>İptal</value></data>
+  <data name="ShrinkAnalysis_Unblock" xml:space="preserve"><value>Engelleri kaldır…</value></data>
+  <data name="ShrinkAnalysis_Analyze" xml:space="preserve"><value>Analiz Et</value></data>
+  <data name="ShrinkAnalysis_TargetSize" xml:space="preserve"><value>Hedef boyut</value></data>
+  <data name="ShrinkAnalysis_TargetTip" xml:space="preserve"><value>Ulaşmak istediğiniz birim boyutu, örn. 300GB. Kullanılan veri + %10 için boş bırakın.</value></data>
+  <data name="ShrinkAnalysis_Title" xml:space="preserve"><value>Küçültme analizi · {0}:</value></data>
+  <data name="ShrinkAnalysis_Start" xml:space="preserve"><value>Başlamak için Analiz Et'e basın.</value></data>
+  <data name="ShrinkAnalysis_Opening" xml:space="preserve"><value>Birim açılıyor…</value></data>
+  <data name="ShrinkAnalysis_Analysed" xml:space="preserve"><value>{0} sn'de analiz edildi. Windows'un kendi küçültme tahmini bekleniyor…</value></data>
+  <data name="ShrinkAnalysis_Done" xml:space="preserve"><value>{0} sn'de tamamlandı.</value></data>
+  <data name="ShrinkAnalysis_Cancelled" xml:space="preserve"><value>İptal edildi.</value></data>
+  <data name="ShrinkAnalysis_AdminHint" xml:space="preserve"><value> Windows Partition Manager'ı yönetici olarak başlatın.</value></data>
+  <data name="ShrinkAnalysis_Failed" xml:space="preserve"><value>Başarısız.</value></data>
+
+  <data name="Unblock_Title" xml:space="preserve"><value>Küçültmeyi engelleyenleri kaldır · {0}:</value></data>
+  <data name="Unblock_PastTarget" xml:space="preserve"><value>hedefin {0} ötesinde</value></data>
+  <data name="Unblock_NeedsReboot" xml:space="preserve"><value>yeniden başlatma gerektirir</value></data>
+  <data name="Unblock_CanUndo" xml:space="preserve"><value>Windows Partition Manager bunu geri alabilir</value></data>
+  <data name="Unblock_CannotUndo" xml:space="preserve"><value>geri alınamaz</value></data>
+  <data name="Unblock_MoreFiles" xml:space="preserve"><value>… ve {0} tane daha</value></data>
+  <data name="Unblock_RestoreText" xml:space="preserve"><value>Windows Partition Manager {0} tarihinde {1} için ayarları değiştirdi: geri yükleyebilir.</value></data>
+  <data name="Unblock_NoRestore" xml:space="preserve"><value>Geri yüklenecek ayar yok.</value></data>
+  <data name="Unblock_ApplyTitle" xml:space="preserve"><value>{0}: üzerinde bu adımlar uygulansın mı?</value></data>
+  <data name="Unblock_Irreversible" xml:space="preserve"><value>Geri yükleme noktalarını silmek geri alınamaz.</value></data>
+  <data name="Unblock_RebootNote" xml:space="preserve"><value>Sayfa dosyası değişikliği yeniden başlatmadan sonra etkili olur.</value></data>
+  <data name="Unblock_DoneReboot" xml:space="preserve"><value>Tamam. Yeniden başlatın, ardından küçültmeyi çalıştırın. Sonra buraya dönüp ayarları geri yüklemek için Geri Yükle'ye basın.</value></data>
+  <data name="Unblock_DoneRestore" xml:space="preserve"><value>Tamam. Küçültmeyi şimdi çalıştırın; ardından ayarları geri yüklemek için Geri Yükle'ye basın.</value></data>
+  <data name="Unblock_Done" xml:space="preserve"><value>Tamam. Küçültmeyi şimdi çalıştırın.</value></data>
+  <data name="Unblock_Failed" xml:space="preserve"><value>Başarısız. Daha önce değiştirilen ayarlar kaydedildi ve geri yüklenebilir.</value></data>
+  <data name="Unblock_ApplySelected" xml:space="preserve"><value>Seçileni uygula</value></data>
+</root>

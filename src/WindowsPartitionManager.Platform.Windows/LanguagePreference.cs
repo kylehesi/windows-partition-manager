@@ -18,6 +18,7 @@ public static class LanguagePreference
         "WindowsPartitionManager",
         "settings.json");
 
+<<<<<<< HEAD
     public static string LoadLanguage()
     {
         try
@@ -25,6 +26,17 @@ public static class LanguagePreference
             if (File.Exists(SettingsPath))
             {
                 using var document = JsonDocument.Parse(File.ReadAllText(SettingsPath));
+=======
+    public static string LoadLanguage() => LoadLanguage(SettingsPath);
+
+    internal static string LoadLanguage(string path)
+    {
+        try
+        {
+            if (File.Exists(path))
+            {
+                using var document = JsonDocument.Parse(File.ReadAllText(path));
+>>>>>>> 12-oct-2026
                 if (document.RootElement.TryGetProperty("language", out var language)
                     && language.ValueKind == JsonValueKind.String
                     && language.GetString() is { } candidate

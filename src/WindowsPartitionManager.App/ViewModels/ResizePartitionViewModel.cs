@@ -9,7 +9,11 @@ using WindowsPartitionManager.Core.Operations;
 
 namespace WindowsPartitionManager.App.ViewModels;
 
+<<<<<<< HEAD
+/// <summary>Form for shrinking or extending one partition, optionally creating a new partition in the space a shrink frees.</summary>
+=======
 /// <summary>Form for shrinking or extending one partition.</summary>
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
 public sealed class ResizePartitionViewModel : INotifyPropertyChanged
 {
     private const ulong MiB = 1024 * 1024;
@@ -19,6 +23,10 @@ public sealed class ResizePartitionViewModel : INotifyPropertyChanged
     private readonly IPowerStatusProvider _power;
     private readonly Disk _disk;
     private readonly Partition _partition;
+<<<<<<< HEAD
+    private readonly IReadOnlySet<char> _lettersInUse;
+=======
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
     private readonly Func<string, bool> _confirm;
 
     private SupportedSize? _limits;
@@ -26,20 +34,52 @@ public sealed class ResizePartitionViewModel : INotifyPropertyChanged
     private bool _isBusy;
     private bool _isDone;
     private bool _limitsLoading = true;
+<<<<<<< HEAD
+    private bool _isShrink;
+    private bool _createAfterShrink;
+    private string _newFileSystem = "NTFS";
+    private string _newLabel = string.Empty;
+    private string _selectedLetter;
+    private bool _newQuickFormat = true;
+    private string _status = string.Empty;
+    private string? _error;
+
+    private static string AutomaticLetter => Localization.Get("NewPartition_Automatic");
+
+    public ResizePartitionViewModel(
+        IStorageOperations operations,
+        ISupportedSizeProvider limitsProvider,
+        IPowerStatusProvider power,
+        Disk disk,
+        Partition partition,
+        IReadOnlySet<char> lettersInUse,
+        Func<string, bool> confirm)
+=======
     private string _status = string.Empty;
     private string? _error;
 
     public ResizePartitionViewModel(IStorageOperations operations, ISupportedSizeProvider limitsProvider, IPowerStatusProvider power, Disk disk, Partition partition, Func<string, bool> confirm)
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
     {
         _operations = operations;
         _limitsProvider = limitsProvider;
         _power = power;
         _disk = disk;
         _partition = partition;
+<<<<<<< HEAD
+        _lettersInUse = lettersInUse;
+=======
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         _confirm = confirm;
 
         _newSizeText = ToMegabytes(partition.SizeBytes);
 
+<<<<<<< HEAD
+        Letters = [AutomaticLetter, .. Enumerable.Range('D', 'Z' - 'D' + 1).Select(c => (char)c).Where(c => !lettersInUse.Contains(c)).Select(c => $"{c}:")];
+        _selectedLetter = Letters.Count > 1 ? Letters[1] : AutomaticLetter;
+
+=======
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         ResizeCommand = new RelayCommand(() => _ = ResizeAsync(), () => CanResize);
         ShrinkToMinimumCommand = new RelayCommand(() => NewSizeText = ToMegabytesRoundedUp(LowerBound));
         ExtendToMaximumCommand = new RelayCommand(() => NewSizeText = ToMegabytes(UpperBound), () => UpperBound > partition.SizeBytes);
@@ -53,16 +93,29 @@ public sealed class ResizePartitionViewModel : INotifyPropertyChanged
     /// <summary>Raised after every attempt, successful or not, so the disk list can be refreshed.</summary>
     public event EventHandler? AttemptFinished;
 
+<<<<<<< HEAD
+    public string Title => Localization.Format(
+        "Resize_Title",
+        _partition.DriveLetter is { } l ? $"{l}:" : Localization.Format("Segment_Partition", _partition.Number),
+        _disk.Number);
+=======
     public string Title => $"Resize · {(_partition.DriveLetter is { } l ? $"{l}:" : $"partition {_partition.Number}")} on disk {_disk.Number}";
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
 
     public string InfoText
     {
         get
         {
             var volume = _partition.Volume;
+<<<<<<< HEAD
+            var used = volume is null ? Localization.Get("Common_Unknown") : ByteSize.Format(volume.UsedBytes);
+            var label = volume?.Label is { Length: > 0 } s ? $" \"{s}\"" : string.Empty;
+            return Localization.Format("Resize_Info", _disk.FriendlyName, volume?.FileSystem, label, ByteSize.Format(_partition.SizeBytes), used);
+=======
             var used = volume is null ? "unknown" : ByteSize.Format(volume.UsedBytes);
             var label = volume?.Label is { Length: > 0 } s ? $" \"{s}\"" : string.Empty;
             return $"{_disk.FriendlyName} · {volume?.FileSystem}{label} · current size {ByteSize.Format(_partition.SizeBytes)}, {used} in use";
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         }
     }
 
@@ -72,15 +125,26 @@ public sealed class ResizePartitionViewModel : INotifyPropertyChanged
         {
             if (_limitsLoading)
             {
+<<<<<<< HEAD
+                return Localization.Get("Resize_LimitsLoading");
+=======
                 return "Asking Windows how far this volume can shrink or grow…";
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
             }
 
             var lower = ByteSize.Format(LowerBound);
             var upper = ByteSize.Format(UpperBound);
+<<<<<<< HEAD
+            var source = _limits is null ? Localization.Get("Resize_LimitsUnreported") : string.Empty;
+            return UpperBound > _partition.SizeBytes
+                ? Localization.Format("Resize_PossibleRange", lower, upper) + source
+                : Localization.Format("Resize_CanShrinkOnly", lower) + source;
+=======
             var source = _limits is null ? " (Windows did not report its own limits; using data size and free space only)" : string.Empty;
             return UpperBound > _partition.SizeBytes
                 ? $"Possible range: {lower} to {upper}{source}"
                 : $"Can shrink to {lower}; cannot extend (no free space right after the partition){source}";
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         }
     }
 
@@ -105,6 +169,13 @@ public sealed class ResizePartitionViewModel : INotifyPropertyChanged
 
     public RelayCommand ExtendToMaximumCommand { get; }
 
+<<<<<<< HEAD
+    public IReadOnlyList<string> FileSystems { get; } = PartitionPlanner.SupportedFileSystems;
+
+    public IReadOnlyList<string> Letters { get; }
+
+=======
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
     public string NewSizeText
     {
         get => _newSizeText;
@@ -119,6 +190,78 @@ public sealed class ResizePartitionViewModel : INotifyPropertyChanged
 
     public string ChangeText { get; private set; } = string.Empty;
 
+<<<<<<< HEAD
+    public bool CreateAfterShrink
+    {
+        get => _createAfterShrink;
+        set
+        {
+            if (SetField(ref _createAfterShrink, value))
+            {
+                OnPropertyChanged(nameof(IsCreateFormEnabled));
+                OnPropertyChanged(nameof(ActionText));
+                Revalidate();
+            }
+        }
+    }
+
+    public string NewFileSystem
+    {
+        get => _newFileSystem;
+        set
+        {
+            if (SetField(ref _newFileSystem, value))
+            {
+                Revalidate();
+            }
+        }
+    }
+
+    public string NewLabel
+    {
+        get => _newLabel;
+        set
+        {
+            if (SetField(ref _newLabel, value))
+            {
+                Revalidate();
+            }
+        }
+    }
+
+    public string SelectedLetter
+    {
+        get => _selectedLetter;
+        set
+        {
+            if (SetField(ref _selectedLetter, value))
+            {
+                Revalidate();
+            }
+        }
+    }
+
+    public bool NewQuickFormat
+    {
+        get => _newQuickFormat;
+        set
+        {
+            if (SetField(ref _newQuickFormat, value))
+            {
+                Revalidate();
+            }
+        }
+    }
+
+    /// <summary>True when the current size is a shrink, so the create-after-shrink fields apply.</summary>
+    public bool IsCreateApplicable => _isShrink;
+
+    public bool IsCreateFormEnabled => CreateAfterShrink && _isShrink;
+
+    public string ActionText => CreateAfterShrink && _isShrink ? Localization.Get("Resize_ActionCombined") : Localization.Get("Resize_Action");
+
+=======
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
     public bool IsBusy
     {
         get => _isBusy;
@@ -205,7 +348,11 @@ public sealed class ResizePartitionViewModel : INotifyPropertyChanged
         parseError = null;
         if (!ByteSize.TryParse(NewSizeText, out var size) || size == 0)
         {
+<<<<<<< HEAD
+            parseError = Localization.Format("Common_BadSize", NewSizeText);
+=======
             parseError = $"Could not understand the size '{NewSizeText}'. Try 300GB, 1.5TB or 20480MB.";
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
             return null;
         }
 
@@ -219,6 +366,96 @@ public sealed class ResizePartitionViewModel : INotifyPropertyChanged
         });
     }
 
+<<<<<<< HEAD
+    private ShrinkAndCreateRequest? BuildCombinedRequest(out string? parseError)
+    {
+        parseError = null;
+        if (!ByteSize.TryParse(NewSizeText, out var size) || size == 0)
+        {
+            parseError = Localization.Format("Common_BadSize", NewSizeText);
+            return null;
+        }
+
+        char? letter = SelectedLetter == AutomaticLetter ? null : SelectedLetter[0];
+        return ShrinkAndCreatePlanner.Normalize(new ShrinkAndCreateRequest
+        {
+            DiskNumber = _disk.Number,
+            PartitionNumber = _partition.Number,
+            NewSizeBytes = size,
+            FileSystem = NewFileSystem,
+            Label = NewLabel.Trim(),
+            DriveLetter = letter,
+            QuickFormat = NewQuickFormat,
+            ExpectedDisk = DiskFingerprint.Of(_disk),
+            ExpectedPartition = PartitionFingerprint.Of(_partition),
+        });
+    }
+
+    private void Revalidate()
+    {
+        Issues.Clear();
+        _isShrink = false;
+
+        if (CreateAfterShrink)
+        {
+            var combined = BuildCombinedRequest(out var combinedError);
+            if (combined is null)
+            {
+                Issues.Add(new ValidationIssue(IssueSeverity.Error, combinedError!));
+                ChangeText = string.Empty;
+            }
+            else
+            {
+                _isShrink = combined.NewSizeBytes < _partition.SizeBytes;
+                foreach (var issue in ShrinkAndCreatePlanner.Validate(_disk, _partition, combined, _limits, _lettersInUse))
+                {
+                    Issues.Add(issue);
+                }
+
+                foreach (var issue in SafetyChecks.Power(_power.GetPowerStatus(), touchesSystemVolume: _partition.IsBoot || _partition.IsSystem))
+                {
+                    Issues.Add(issue);
+                }
+
+                ChangeText = _isShrink
+                    ? Localization.Format("Resize_ShrinkAndCreateChange", ByteSize.Format(_partition.SizeBytes), ByteSize.Format(combined.NewSizeBytes), ByteSize.Format(_partition.SizeBytes - combined.NewSizeBytes))
+                    : Localization.Get("Resize_NoChange");
+            }
+        }
+        else
+        {
+            var request = BuildRequest(out var parseError);
+            if (request is null)
+            {
+                Issues.Add(new ValidationIssue(IssueSeverity.Error, parseError!));
+                ChangeText = string.Empty;
+            }
+            else
+            {
+                _isShrink = request.NewSizeBytes < _partition.SizeBytes;
+                foreach (var issue in ResizePlanner.Validate(_disk, _partition, request, _limits))
+                {
+                    Issues.Add(issue);
+                }
+
+                foreach (var issue in SafetyChecks.Power(_power.GetPowerStatus(), touchesSystemVolume: _partition.IsBoot || _partition.IsSystem))
+                {
+                    Issues.Add(issue);
+                }
+
+                ChangeText = request.NewSizeBytes < _partition.SizeBytes
+                    ? Localization.Format("Resize_ShrinkChange", ByteSize.Format(_partition.SizeBytes), ByteSize.Format(request.NewSizeBytes), ByteSize.Format(_partition.SizeBytes - request.NewSizeBytes))
+                    : request.NewSizeBytes > _partition.SizeBytes
+                        ? Localization.Format("Resize_ExtendChange", ByteSize.Format(_partition.SizeBytes), ByteSize.Format(request.NewSizeBytes), ByteSize.Format(request.NewSizeBytes - _partition.SizeBytes))
+                        : Localization.Get("Resize_NoChange");
+            }
+        }
+
+        OnPropertyChanged(nameof(ChangeText));
+        OnPropertyChanged(nameof(IsCreateApplicable));
+        OnPropertyChanged(nameof(IsCreateFormEnabled));
+        OnPropertyChanged(nameof(ActionText));
+=======
     private void Revalidate()
     {
         Issues.Clear();
@@ -248,6 +485,7 @@ public sealed class ResizePartitionViewModel : INotifyPropertyChanged
         }
 
         OnPropertyChanged(nameof(ChangeText));
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         OnPropertyChanged(nameof(HasBlockingIssue));
         OnPropertyChanged(nameof(CanResize));
         ResizeCommand.RaiseCanExecuteChanged();
@@ -255,13 +493,26 @@ public sealed class ResizePartitionViewModel : INotifyPropertyChanged
 
     private async Task ResizeAsync()
     {
+<<<<<<< HEAD
+        if (CreateAfterShrink)
+        {
+            await ResizeAndCreateAsync();
+            return;
+        }
+
+=======
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         var request = BuildRequest(out _);
         if (request is null || HasBlockingIssue || IsBusy)
         {
             return;
         }
 
+<<<<<<< HEAD
+        if (!_confirm(ChangeText + "\n\n" + Localization.Get("Resize_ConfirmBody")))
+=======
         if (!_confirm($"{ChangeText}\n\nWindows moves files as needed and keeps your data, but any resize carries risk: make sure important files are backed up and do not power off during the operation. Continue?"))
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         {
             return;
         }
@@ -271,8 +522,13 @@ public sealed class ResizePartitionViewModel : INotifyPropertyChanged
         try
         {
             var result = await _operations.ResizePartitionAsync(request, new Progress<string>(s => Status = s));
+<<<<<<< HEAD
+            Status = Localization.Format("Resize_Done", ByteSize.Format(result.SizeBytes)) +
+                     (request.NewSizeBytes < _partition.SizeBytes ? Localization.Get("Resize_DoneHint") : string.Empty);
+=======
             Status = $"Done: the partition is now {ByteSize.Format(result.SizeBytes)}." +
                      (request.NewSizeBytes < _partition.SizeBytes ? " Use \"New partition\" on the freed space to create a drive." : string.Empty);
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
             IsDone = true;
             Completed?.Invoke(this, result);
             AttemptFinished?.Invoke(this, EventArgs.Empty);
@@ -280,7 +536,58 @@ public sealed class ResizePartitionViewModel : INotifyPropertyChanged
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
             Error = ex.Message;
+<<<<<<< HEAD
+            Status = Localization.Get("Resize_Failed");
+            AttemptFinished?.Invoke(this, EventArgs.Empty);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private async Task ResizeAndCreateAsync()
+    {
+        var combined = BuildCombinedRequest(out _);
+        if (combined is null || !_isShrink || HasBlockingIssue || IsBusy)
+        {
+            return;
+        }
+
+        if (!_confirm(ChangeText + "\n\n" + Localization.Get("Resize_ShrinkAndCreateConfirmBody")))
+        {
+            return;
+        }
+
+        IsBusy = true;
+        Error = null;
+        try
+        {
+            var progress = new Progress<string>(s => Status = s);
+            var shrunk = await _operations.ResizePartitionAsync(new ResizePartitionRequest
+            {
+                DiskNumber = combined.DiskNumber,
+                PartitionNumber = combined.PartitionNumber,
+                NewSizeBytes = combined.NewSizeBytes,
+                ExpectedDisk = combined.ExpectedDisk,
+                ExpectedPartition = combined.ExpectedPartition,
+            }, progress);
+
+            var create = ShrinkAndCreatePlanner.CreateRequest(combined, _disk, _partition)!;
+            await _operations.CreatePartitionAsync(create, progress);
+
+            Status = Localization.Format("Resize_ShrinkAndCreateDone", ByteSize.Format(shrunk.SizeBytes));
+            IsDone = true;
+            Completed?.Invoke(this, shrunk);
+            AttemptFinished?.Invoke(this, EventArgs.Empty);
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            Error = ex.Message;
+            Status = Localization.Get("Resize_Failed");
+=======
             Status = "Failed. Nothing is lost: Windows applies a resize only when it can complete it. The disk list has been refreshed.";
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
             AttemptFinished?.Invoke(this, EventArgs.Empty);
         }
         finally

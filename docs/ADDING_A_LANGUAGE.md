@@ -40,6 +40,7 @@ Add to `tests/WindowsPartitionManager.App.Tests/LanguagePreferenceTests.cs`:
 
 ## Translating the UI
 
+<<<<<<< HEAD
 The setting alone does not translate strings. To actually translate the UI you need:
 
 1. A resource model (`.resx` / `ResourceManager`) for the user-facing strings.
@@ -48,5 +49,17 @@ The setting alone does not translate strings. To actually translate the UI you n
 4. Include the culture in `SatelliteResourceLanguages` in
    `src/WindowsPartitionManager.App/WindowsPartitionManager.App.csproj` so its satellite
    assembly is produced.
+=======
+The user-facing strings are localizable through `Strings.resx` (neutral English) and per-language
+satellites (`Strings.tr.resx` for Turkish). XAML reads them with `{DynamicResource Key}` and the
+view models with `Localization.Get` / `Localization.Format`. To translate the UI into a new
+language:
+
+1. Add `Strings.<code>.resx` (e.g. `Strings.de.resx`) next to `Strings.resx`, with the same keys
+   and the translated values. Missing keys fall back to the English neutral resource.
+2. Include the culture in `SatelliteResourceLanguages` in
+   `src/WindowsPartitionManager.App/WindowsPartitionManager.App.csproj` (e.g. `en;tr;de`) so its
+   satellite assembly is produced.
+>>>>>>> 12-oct-2026
 
 The per-language rollout is tracked in `future/README.txt` (day1–day4).

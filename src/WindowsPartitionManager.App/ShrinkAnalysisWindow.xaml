@@ -22,6 +22,17 @@
 
         <TextBlock Grid.Row="0" Text="{Binding Title}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,4" />
         <TextBlock Grid.Row="1" Style="{StaticResource Secondary}" TextWrapping="Wrap" Margin="0,0,0,12"
+<<<<<<< HEAD
+                   Text="{DynamicResource ShrinkAnalysis_Subtitle}" />
+
+        <DockPanel Grid.Row="2" Margin="0,0,0,10">
+            <Button DockPanel.Dock="Right" Content="{DynamicResource ShrinkAnalysis_Cancel}" Command="{Binding CancelCommand}" Margin="8,0,0,0" />
+            <Button DockPanel.Dock="Right" Content="{DynamicResource ShrinkAnalysis_Unblock}" Command="{Binding UnblockCommand}" Margin="8,0,0,0" ToolTip="{Binding UnblockText}" />
+            <Button DockPanel.Dock="Right" Content="{DynamicResource ShrinkAnalysis_Analyze}" Command="{Binding AnalyzeCommand}" Margin="8,0,0,0" IsDefault="True" />
+            <TextBlock Text="{DynamicResource ShrinkAnalysis_TargetSize}" VerticalAlignment="Center" Margin="0,0,8,0" />
+            <TextBox Text="{Binding TargetText, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" Padding="6,4"
+                     ToolTip="{DynamicResource ShrinkAnalysis_TargetTip}" />
+=======
                    Text="Finds the files Windows refuses to move and shows how far this volume can really shrink. Read-only: nothing is changed." />
 
         <DockPanel Grid.Row="2" Margin="0,0,0,10">
@@ -31,6 +42,7 @@
             <TextBlock Text="Target size" VerticalAlignment="Center" Margin="0,0,8,0" />
             <TextBox Text="{Binding TargetText, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" Padding="6,4"
                      ToolTip="Volume size you would like to reach, e.g. 300GB. Leave empty for used data + 10 %." />
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         </DockPanel>
 
         <StackPanel Grid.Row="3" Margin="0,0,0,10">

@@ -123,6 +123,10 @@ as text for both the CLI and the analysis window.
 | `CreatePartitionRequest`, `ResizePartitionRequest`, `FormatPartitionRequest`, `DeletePartitionRequest` | Immutable descriptions of a write, including the fingerprints of the disk and partition the user saw. |
 | `PartitionPlanner` | Rules for creating (inside free space, aligned, at least 8 MiB, within Windows' largest free extent, FAT32 ≤ 32 GB, label length, letter free, MBR primary limit) and for deleting (never Windows, boot, EFI, MSR or Recovery partitions; on the system disk only basic data partitions). |
 | `ResizePlanner` | Rules for shrinking (not below used data, not below Windows' own minimum, warn below 5 % free) and extending (only into unallocated space directly after the partition); NTFS/ReFS only. |
+<<<<<<< HEAD
+| `ShrinkAndCreatePlanner` | The one-step "shrink and create": validates the resize half against the live layout and the create half against the layout as it will be once the shrink has happened, so both can be confirmed up front. |
+=======
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
 | `FormatPlanner` | Rules for formatting in place (basic data only, never the Windows volume, file-system limits, a warning that exFAT/FAT32 cannot be resized later). |
 | `SafetyChecks` | Pre-flight rules shared by all writes: power source and battery level, volume health and dirty bit, removable-disk warning. |
 | `LayoutGuard`, `DiskFingerprint`, `PartitionFingerprint` | The last check before a write: the disk (number, size, model, serial) and partition (number, offset, size) must still be exactly what the user saw. |
@@ -150,7 +154,14 @@ Tests implement these with fakes; the platform layer implements them for real.
 | `VirtualDisk` | Creates, opens, attaches and detaches VHDX files through `virtdisk.dll`. Detaching takes the disk offline first, waits until it is gone and lets device-removal notifications settle (see [Windows behaviours](#windows-behaviours-worth-knowing)). Used by `wpm vhd` and the integration tests. |
 | `PowerStatusProvider`, `KeepAwake` | `GetSystemPowerStatus` for battery rules; `SetThreadExecutionState` keeps the computer from sleeping during a write. |
 | `OperationLog` | Appends one line per write attempt with its outcome; written through to disk so it survives a crash. |
+<<<<<<< HEAD
 | `LanguagePreference` | Reads the `language` field from `settings.json`, maps it to a culture and applies it, and formats dates; shared by the app and the CLI. |
+=======
+<<<<<<< HEAD
+| `LanguagePreference` | Reads the `language` field from `settings.json`, maps it to a culture and applies it, and formats dates; shared by the app and the CLI. |
+=======
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
+>>>>>>> 12-oct-2026
 | `PartitionTypes` | GPT type GUIDs and MBR type bytes to `PartitionKind`, bus type codes to names. |
 | `Interop/` | `LibraryImport` declarations (kernel32, advapi32) and privilege handling (`SeManageVolumePrivilege` for permanent VHD attach). |
 
@@ -183,11 +194,23 @@ available width would make a content-sized window as wide as the screen.
 | Window | Purpose |
 |---|---|
 | `NewPartitionWindow` | Size, file system, label, drive letter, quick format; live validation; confirmation. |
-| `ResizePartitionWindow` | New size with "Smallest" and "Largest" shortcuts; Windows' limits loaded in the background. |
+<<<<<<< HEAD
+| `ResizePartitionWindow` | New size with "Smallest" and "Largest" shortcuts; Windows' limits loaded in the background. An optional *create a partition in the freed space* section turns a shrink into the one-step "shrink and create" flow. |
 | `DestructiveActionWindow` | Delete and format; the button only enables after the partition name is typed. |
 | `ShrinkAnalysisWindow` | Runs the analysis with progress and cancellation; opens the unblock wizard. |
 | `UnblockWindow` | Lists the unblock steps with their consequences; applies and restores. |
 | `SettingsWindow` | Theme (White / Dark / Night), UI font, UI language, operation log location, pending restore, version. |
+=======
+| `ResizePartitionWindow` | New size with "Smallest" and "Largest" shortcuts; Windows' limits loaded in the background. |
+| `DestructiveActionWindow` | Delete and format; the button only enables after the partition name is typed. |
+| `ShrinkAnalysisWindow` | Runs the analysis with progress and cancellation; opens the unblock wizard. |
+| `UnblockWindow` | Lists the unblock steps with their consequences; applies and restores. |
+<<<<<<< HEAD
+| `SettingsWindow` | Theme (White / Dark / Night), UI font, UI language, operation log location, pending restore, version. |
+=======
+| `SettingsWindow` | Theme (White / Dark / Night) and UI font, operation log location, pending restore, version. |
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
+>>>>>>> 12-oct-2026
 
 After every write attempt, successful or not, the dialog raises `AttemptFinished` and the main
 window refreshes from Windows.
@@ -199,17 +222,42 @@ window refreshes from Windows.
 without a restart. Three `ResourceDictionary` files under `Themes/` define the same brush keys for
 **White**, **Dark** and **Night**; `ThemeManager` swaps the dictionary in
 `Application.Current.Resources.MergedDictionaries`, while the font is a single `UiFontFamily`
+<<<<<<< HEAD
 resource. The language choice is read from the same settings file by `LanguagePreference` in the
 platform layer (shared with the CLI), which maps English to `en` and Turkish to `tr`, sets the
 ambient and current-thread culture, and formats dates — English keeps the ISO `yyyy-MM-dd HH:mm`
 form, other cultures use their short date/time. There are no resource files yet, so the strings
 stay in English. At startup `ThemeManager` also points WPF's default element `Language` at the UI
+=======
+<<<<<<< HEAD
+resource. The language choice is read from the same settings file by `LanguagePreference` in the
+platform layer (shared with the CLI), which maps English to `en` and Turkish to `tr`, sets the
+ambient and current-thread culture, and formats dates — English keeps the ISO `yyyy-MM-dd HH:mm`
+form, other cultures use their short date/time. The user-facing strings live in `Strings.resx`
+(neutral English) with a `Strings.tr.resx` Turkish satellite; `Localization` rebuilds a
+`ResourceDictionary` of every key for the chosen culture and swaps it into the application's
+merged dictionaries (the same pattern as the theme), and the view models read strings through
+`Localization.Get` / `Localization.Format`. The XAML reads them with `DynamicResource` (column
+headers are wrapped in `TextBlock`s because `GridViewColumn` is not a `FrameworkElement`). The
+code, identifiers, comments and the CLI's analysis output stay in English. At startup
+`ThemeManager` also points WPF's default element `Language` at the UI
+>>>>>>> 12-oct-2026
 culture, and changing the language updates the open windows' `Language` immediately. `SettingsStore`
 reads and writes `%LOCALAPPDATA%\WindowsPartitionManager\settings.json` (atomically, temp file
 then replace), falling back to White + Segoe UI + English when the file is missing or malformed.
 The choices apply immediately and are applied on startup. `PartitionColors` (the disk map / table
 swatch palette) and the toolbar action-glyph / status-indicator colours are deliberately untouched
 by themes.
+<<<<<<< HEAD
+=======
+=======
+resource. `SettingsStore` reads and writes
+`%LOCALAPPDATA%\WindowsPartitionManager\settings.json` (atomically, temp file then replace),
+falling back to White + Segoe UI when the file is missing or malformed. The choice applies
+immediately and is applied on startup. `PartitionColors` (the disk map / table swatch palette) and
+the toolbar action-glyph / status-indicator colours are deliberately untouched by themes.
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
+>>>>>>> 12-oct-2026
 
 **Developer aid.** `--screenshot file.png [--size 1020x700]` loads the disks, renders the main
 window to PNG and exits; it is used to check the layout without a human (1020 px is the minimum
@@ -218,9 +266,19 @@ window width and the table must fit there).
 ## Command-line tool (`WindowsPartitionManager.Cli`)
 
 The executable is `wpm`. Every write command prints a plan and the validation issues, refuses on
+<<<<<<< HEAD
 errors and asks for a typed confirmation unless `--yes` is given. On start-up it applies the same
 language preference as the desktop app (`LanguagePreference`), so numbers and dates in its output
 follow the chosen culture.
+=======
+<<<<<<< HEAD
+errors and asks for a typed confirmation unless `--yes` is given. On start-up it applies the same
+language preference as the desktop app (`LanguagePreference`), so numbers and dates in its output
+follow the chosen culture.
+=======
+errors and asks for a typed confirmation unless `--yes` is given.
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
+>>>>>>> 12-oct-2026
 
 | Command | Purpose |
 |---|---|
@@ -294,7 +352,15 @@ All under `%LOCALAPPDATA%\WindowsPartitionManager\`:
 |---|---|
 | `operations.log` | One line per write attempt: time, operation, parameters, outcome. Written through to disk. |
 | `unblock-state.json` | What the unblock wizard changed, until it is restored. |
+<<<<<<< HEAD
 | `settings.json` | The selected theme, UI font and language. |
+=======
+<<<<<<< HEAD
+| `settings.json` | The selected theme, UI font and language. |
+=======
+| `settings.json` | The selected theme and UI font. |
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
+>>>>>>> 12-oct-2026
 | `test-trace.log` | Integration tests only: a write-through breadcrumb per step, for diagnosing crashes. |
 
 ## Testing

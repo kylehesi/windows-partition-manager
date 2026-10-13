@@ -21,7 +21,11 @@ public sealed class ShrinkAnalysisViewModel : INotifyPropertyChanged, IDisposabl
     private CancellationTokenSource? _cancellation;
 
     private string _targetText = string.Empty;
+<<<<<<< HEAD
+    private string _status = Localization.Get("ShrinkAnalysis_Start");
+=======
     private string _status = "Press Analyze to start.";
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
     private string _progressText = string.Empty;
     private double _progressFraction;
     private bool _progressIndeterminate;
@@ -64,7 +68,11 @@ public sealed class ShrinkAnalysisViewModel : INotifyPropertyChanged, IDisposabl
 
     public char DriveLetter { get; }
 
+<<<<<<< HEAD
+    public string Title => Localization.Format("ShrinkAnalysis_Title", DriveLetter);
+=======
     public string Title => $"Shrink analysis · {DriveLetter}:";
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
 
     public RelayCommand AnalyzeCommand { get; }
 
@@ -153,7 +161,11 @@ public sealed class ShrinkAnalysisViewModel : INotifyPropertyChanged, IDisposabl
         {
             if (!ByteSize.TryParse(TargetText, out var parsed))
             {
+<<<<<<< HEAD
+                Error = Localization.Format("Common_BadSize", TargetText);
+=======
                 Error = $"Could not understand the size '{TargetText}'. Try something like 300GB or 1.5TB.";
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
                 return;
             }
 
@@ -168,7 +180,11 @@ public sealed class ShrinkAnalysisViewModel : INotifyPropertyChanged, IDisposabl
         UnblockCommand.RaiseCanExecuteChanged();
         ProgressIndeterminate = true;
         ProgressFraction = 0;
+<<<<<<< HEAD
+        Status = Localization.Get("ShrinkAnalysis_Opening");
+=======
         Status = "Opening volume…";
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         var stopwatch = Stopwatch.StartNew();
 
         _cancellation = new CancellationTokenSource();
@@ -199,7 +215,11 @@ public sealed class ShrinkAnalysisViewModel : INotifyPropertyChanged, IDisposabl
 
             // Show our result right away; Windows' own estimate is slow and only informative.
             ReportText = ShrinkReportFormatter.ToText(report, maxBlockers: 200);
+<<<<<<< HEAD
+            Status = Localization.Format("ShrinkAnalysis_Analysed", stopwatch.Elapsed.TotalSeconds.ToString("F1", CultureInfo.InvariantCulture));
+=======
             Status = $"Analysed in {stopwatch.Elapsed.TotalSeconds:F1} s. Waiting for Windows' own shrink estimate…";
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
             ProgressIndeterminate = true;
 
             SupportedSize? supported = null;
@@ -217,6 +237,18 @@ public sealed class ShrinkAnalysisViewModel : INotifyPropertyChanged, IDisposabl
             _unblockSteps = UnblockPlanner.Plan(report);
             OnPropertyChanged(nameof(UnblockText));
             UnblockCommand.RaiseCanExecuteChanged();
+<<<<<<< HEAD
+            Status = Localization.Format("ShrinkAnalysis_Done", stopwatch.Elapsed.TotalSeconds.ToString("F1", CultureInfo.InvariantCulture));
+        }
+        catch (OperationCanceledException)
+        {
+            Status = Localization.Get("ShrinkAnalysis_Cancelled");
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            Error = ex.Message + Localization.Get("ShrinkAnalysis_AdminHint");
+            Status = Localization.Get("ShrinkAnalysis_Failed");
+=======
             Status = $"Done in {stopwatch.Elapsed.TotalSeconds:F1} s.";
         }
         catch (OperationCanceledException)
@@ -227,11 +259,16 @@ public sealed class ShrinkAnalysisViewModel : INotifyPropertyChanged, IDisposabl
         {
             Error = ex.Message + " Start Windows Partition Manager as administrator.";
             Status = "Failed.";
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
             Error = ex.Message;
+<<<<<<< HEAD
+            Status = Localization.Get("ShrinkAnalysis_Failed");
+=======
             Status = "Failed.";
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         }
         finally
         {

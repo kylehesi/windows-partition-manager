@@ -1,4 +1,9 @@
 using System.Globalization;
+<<<<<<< HEAD
+=======
+using System.Threading;
+using System.Windows;
+>>>>>>> 12-oct-2026
 using WindowsPartitionManager.App.Theming;
 
 namespace WindowsPartitionManager.App.Tests;
@@ -25,4 +30,37 @@ public sealed class ThemeManagerTests
             CultureInfo.DefaultThreadCurrentUICulture = defaultUiCulture;
         }
     }
+<<<<<<< HEAD
+=======
+
+    [Fact]
+    public void ApplyLanguageToWindows_SetsEveryWindowLanguage()
+    {
+        Exception? failure = null;
+
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var first = new Window();
+                var second = new Window();
+
+                ThemeManager.ApplyLanguageToWindows([first, second], "tr");
+
+                Assert.Equal("tr", first.Language.IetfLanguageTag);
+                Assert.Equal("tr", second.Language.IetfLanguageTag);
+            }
+            catch (Exception ex)
+            {
+                failure = ex;
+            }
+        });
+
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        Assert.Null(failure);
+    }
+>>>>>>> 12-oct-2026
 }

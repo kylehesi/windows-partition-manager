@@ -105,6 +105,50 @@
                 <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center" Style="{StaticResource Secondary}" Margin="12,0,6,0"
                            Text="{Binding SelectionText}" />
                 <StackPanel Orientation="Horizontal">
+<<<<<<< HEAD
+                    <Button Style="{StaticResource ToolbarButton}" Command="{Binding RefreshCommand}" ToolTip="{DynamicResource Main_RefreshTip}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource ToolbarGlyph}" Text="&#xE72C;" Foreground="#0078D4" />
+                            <TextBlock Style="{StaticResource ToolbarLabel}" Text="{DynamicResource Main_Refresh}" />
+                        </StackPanel>
+                    </Button>
+                    <Rectangle Width="1" Fill="{DynamicResource CardBorder}" Margin="4,6" />
+                    <Button Style="{StaticResource ToolbarButton}" Command="{Binding AnalyzeCommand}" CommandParameter="{Binding SelectedRow}" ToolTip="{DynamicResource Main_AnalyzeTip}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource ToolbarGlyph}" Text="&#xE9D9;" Foreground="#8E44AD" />
+                            <TextBlock Style="{StaticResource ToolbarLabel}" Text="{DynamicResource Main_Analyze}" />
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource ToolbarButton}" Command="{Binding ResizeCommand}" CommandParameter="{Binding SelectedRow}" ToolTip="{DynamicResource Main_ResizeTip}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource ToolbarGlyph}" Text="&#xE740;" Foreground="#0F9D8A" />
+                            <TextBlock Style="{StaticResource ToolbarLabel}" Text="{DynamicResource Main_Resize}" />
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource ToolbarButton}" Command="{Binding NewPartitionCommand}" CommandParameter="{Binding SelectedRow}" ToolTip="{DynamicResource Main_NewPartitionTip}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource ToolbarGlyph}" Text="&#xE710;" Foreground="#2E9E44" />
+                            <TextBlock Style="{StaticResource ToolbarLabel}" Text="{DynamicResource Main_NewPartition}" />
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource ToolbarButton}" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedRow}" ToolTip="{DynamicResource Main_DeleteTip}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource ToolbarGlyph}" Text="&#xE74D;" Foreground="#D13438" />
+                            <TextBlock Style="{StaticResource ToolbarLabel}" Text="{DynamicResource Main_Delete}" />
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource ToolbarButton}" Command="{Binding FormatCommand}" CommandParameter="{Binding SelectedRow}" ToolTip="{DynamicResource Main_FormatTip}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource ToolbarGlyph}" Text="&#xE74E;" Foreground="#E8710A" />
+                            <TextBlock Style="{StaticResource ToolbarLabel}" Text="{DynamicResource Main_Format}" />
+                        </StackPanel>
+                    </Button>
+                    <Rectangle Width="1" Fill="{DynamicResource CardBorder}" Margin="4,6" />
+                    <Button Style="{StaticResource ToolbarButton}" Command="{Binding SettingsCommand}" ToolTip="{DynamicResource Main_SettingsTip}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource ToolbarGlyph}" Text="&#xE713;" Foreground="#5C5C5C" />
+                            <TextBlock Style="{StaticResource ToolbarLabel}" Text="{DynamicResource Main_Settings}" />
+=======
                     <Button Style="{StaticResource ToolbarButton}" Command="{Binding RefreshCommand}" ToolTip="Read the disks again">
                         <StackPanel>
                             <TextBlock Style="{StaticResource ToolbarGlyph}" Text="&#xE72C;" Foreground="#0078D4" />
@@ -147,6 +191,7 @@
                         <StackPanel>
                             <TextBlock Style="{StaticResource ToolbarGlyph}" Text="&#xE713;" Foreground="#5C5C5C" />
                             <TextBlock Style="{StaticResource ToolbarLabel}" Text="Settings" />
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -177,7 +222,11 @@
 
                                     <controls:DiskMapControl Segments="{Binding Segments}" />
 
+<<<<<<< HEAD
+                                    <TextBlock Text="{DynamicResource Main_PartitionsFreeSpace}" Style="{StaticResource Secondary}" FontSize="12" Margin="0,12,0,4" />
+=======
                                     <TextBlock Text="Partitions and free space on this disk" Style="{StaticResource Secondary}" FontSize="12" Margin="0,12,0,4" />
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
 
                                     <Border BorderBrush="{DynamicResource CardBorder}" BorderThickness="1,1,0,0" CornerRadius="3" ClipToBounds="True">
                                         <ListView ItemsSource="{Binding Rows}" BorderThickness="0" Background="Transparent"
@@ -211,7 +260,14 @@
                                             </ListView.ItemContainerStyle>
                                             <ListView.View>
                                                 <GridView>
+<<<<<<< HEAD
+                                                    <GridViewColumn Width="130">
+                                                        <GridViewColumn.Header>
+                                                            <TextBlock Text="{DynamicResource Col_Partition}" />
+                                                        </GridViewColumn.Header>
+=======
                                                     <GridViewColumn Header="Partition" Width="130">
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
                                                         <GridViewColumn.CellTemplate>
                                                             <DataTemplate DataType="{x:Type vm:SegmentRow}">
                                                                 <StackPanel Orientation="Horizontal">
@@ -221,41 +277,94 @@
                                                             </DataTemplate>
                                                         </GridViewColumn.CellTemplate>
                                                     </GridViewColumn>
+<<<<<<< HEAD
+                                                    <GridViewColumn Width="140" DisplayMemberBinding="{Binding Type}">
+                                                        <GridViewColumn.Header>
+                                                            <TextBlock Text="{DynamicResource Col_Type}" />
+                                                        </GridViewColumn.Header>
+                                                    </GridViewColumn>
+                                                    <GridViewColumn Width="90" DisplayMemberBinding="{Binding FileSystem}">
+                                                        <GridViewColumn.Header>
+                                                            <TextBlock Text="{DynamicResource Col_FileSystem}" />
+                                                        </GridViewColumn.Header>
+                                                    </GridViewColumn>
+                                                    <GridViewColumn Width="130" DisplayMemberBinding="{Binding Label}">
+                                                        <GridViewColumn.Header>
+                                                            <TextBlock Text="{DynamicResource Col_Label}" />
+                                                        </GridViewColumn.Header>
+                                                    </GridViewColumn>
+                                                    <GridViewColumn Width="80" HeaderContainerStyle="{StaticResource NumericHeader}">
+                                                        <GridViewColumn.Header>
+                                                            <TextBlock Text="{DynamicResource Col_Offset}" />
+                                                        </GridViewColumn.Header>
+=======
                                                     <GridViewColumn Header="Type" Width="140" DisplayMemberBinding="{Binding Type}" />
                                                     <GridViewColumn Header="File system" Width="90" DisplayMemberBinding="{Binding FileSystem}" />
                                                     <GridViewColumn Header="Label" Width="130" DisplayMemberBinding="{Binding Label}" />
                                                     <GridViewColumn Header="Offset" Width="80" HeaderContainerStyle="{StaticResource NumericHeader}">
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
                                                         <GridViewColumn.CellTemplate>
                                                             <DataTemplate DataType="{x:Type vm:SegmentRow}">
                                                                 <TextBlock Text="{Binding Offset}" Style="{StaticResource NumericCell}" />
                                                             </DataTemplate>
                                                         </GridViewColumn.CellTemplate>
                                                     </GridViewColumn>
+<<<<<<< HEAD
+                                                    <GridViewColumn Width="80" HeaderContainerStyle="{StaticResource NumericHeader}">
+                                                        <GridViewColumn.Header>
+                                                            <TextBlock Text="{DynamicResource Col_Size}" />
+                                                        </GridViewColumn.Header>
+=======
                                                     <GridViewColumn Header="Size" Width="80" HeaderContainerStyle="{StaticResource NumericHeader}">
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
                                                         <GridViewColumn.CellTemplate>
                                                             <DataTemplate DataType="{x:Type vm:SegmentRow}">
                                                                 <TextBlock Text="{Binding Size}" Style="{StaticResource NumericCell}" />
                                                             </DataTemplate>
                                                         </GridViewColumn.CellTemplate>
                                                     </GridViewColumn>
+<<<<<<< HEAD
+                                                    <GridViewColumn Width="80" HeaderContainerStyle="{StaticResource NumericHeader}">
+                                                        <GridViewColumn.Header>
+                                                            <TextBlock Text="{DynamicResource Col_Used}" />
+                                                        </GridViewColumn.Header>
+=======
                                                     <GridViewColumn Header="Used" Width="80" HeaderContainerStyle="{StaticResource NumericHeader}">
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
                                                         <GridViewColumn.CellTemplate>
                                                             <DataTemplate DataType="{x:Type vm:SegmentRow}">
                                                                 <TextBlock Text="{Binding Used}" Style="{StaticResource NumericCell}" />
                                                             </DataTemplate>
                                                         </GridViewColumn.CellTemplate>
                                                     </GridViewColumn>
+<<<<<<< HEAD
+                                                    <GridViewColumn Width="80" HeaderContainerStyle="{StaticResource NumericHeader}">
+                                                        <GridViewColumn.Header>
+                                                            <TextBlock Text="{DynamicResource Col_Free}" />
+                                                        </GridViewColumn.Header>
+=======
                                                     <GridViewColumn Header="Free" Width="80" HeaderContainerStyle="{StaticResource NumericHeader}">
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
                                                         <GridViewColumn.CellTemplate>
                                                             <DataTemplate DataType="{x:Type vm:SegmentRow}">
                                                                 <TextBlock Text="{Binding Free}" Style="{StaticResource NumericCell}" />
                                                             </DataTemplate>
                                                         </GridViewColumn.CellTemplate>
                                                     </GridViewColumn>
+<<<<<<< HEAD
+                                                    <GridViewColumn Width="110">
+                                                        <GridViewColumn.Header>
+                                                            <TextBlock Text="{DynamicResource Col_Actions}" />
+                                                        </GridViewColumn.Header>
+                                                        <GridViewColumn.CellTemplate>
+                                                            <DataTemplate DataType="{x:Type vm:SegmentRow}">
+                                                                <Button Content="{DynamicResource Main_Actions}" Padding="10,2" MinHeight="24" FontSize="12" HorizontalAlignment="Left"
+=======
                                                     <GridViewColumn Header="Actions" Width="110">
                                                         <GridViewColumn.CellTemplate>
                                                             <DataTemplate DataType="{x:Type vm:SegmentRow}">
                                                                 <Button Content="Actions &#x25BE;" Padding="10,2" MinHeight="24" FontSize="12" HorizontalAlignment="Left"
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
                                                                         Click="Actions_Click"
                                                                         ContextMenu="{StaticResource RowActionsMenu}"
                                                                         Visibility="{Binding HasActions, Converter={x:Static controls:Converters.BoolToVisibility}}" />

@@ -15,7 +15,14 @@ if (!OperatingSystem.IsWindows())
 }
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
+<<<<<<< HEAD
 LanguagePreference.Apply(LanguagePreference.LoadLanguage());
+=======
+<<<<<<< HEAD
+LanguagePreference.Apply(LanguagePreference.LoadLanguage());
+=======
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
+>>>>>>> 12-oct-2026
 var command = args.Length == 0 ? "list" : args[0].ToLowerInvariant();
 
 return command switch
@@ -479,7 +486,15 @@ static async Task<int> UnblockAsync(string[] args)
             return 0;
         }
 
+<<<<<<< HEAD
         Console.WriteLine($"Restoring settings changed on {LanguagePreference.FormatTimestamp(state.AppliedAt)} for {state.Volume}:" +
+=======
+<<<<<<< HEAD
+        Console.WriteLine($"Restoring settings changed on {LanguagePreference.FormatTimestamp(state.AppliedAt)} for {state.Volume}:" +
+=======
+        Console.WriteLine($"Restoring settings changed on {state.AppliedAt:yyyy-MM-dd HH:mm} for {state.Volume}:" +
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
+>>>>>>> 12-oct-2026
                           (state.HibernationWasEnabled ? " hibernation on;" : string.Empty) +
                           (state.RemovedPageFile is not null || state.PageFileWasAutomatic ? " page file setting;" : string.Empty));
         await runner.RestoreAsync(progress);

@@ -7,7 +7,14 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/WindowsPartitionManager.Core.Tests/WindowsPartitionManager.Core.Tests.csproj" />
+<<<<<<< HEAD
     <Project Path="tests/WindowsPartitionManager.App.Tests/WindowsPartitionManager.App.Tests.csproj" />
+=======
+<<<<<<< HEAD
+    <Project Path="tests/WindowsPartitionManager.App.Tests/WindowsPartitionManager.App.Tests.csproj" />
+=======
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
+>>>>>>> 12-oct-2026
     <Project Path="tests/WindowsPartitionManager.Integration.Tests/WindowsPartitionManager.Integration.Tests.csproj" />
   </Folder>
 </Solution>

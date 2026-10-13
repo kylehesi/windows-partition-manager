@@ -18,7 +18,11 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private readonly IUnblockOperations _unblock;
     private readonly Func<string, bool> _confirm;
     private bool _isBusy;
+<<<<<<< HEAD
+    private string _status = Localization.Get("Main_Ready");
+=======
     private string _status = "Ready";
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
     private string? _error;
     private SegmentRow? _selectedRow;
 
@@ -72,8 +76,13 @@ public sealed class MainViewModel : INotifyPropertyChanged
     }
 
     public string SelectionText => SelectedRow is { } row
+<<<<<<< HEAD
+        ? Localization.Format("Main_SelectionSelected", row.Name, row.DiskNumber)
+        : Localization.Get("Main_SelectionNone");
+=======
         ? $"Selected: {row.Name} on disk {row.DiskNumber}"
         : "Select a row to enable the toolbar, or use its Actions menu.";
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
 
     /// <summary>Raised when the user wants to delete or format a partition; the view opens the typed-confirmation form.</summary>
     public event EventHandler<DestructiveActionViewModel>? DestructiveRequested;
@@ -95,14 +104,24 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private async Task InitializeAsync(SegmentRow row)
     {
         var disk = row.Disk;
+<<<<<<< HEAD
+        var prompt = Localization.Format("Main_InitializePrompt", disk.Number, disk.FriendlyName, Core.Formatting.ByteSize.Format(disk.SizeBytes))
+                     + "\n\n" + Localization.Get("Main_InitializePromptBody");
+        if (!_confirm(prompt))
+=======
         if (!_confirm($"Disk {disk.Number} ({disk.FriendlyName}, {Core.Formatting.ByteSize.Format(disk.SizeBytes)}) has no partition table that Windows recognises.\n\nInitialize it as GPT? If the disk is new or was wiped, nothing is lost. If it holds data in a format Windows cannot read (a damaged partition table, or a Linux or Mac disk), that data becomes unreachable."))
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         {
             return;
         }
 
         IsBusy = true;
         Error = null;
+<<<<<<< HEAD
+        Status = Localization.Format("Main_Initializing", disk.Number);
+=======
         Status = $"Initializing disk {disk.Number} as GPT\u2026";
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         try
         {
             await _operations.InitializeDiskAsync(disk.Number, PartitionStyle.Gpt);
@@ -181,7 +200,11 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
         IsBusy = true;
         Error = null;
+<<<<<<< HEAD
+        Status = Localization.Get("Main_ReadingDisks");
+=======
         Status = "Reading disks…";
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         var stopwatch = Stopwatch.StartNew();
 
         try
@@ -195,7 +218,11 @@ public sealed class MainViewModel : INotifyPropertyChanged
                 Disks.Add(new DiskViewModel(disk, this));
             }
 
+<<<<<<< HEAD
+            Status = Localization.Format("Main_Refreshed", disks.Count, stopwatch.ElapsedMilliseconds);
+=======
             Status = $"{disks.Count} disk(s) · refreshed in {stopwatch.ElapsedMilliseconds} ms";
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
@@ -203,7 +230,11 @@ public sealed class MainViewModel : INotifyPropertyChanged
             SelectedRow = null;
             Disks.Clear();
             Error = ex.Message;
+<<<<<<< HEAD
+            Status = Localization.Get("Main_ReadFailed");
+=======
             Status = "Failed to read disks";
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         }
         finally
         {
@@ -217,6 +248,24 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private NewPartitionViewModel CreateNewPartition(SegmentRow row)
     {
         var region = new FreeRegion(row.Segment.OffsetBytes, row.Segment.SizeBytes);
+<<<<<<< HEAD
+        var form = new NewPartitionViewModel(_operations, _power, row.Disk, region, LettersInUse(), _confirm);
+        form.AttemptFinished += (_, _) => _ = RefreshAsync();
+        return form;
+    }
+
+    private ResizePartitionViewModel CreateResize(SegmentRow row)
+    {
+        var form = new ResizePartitionViewModel(_operations, _supportedSizes, _power, row.Disk, row.Partition!, LettersInUse(), _confirm);
+        form.AttemptFinished += (_, _) => _ = RefreshAsync();
+        return form;
+    }
+
+    /// <summary>Drive letters already taken by partitions or mounted volumes, so a new one is never offered twice.</summary>
+    private HashSet<char> LettersInUse()
+    {
+=======
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         // Optical, network and substituted drives hold letters too, not only partitions.
         var letters = new HashSet<char>(PartitionPlanner.LettersInUse(Disks.Select(d => d.Disk)));
         foreach (var root in Environment.GetLogicalDrives())
@@ -227,6 +276,9 @@ public sealed class MainViewModel : INotifyPropertyChanged
             }
         }
 
+<<<<<<< HEAD
+        return letters;
+=======
         var form = new NewPartitionViewModel(_operations, _power, row.Disk, region, letters, _confirm);
         form.AttemptFinished += (_, _) => _ = RefreshAsync();
         return form;
@@ -237,6 +289,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         var form = new ResizePartitionViewModel(_operations, _supportedSizes, _power, row.Disk, row.Partition!, _confirm);
         form.AttemptFinished += (_, _) => _ = RefreshAsync();
         return form;
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
     }
 
     private bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)

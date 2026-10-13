@@ -58,8 +58,19 @@ write-through to `%LOCALAPPDATA%\WindowsPartitionManager\test-trace.log`; read i
   the UI, and tests against a VHDX, never against the developer's real disks.
 - Sizes are `ulong` bytes in the model; format only at the UI edge with `ByteSize.Format`.
 - Keep the UI dependency-free until there is a concrete need for an MVVM or theming library.
-- The UI and all code stay in English (user requirement); no Turkish strings or identifiers.
+<<<<<<< HEAD
+- Code, identifiers and comments stay in English. User-facing UI strings are localizable: English
+  is the neutral `Strings.resx`, satellites like `Strings.tr.resx` provide translations, and XAML
+  / view models must read them through `{DynamicResource}` / `Localization.Get` rather than
+  hardcoding new strings.
 - How to add a language setting: see `docs/ADDING_A_LANGUAGE.md`.
+=======
+- The UI and all code stay in English (user requirement); no Turkish strings or identifiers.
+<<<<<<< HEAD
+- How to add a language setting: see `docs/ADDING_A_LANGUAGE.md`.
+=======
+>>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
+>>>>>>> 12-oct-2026
 - Partition colours live in `PartitionColors`; the disk map and the table swatches must share them.
 
 ## Packaging
