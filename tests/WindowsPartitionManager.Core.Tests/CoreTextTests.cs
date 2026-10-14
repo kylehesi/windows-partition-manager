@@ -12,10 +12,10 @@ namespace WindowsPartitionManager.Core.Tests;
 /// <see cref="CoreText.Culture"/> is process-wide and the other test classes expect English
 /// messages, so the tests that switch it run on their own, after the parallel ones.
 /// </summary>
-[CollectionDefinition(nameof(CoreTextCollection), DisableParallelization = true)]
-public sealed class CoreTextCollection;
+[CollectionDefinition(nameof(CoreTextCultureGroup), DisableParallelization = true)]
+public sealed class CoreTextCultureGroup;
 
-[Collection(nameof(CoreTextCollection))]
+[Collection(nameof(CoreTextCultureGroup))]
 public class CoreTextTests
 {
     private const ulong MiB = 1024 * 1024;
@@ -47,7 +47,7 @@ public class CoreTextTests
         Volume = new Volume { Path = "v", FileSystem = "NTFS", SizeBytes = size, FreeBytes = size / 2, DriveLetter = 'D' },
     };
 
-    private static IReadOnlyList<string> SameSizeMessages()
+    private static List<string> SameSizeMessages()
     {
         var partition = Ntfs(50 * GiB);
         var request = new ResizePartitionRequest { DiskNumber = 1, PartitionNumber = 1, NewSizeBytes = partition.SizeBytes };
