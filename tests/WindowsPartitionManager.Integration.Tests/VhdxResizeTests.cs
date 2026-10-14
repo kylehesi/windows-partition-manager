@@ -125,7 +125,6 @@ public sealed class VhdxResizeTests(ITestOutputHelper output)
         }
     }
 
-<<<<<<< HEAD
     [AdminFact]
     public async Task ShrinkAndCreateInOneStep()
     {
@@ -206,8 +205,6 @@ public sealed class VhdxResizeTests(ITestOutputHelper output)
         }
     }
 
-=======
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
     private static async Task<Disk> WaitForDiskAsync(WmiStorageProvider provider, int diskNumber, Func<Disk, bool> condition)
     {
         var stopwatch = Stopwatch.StartNew();

@@ -41,7 +41,6 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-<<<<<<< HEAD
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource Common_FileSystem}" VerticalAlignment="Center" Margin="0,0,0,8" />
                 <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding FileSystems}" SelectedItem="{Binding FileSystem}" Padding="6,4" Margin="0,0,0,8" />
 
@@ -49,15 +48,6 @@
                 <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Label, UpdateSourceTrigger=PropertyChanged}" Padding="6,4" Margin="0,0,0,8" VerticalContentAlignment="Center" MaxLength="32" />
 
                 <CheckBox Grid.Row="2" Grid.Column="1" Content="{DynamicResource Common_QuickFormat}" Foreground="{DynamicResource TextPrimary}" IsChecked="{Binding QuickFormat}" />
-=======
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="File system" VerticalAlignment="Center" Margin="0,0,0,8" />
-                <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding FileSystems}" SelectedItem="{Binding FileSystem}" Padding="6,4" Margin="0,0,0,8" />
-
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="Label" VerticalAlignment="Center" Margin="0,0,0,8" />
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Label, UpdateSourceTrigger=PropertyChanged}" Padding="6,4" Margin="0,0,0,8" VerticalContentAlignment="Center" MaxLength="32" />
-
-                <CheckBox Grid.Row="2" Grid.Column="1" Content="Quick format (recommended)" Foreground="{DynamicResource TextPrimary}" IsChecked="{Binding QuickFormat}" />
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
             </Grid>
         </Border>
 
@@ -103,11 +93,7 @@
         </StackPanel>
 
         <StackPanel Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
-<<<<<<< HEAD
             <Button Content="{DynamicResource Common_Close}" Click="Close_Click" Margin="0,0,8,0" />
-=======
-            <Button Content="Close" Click="Close_Click" Margin="0,0,8,0" />
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
             <Button Content="{Binding ActionText}" Command="{Binding ExecuteCommand}" FontWeight="SemiBold" Foreground="{DynamicResource Danger}" />
         </StackPanel>
     </Grid>

@@ -145,10 +145,7 @@ please open an issue; false positives can be reported to Microsoft at
 | Find out why a volume will not shrink | **Analyze**: lists the unmovable files past your target (page file, hibernation file, restore points, NTFS metadata) and how far the volume can really shrink. |
 | Remove what is in the way | **Unblock…** in the analysis window: turns hibernation off, moves the page file to another drive, deletes restore points, and puts the settings back afterwards. |
 | Shrink or extend a partition | **Resize** (NTFS and ReFS). The freed space appears as unallocated right after the partition. |
-<<<<<<< HEAD
 | Shrink and create in one step | **Resize** with *Create a partition in the freed space* ticked: shrink a volume and turn the freed space into a new drive in a single confirmed operation. |
-=======
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
 | Turn free space into a new drive | **New partition**: size, file system (NTFS, exFAT, FAT32, ReFS), label and drive letter. |
 | Reformat or remove a partition | **Format** and **Delete**, with typed confirmation. Windows' own partitions are protected. |
 | Prepare a new disk | **Initialize disk** (GPT) for a disk without a partition table. |
@@ -158,41 +155,22 @@ Select a row and use the toolbar, or use the row's **Actions** menu (also on rig
 ### Appearance
 
 The **Settings** window lets you pick one of three colour themes — **White** (light), **Dark**
-<<<<<<< HEAD
 and **Night** (blue) — a UI font (Segoe UI, Arial, Calibri, Consolas or Times New Roman), and a
-UI language (English or Turkish). Changing any of them takes effect immediately and is remembered
-on the next launch. The language sets the culture used for dates and numbers — in the app and in
-the `wpm` command-line tool — but the interface strings are not yet translated. Log and analysis
-=======
-<<<<<<< HEAD
-and **Night** (blue) — a UI font (Segoe UI, Arial, Calibri, Consolas or Times New Roman), and a
-UI language (English or Turkish). Changing any of them takes effect immediately and is remembered
+UI language (English, the default, or Turkish). Changing any of them takes effect immediately and is remembered
 on the next launch. The language sets the culture used for dates and numbers — in the app and in
 the `wpm` command-line tool — and translates the interface strings to Turkish when Turkish is
 chosen (the `wpm` command-line output and the shrink-analysis report stay in English). Log and
 analysis output stay in a monospace font; the partition colours in the disk map and table are not
 changed by the theme.
-=======
-and **Night** (blue) — and a UI font (Segoe UI, Arial, Calibri, Consolas or Times New Roman).
-Changing either takes effect immediately and is remembered on the next launch. Log and analysis
->>>>>>> 12-oct-2026
-output stay in a monospace font; the partition colours in the disk map and table are not changed
-by the theme.
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
 
 ### Typical use: a new drive from the free space of C:
 
 1. Select C: and press **Analyze**. If Windows' limit is far above your data, the report names
    the files responsible; **Unblock…** can remove them (some steps need a reboot).
-<<<<<<< HEAD
 2. Press **Resize**, choose the new size and confirm. To do it in one step, tick **Create a
    partition in the freed space**, choose the file system, label and drive letter, and confirm —
    the freed space becomes a new drive automatically.
 3. Otherwise select the new **Unallocated** row, press **New partition**, choose a letter, confirm.
-=======
-2. Press **Resize**, choose the new size, confirm.
-3. Select the new **Unallocated** row, press **New partition**, choose a letter, confirm.
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
 4. If you used Unblock, open it again (or **Settings**) and press **Restore previous settings**.
 
 ### USB flash drives and external SSDs
@@ -290,12 +268,8 @@ limitations and the Windows behaviours the design works around.
 - [x] Independent safety audit; stale-layout protection and re-validation before every write
 - [x] Virtual-disk integration tests, including a rehearsal on a real layout
 - [x] MSI installer with desktop and Start menu shortcuts, and a portable build, scanned with Microsoft Defender
-<<<<<<< HEAD
 - [x] Localize the UI strings (Turkish)
 - [x] Shrink and create in one step
-=======
-- [ ] Shrink and create in one step
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
 - [ ] Queue of pending operations with preview
 - [ ] Code signing (removes the SmartScreen warning)
 - [ ] Continuous integration on GitHub Actions (workflow written, not yet run)

@@ -47,11 +47,7 @@ public sealed class DiskMapControl : FrameworkElement
         var size = ByteSize.Format(segment.SizeBytes);
         if (segment.Partition is not { } partition)
         {
-<<<<<<< HEAD
             return (Localization.Get("Common_Unallocated"), size);
-=======
-            return ("Unallocated", size);
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         }
 
         var title = partition.DriveLetter is { } letter
@@ -137,11 +133,7 @@ public sealed class DiskMapControl : FrameworkElement
                       (p.Volume is { } v ? $" ({v.FileSystem}{(v.Label is { Length: > 0 } label ? $" \"{label}\"" : string.Empty)})" : string.Empty) +
                       $"\n{ByteSize.Format(segment.SizeBytes)} at {ByteSize.Format(segment.OffsetBytes)}" +
                       (p.Volume is { } vol ? $"\n{ByteSize.Format(vol.UsedBytes)} used, {ByteSize.Format(vol.FreeBytes)} free" : string.Empty)
-<<<<<<< HEAD
                     : $"{Localization.Get("Common_Unallocated")}\n{ByteSize.Format(segment.SizeBytes)} at {ByteSize.Format(segment.OffsetBytes)}";
-=======
-                    : $"Unallocated\n{ByteSize.Format(segment.SizeBytes)} at {ByteSize.Format(segment.OffsetBytes)}";
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
 
                 if (!Equals(ToolTip, text))
                 {

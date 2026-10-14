@@ -7,11 +7,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:ResizePartitionViewModel}"
-<<<<<<< HEAD
         Title="{Binding Title}" Height="640" Width="640" MinHeight="500" MinWidth="540"
-=======
-        Title="{Binding Title}" Height="520" Width="640" MinHeight="440" MinWidth="540"
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         Background="{DynamicResource WindowBackground}"
         FontFamily="{DynamicResource UiFontFamily}" FontSize="13"
         WindowStartupLocation="CenterOwner">
@@ -21,10 +17,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-<<<<<<< HEAD
             <RowDefinition Height="Auto" />
-=======
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -43,7 +36,6 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-<<<<<<< HEAD
                 <TextBlock Grid.Column="0" Text="{DynamicResource Resize_NewSize}" VerticalAlignment="Center" />
                 <TextBox Grid.Column="1" Text="{Binding NewSizeText, UpdateSourceTrigger=PropertyChanged}" Padding="6,4" Margin="0,0,8,0" VerticalContentAlignment="Center" />
                 <Button Grid.Column="2" Content="{DynamicResource Resize_Smallest}" Command="{Binding ShrinkToMinimumCommand}" Margin="0,0,8,0" ToolTip="{DynamicResource Resize_SmallestTip}" />
@@ -81,16 +73,6 @@
         </Border>
 
         <ScrollViewer Grid.Row="5" VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
-=======
-                <TextBlock Grid.Column="0" Text="New size" VerticalAlignment="Center" />
-                <TextBox Grid.Column="1" Text="{Binding NewSizeText, UpdateSourceTrigger=PropertyChanged}" Padding="6,4" Margin="0,0,8,0" VerticalContentAlignment="Center" />
-                <Button Grid.Column="2" Content="Smallest" Command="{Binding ShrinkToMinimumCommand}" Margin="0,0,8,0" ToolTip="The smallest size Windows and the data allow" />
-                <Button Grid.Column="3" Content="Largest" Command="{Binding ExtendToMaximumCommand}" ToolTip="Fill the free space right after the partition" />
-            </Grid>
-        </Border>
-
-        <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
             <StackPanel>
                 <TextBlock Text="{Binding ChangeText}" TextWrapping="Wrap" Margin="0,0,0,8" />
                 <ItemsControl ItemsSource="{Binding Issues}">
@@ -121,25 +103,15 @@
             </StackPanel>
         </ScrollViewer>
 
-<<<<<<< HEAD
         <StackPanel Grid.Row="6" Margin="0,8,0,0">
-=======
-        <StackPanel Grid.Row="5" Margin="0,8,0,0">
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
             <TextBlock Text="{Binding Status}" Style="{StaticResource Secondary}" TextWrapping="Wrap" />
             <ProgressBar Height="6" Margin="0,6,0,0" IsIndeterminate="True"
                          Visibility="{Binding IsBusy, Converter={x:Static controls:Converters.BoolToVisibility}}" />
         </StackPanel>
 
-<<<<<<< HEAD
         <StackPanel Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
             <Button Content="{DynamicResource Common_Close}" Click="Close_Click" Margin="0,0,8,0" />
             <Button Content="{Binding ActionText}" Command="{Binding ResizeCommand}" IsDefault="True" FontWeight="SemiBold" />
-=======
-        <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
-            <Button Content="Close" Click="Close_Click" Margin="0,0,8,0" />
-            <Button Content="Resize" Command="{Binding ResizeCommand}" IsDefault="True" FontWeight="SemiBold" />
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         </StackPanel>
     </Grid>
 </Window>

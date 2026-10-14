@@ -14,11 +14,7 @@
     <!-- Separate output so the unelevated dev build never overwrites (or is skipped in favour of) the real one. -->
     <OutDir Condition="'$(DevManifest)' == 'true'">bin\$(Configuration)\dev\</OutDir>
     <IntermediateOutputPath Condition="'$(DevManifest)' == 'true'">obj\$(Configuration)\dev\</IntermediateOutputPath>
-<<<<<<< HEAD
     <SatelliteResourceLanguages>en;tr</SatelliteResourceLanguages>
-=======
-    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,17 +22,8 @@
     <ProjectReference Include="..\WindowsPartitionManager.Platform.Windows\WindowsPartitionManager.Platform.Windows.csproj" />
   </ItemGroup>
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 12-oct-2026
   <ItemGroup>
     <InternalsVisibleTo Include="WindowsPartitionManager.App.Tests" />
   </ItemGroup>
 
-<<<<<<< HEAD
-=======
-=======
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
->>>>>>> 12-oct-2026
 </Project>

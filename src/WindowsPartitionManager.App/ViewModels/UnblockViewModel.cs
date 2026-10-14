@@ -3,14 +3,7 @@ using System.Runtime.CompilerServices;
 using WindowsPartitionManager.Core.Abstractions;
 using WindowsPartitionManager.Core.Formatting;
 using WindowsPartitionManager.Core.Operations;
-<<<<<<< HEAD
 using WindowsPartitionManager.Platform.Windows;
-=======
-<<<<<<< HEAD
-using WindowsPartitionManager.Platform.Windows;
-=======
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
->>>>>>> 12-oct-2026
 
 namespace WindowsPartitionManager.App.ViewModels;
 
@@ -30,24 +23,14 @@ public sealed class UnblockStepViewModel(UnblockStep step) : INotifyPropertyChan
     {
         get
         {
-<<<<<<< HEAD
             var parts = new List<string> { Localization.Format("Unblock_PastTarget", ByteSize.Format(Step.BytesPastTarget)) };
             if (Step.RequiresReboot) parts.Add(Localization.Get("Unblock_NeedsReboot"));
             parts.Add(Step.Reversible ? Localization.Get("Unblock_CanUndo") : Localization.Get("Unblock_CannotUndo"));
-=======
-            var parts = new List<string> { $"{ByteSize.Format(Step.BytesPastTarget)} past the target" };
-            if (Step.RequiresReboot) parts.Add("needs a reboot");
-            parts.Add(Step.Reversible ? "Windows Partition Manager can undo this" : "cannot be undone");
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
             return string.Join(" · ", parts);
         }
     }
 
-<<<<<<< HEAD
     public string FilesText => string.Join("\n", Step.Files.Take(6)) + (Step.Files.Count > 6 ? "\n" + Localization.Format("Unblock_MoreFiles", Step.Files.Count - 6) : string.Empty);
-=======
-    public string FilesText => string.Join("\n", Step.Files.Take(6)) + (Step.Files.Count > 6 ? $"\n… and {Step.Files.Count - 6} more" : string.Empty);
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
 
     public bool IsSelected
     {
@@ -94,11 +77,7 @@ public sealed class UnblockViewModel : INotifyPropertyChanged
 
     public char DriveLetter { get; }
 
-<<<<<<< HEAD
     public string Title => Localization.Format("Unblock_Title", DriveLetter);
-=======
-    public string Title => $"Unblock shrink · {DriveLetter}:";
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
 
     public string Summary => UnblockPlanner.Summarize(Steps.Select(s => s.Step).ToList());
 
@@ -113,17 +92,8 @@ public sealed class UnblockViewModel : INotifyPropertyChanged
     public bool HasPendingRestore => _operations.LoadState() is { HasSomethingToRestore: true };
 
     public string RestoreText => _operations.LoadState() is { } s
-<<<<<<< HEAD
-        ? $"Windows Partition Manager changed settings on {LanguagePreference.FormatTimestamp(s.AppliedAt)} for {s.Volume}: and can restore them."
-=======
-<<<<<<< HEAD
         ? Localization.Format("Unblock_RestoreText", LanguagePreference.FormatTimestamp(s.AppliedAt), s.Volume)
         : Localization.Get("Unblock_NoRestore");
-=======
-        ? $"Windows Partition Manager changed settings on {s.AppliedAt:yyyy-MM-dd HH:mm} for {s.Volume}: and can restore them."
->>>>>>> 12-oct-2026
-        : "No settings to restore.";
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
 
     public bool IsBusy
     {
@@ -179,15 +149,9 @@ public sealed class UnblockViewModel : INotifyPropertyChanged
         }
 
         var lines = string.Join("\n", selected.Select(s => "• " + s.Title));
-<<<<<<< HEAD
         var irreversible = selected.Any(s => !s.Reversible) ? "\n\n" + Localization.Get("Unblock_Irreversible") : string.Empty;
         var reboot = selected.Any(s => s.RequiresReboot) ? "\n\n" + Localization.Get("Unblock_RebootNote") : string.Empty;
         if (!_confirm(Localization.Format("Unblock_ApplyTitle", DriveLetter) + "\n\n" + lines + irreversible + reboot))
-=======
-        var irreversible = selected.Any(s => !s.Reversible) ? "\n\nDeleting restore points cannot be undone." : string.Empty;
-        var reboot = selected.Any(s => s.RequiresReboot) ? "\n\nThe page file change takes effect after a reboot." : string.Empty;
-        if (!_confirm($"Apply these steps on {DriveLetter}:?\n\n{lines}{irreversible}{reboot}"))
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         {
             return;
         }
@@ -198,17 +162,10 @@ public sealed class UnblockViewModel : INotifyPropertyChanged
         {
             var state = await _runner.ApplyAsync(DriveLetter, selected.Select(s => s.Action), new Progress<string>(s => Status = s));
             Status = selected.Any(s => s.RequiresReboot)
-<<<<<<< HEAD
                 ? Localization.Get("Unblock_DoneReboot")
                 : state.HasSomethingToRestore
                     ? Localization.Get("Unblock_DoneRestore")
                     : Localization.Get("Unblock_Done");
-=======
-                ? "Done. Reboot, then run the shrink. Afterwards come back here and press Restore to put the settings back."
-                : state.HasSomethingToRestore
-                    ? "Done. Run the shrink now; afterwards press Restore to put the settings back."
-                    : "Done. Run the shrink now.";
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
             IsDone = true;
             OnPropertyChanged(nameof(HasPendingRestore));
             OnPropertyChanged(nameof(RestoreText));
@@ -217,11 +174,7 @@ public sealed class UnblockViewModel : INotifyPropertyChanged
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
             Error = ex.Message;
-<<<<<<< HEAD
             Status = Localization.Get("Unblock_Failed");
-=======
-            Status = "Failed. Settings that were already changed are recorded and can be restored.";
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
             OnPropertyChanged(nameof(HasPendingRestore));
             RestoreCommand.RaiseCanExecuteChanged();
         }
@@ -233,11 +186,7 @@ public sealed class UnblockViewModel : INotifyPropertyChanged
 
     private async Task RestoreAsync()
     {
-<<<<<<< HEAD
         if (IsBusy || !_confirm(Localization.Get("Common_RestoreConfirm")))
-=======
-        if (IsBusy || !_confirm("Restore hibernation and page file settings to what they were before Windows Partition Manager changed them?"))
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         {
             return;
         }

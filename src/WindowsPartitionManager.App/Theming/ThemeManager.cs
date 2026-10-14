@@ -1,22 +1,8 @@
-<<<<<<< HEAD
-using System.Globalization;
-=======
-<<<<<<< HEAD
 using System.Globalization;
 using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Media;
 using WindowsPartitionManager.Platform.Windows;
-=======
->>>>>>> 12-oct-2026
-using System.Windows;
-using System.Windows.Markup;
-using System.Windows.Media;
-<<<<<<< HEAD
-using WindowsPartitionManager.Platform.Windows;
-=======
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
->>>>>>> 12-oct-2026
 
 namespace WindowsPartitionManager.App.Theming;
 
@@ -56,18 +42,11 @@ public static class ThemeManager
     {
         Application.Current!.Resources["UiFontFamily"] = new FontFamily(fontName);
     }
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 12-oct-2026
 
     public static void ApplyLanguage(string languageName)
     {
         LanguagePreference.Apply(languageName);
-<<<<<<< HEAD
-=======
         Localization.Apply(languageName);
->>>>>>> 12-oct-2026
         ApplyLanguageToOpenWindows(LanguagePreference.ResolveCulture(languageName));
     }
 
@@ -92,19 +71,11 @@ public static class ThemeManager
 
     private static void ApplyLanguageToOpenWindows(string cultureName)
     {
-<<<<<<< HEAD
-        if (Application.Current is not { } app)
-=======
         if (Application.Current is not { } app || !app.Dispatcher.CheckAccess())
->>>>>>> 12-oct-2026
         {
             return;
         }
 
-<<<<<<< HEAD
-        var language = XmlLanguage.GetLanguage(CultureInfo.GetCultureInfo(cultureName).IetfLanguageTag);
-        foreach (Window window in app.Windows)
-=======
         ApplyLanguageToWindows(app.Windows.Cast<Window>(), cultureName);
     }
 
@@ -113,16 +84,10 @@ public static class ThemeManager
     {
         var language = XmlLanguage.GetLanguage(CultureInfo.GetCultureInfo(cultureName).IetfLanguageTag);
         foreach (Window window in windows)
->>>>>>> 12-oct-2026
         {
             window.Language = language;
         }
     }
 
     private static bool _frameworkLanguageInitialized;
-<<<<<<< HEAD
-=======
-=======
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
->>>>>>> 12-oct-2026
 }

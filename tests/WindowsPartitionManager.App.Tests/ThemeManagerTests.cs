@@ -1,9 +1,6 @@
 using System.Globalization;
-<<<<<<< HEAD
-=======
 using System.Threading;
 using System.Windows;
->>>>>>> 12-oct-2026
 using WindowsPartitionManager.App.Theming;
 
 namespace WindowsPartitionManager.App.Tests;
@@ -30,8 +27,6 @@ public sealed class ThemeManagerTests
             CultureInfo.DefaultThreadCurrentUICulture = defaultUiCulture;
         }
     }
-<<<<<<< HEAD
-=======
 
     [Fact]
     public void ApplyLanguageToWindows_SetsEveryWindowLanguage()
@@ -62,5 +57,4 @@ public sealed class ThemeManagerTests
 
         Assert.Null(failure);
     }
->>>>>>> 12-oct-2026
 }

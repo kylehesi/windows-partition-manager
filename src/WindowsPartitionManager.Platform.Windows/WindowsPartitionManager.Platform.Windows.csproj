@@ -13,11 +13,8 @@
     <PackageReference Include="System.Management" Version="10.0.12" />
   </ItemGroup>
 
-<<<<<<< HEAD
   <ItemGroup>
     <InternalsVisibleTo Include="WindowsPartitionManager.App.Tests" />
   </ItemGroup>
 
-=======
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
 </Project>

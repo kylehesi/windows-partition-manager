@@ -1,8 +1,5 @@
 using System.Globalization;
-<<<<<<< HEAD
-=======
 using System.IO;
->>>>>>> 12-oct-2026
 using WindowsPartitionManager.Platform.Windows;
 
 namespace WindowsPartitionManager.App.Tests;
@@ -10,8 +7,6 @@ namespace WindowsPartitionManager.App.Tests;
 public sealed class LanguagePreferenceTests
 {
     [Theory]
-<<<<<<< HEAD
-=======
     [InlineData("{\"language\":\"Turkish\"}", "Turkish")]
     [InlineData("{\"language\":\"English\"}", "English")]
     [InlineData("{\"language\":\"German\"}", "English")]
@@ -51,7 +46,6 @@ public sealed class LanguagePreferenceTests
     }
 
     [Theory]
->>>>>>> 12-oct-2026
     [InlineData("English", "en")]
     [InlineData("Turkish", "tr")]
     [InlineData("", "en")]
@@ -95,8 +89,6 @@ public sealed class LanguagePreferenceTests
 
         Assert.Equal("10.10.2026 22:14", LanguagePreference.FormatTimestamp(value, CultureInfo.GetCultureInfo("tr")));
     }
-<<<<<<< HEAD
-=======
 
     [Fact]
     public void Apply_Turkish_NumberOutputFollowsCulture()
@@ -116,5 +108,4 @@ public sealed class LanguagePreferenceTests
             CultureInfo.CurrentUICulture = originalUiCulture;
         }
     }
->>>>>>> 12-oct-2026
 }

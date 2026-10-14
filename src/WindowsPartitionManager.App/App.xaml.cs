@@ -21,16 +21,8 @@ public partial class App : Application
         var settings = SettingsStore.Load();
         ThemeManager.ApplyTheme(settings.Theme);
         ThemeManager.ApplyFont(settings.Font);
-<<<<<<< HEAD
         ThemeManager.ApplyLanguage(settings.Language);
         ThemeManager.InitializeFrameworkLanguage();
-=======
-<<<<<<< HEAD
-        ThemeManager.ApplyLanguage(settings.Language);
-        ThemeManager.InitializeFrameworkLanguage();
-=======
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
->>>>>>> 12-oct-2026
 
         var storage = new WmiStorageProvider();
         MainWindow? window = null;
@@ -62,11 +54,8 @@ public partial class App : Application
         viewModel.SettingsRequested += (_, _) =>
         {
             var settings = new SettingsViewModel(OperationLog.Path, UnblockOperations.StatePath, new UnblockOperations(), Confirm);
-<<<<<<< HEAD
             // A language change rebuilds the rows (their strings are read when the view models are built).
             settings.Changed += (_, _) => _ = viewModel.RefreshAsync();
-=======
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
             var dialog = new SettingsWindow { DataContext = settings, Owner = window };
             dialog.ShowDialog();
         };

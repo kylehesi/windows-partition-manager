@@ -20,7 +20,6 @@ public sealed class DiskViewModel
         Rows = Segments.Select(s => new SegmentRow(disk, s, owner)).ToList();
 
         var flags = new List<string>();
-<<<<<<< HEAD
         if (disk.IsSystem) flags.Add(Localization.Get("Disk_System"));
         if (disk.IsBoot) flags.Add(Localization.Get("Disk_Boot"));
         if (disk.IsReadOnly) flags.Add(Localization.Get("Disk_ReadOnly"));
@@ -28,15 +27,6 @@ public sealed class DiskViewModel
         if (disk.Health != HealthStatus.Healthy) flags.Add(disk.Health.ToString());
 
         var style = disk.Style == PartitionStyle.Raw ? Localization.Get("Disk_NotInitialized") : disk.Style.ToString().ToUpperInvariant();
-=======
-        if (disk.IsSystem) flags.Add("System");
-        if (disk.IsBoot) flags.Add("Boot");
-        if (disk.IsReadOnly) flags.Add("Read-only");
-        if (disk.IsOffline) flags.Add("Offline");
-        if (disk.Health != HealthStatus.Healthy) flags.Add(disk.Health.ToString());
-
-        var style = disk.Style == PartitionStyle.Raw ? "not initialized" : disk.Style.ToString().ToUpperInvariant();
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         Title = $"Disk {disk.Number} \u2022 {disk.FriendlyName}";
         Header = $"{Title} ({ByteSize.Format(disk.SizeBytes)}, {style}, {disk.BusType})";
         HasFlags = flags.Count > 0;
@@ -75,24 +65,14 @@ public sealed class SegmentRow
 
         if (segment.Partition is not { } partition)
         {
-<<<<<<< HEAD
             Name = Localization.Get("Common_Unallocated");
             Type = Localization.Get("Segment_FreeSpace");
-=======
-            Name = "Unallocated";
-            Type = "Free space";
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
             // A RAW disk must be initialized before anything can be created on it.
             CanCreate = disk.Style is PartitionStyle.Gpt or PartitionStyle.Mbr && !disk.IsReadOnly && !disk.IsOffline;
             CanInitialize = disk.Style is PartitionStyle.Raw or PartitionStyle.Unknown && !disk.IsReadOnly && !disk.IsOffline;
 
-<<<<<<< HEAD
             if (CanInitialize) actions.Add(new RowAction(Localization.Get("Segment_InitializeGpt"), owner.InitializeCommand));
             if (CanCreate) actions.Add(new RowAction(Localization.Get("Segment_NewPartition"), owner.NewPartitionCommand));
-=======
-            if (CanInitialize) actions.Add(new RowAction("Initialize disk (GPT)", owner.InitializeCommand));
-            if (CanCreate) actions.Add(new RowAction("New partition…", owner.NewPartitionCommand));
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
             Actions = actions;
             return;
         }
@@ -100,11 +80,7 @@ public sealed class SegmentRow
         Partition = partition;
         PartitionNumber = partition.Number;
         DriveLetter = partition.DriveLetter;
-<<<<<<< HEAD
         Name = partition.DriveLetter is { } letter ? $"{letter}:" : Localization.Format("Segment_Partition", partition.Number);
-=======
-        Name = partition.DriveLetter is { } letter ? $"{letter}:" : $"Partition {partition.Number}";
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         Type = partition.TypeDescription;
 
         CanResize = ResizePlanner.CanResize(partition) && !disk.IsReadOnly && !disk.IsOffline;
@@ -121,17 +97,10 @@ public sealed class SegmentRow
                          volume.FileSystem.Equals("NTFS", StringComparison.OrdinalIgnoreCase);
         }
 
-<<<<<<< HEAD
         if (CanAnalyze) actions.Add(new RowAction(Localization.Get("Segment_AnalyzeShrink"), owner.AnalyzeCommand));
         if (CanResize) actions.Add(new RowAction(Localization.Get("Segment_Resize"), owner.ResizeCommand));
         if (CanFormat) actions.Add(new RowAction(Localization.Get("Segment_Format"), owner.FormatCommand, IsDestructive: true));
         if (CanDelete) actions.Add(new RowAction(Localization.Get("Segment_Delete"), owner.DeleteCommand, IsDestructive: true));
-=======
-        if (CanAnalyze) actions.Add(new RowAction("Analyze shrink…", owner.AnalyzeCommand));
-        if (CanResize) actions.Add(new RowAction("Resize…", owner.ResizeCommand));
-        if (CanFormat) actions.Add(new RowAction("Format…", owner.FormatCommand, IsDestructive: true));
-        if (CanDelete) actions.Add(new RowAction("Delete…", owner.DeleteCommand, IsDestructive: true));
->>>>>>> a89c3121d8289d5274cd7d9470051658b8569669
         Actions = actions;
     }
 
