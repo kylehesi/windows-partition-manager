@@ -19,8 +19,13 @@ public partial class App : Application
         base.OnStartup(e);
 
         var settings = SettingsStore.Load();
+        // Developer aid for screenshots: try a theme or language without saving it.
+        if (ArgumentAfter(e.Args, "--theme") is { } theme) settings = settings with { Theme = theme };
+        if (ArgumentAfter(e.Args, "--language") is { } language) settings = settings with { Language = language };
         ThemeManager.ApplyTheme(settings.Theme);
         ThemeManager.ApplyFont(settings.Font);
+        ThemeManager.ApplyLanguage(settings.Language);
+        ThemeManager.InitializeFrameworkLanguage();
 
         var storage = new WmiStorageProvider();
         MainWindow? window = null;
@@ -52,6 +57,8 @@ public partial class App : Application
         viewModel.SettingsRequested += (_, _) =>
         {
             var settings = new SettingsViewModel(OperationLog.Path, UnblockOperations.StatePath, new UnblockOperations(), Confirm);
+            // A language change rebuilds the rows (their strings are read when the view models are built).
+            settings.Changed += (_, _) => _ = viewModel.RefreshAsync();
             var dialog = new SettingsWindow { DataContext = settings, Owner = window };
             dialog.ShowDialog();
         };
@@ -86,47 +93,88 @@ public partial class App : Application
         var layoutReady = fixedSize ? refresh : window.LockWidthToContentAsync(refresh);
         if (screenshotPath is not null)
         {
-            _ = CaptureAndExitAsync(window, layoutReady, Path.GetFullPath(screenshotPath));
+            _ = CaptureAndExitAsync(window, viewModel, layoutReady, Path.GetFullPath(screenshotPath), ArgumentAfter(e.Args, "--dialog"));
         }
     }
 
     /// <summary>
-    /// Developer aid: <c>--screenshot file.png [--size 1120x700]</c> renders the main window once
-    /// the disks are loaded, saves it as PNG and exits. Used to check layout without a human.
+    /// Developer aid: <c>--screenshot file.png [--size 1120x700] [--theme Dark] [--language Turkish]
+    /// [--dialog settings|new|resize|format|delete]</c> renders the main window (or the named dialog,
+    /// opened for the first row that allows it) once the disks are loaded, saves it as PNG and exits.
+    /// Used to check layout without a human. Dialogs only open; nothing is ever applied.
     /// </summary>
-    private async Task CaptureAndExitAsync(Window window, Task refresh, string path)
+    private async Task CaptureAndExitAsync(Window window, MainViewModel viewModel, Task refresh, string path, string? dialog)
     {
         await refresh;
         await Task.Delay(500);
         await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
 
-        if (window.Content is FrameworkElement content)
+        var target = window;
+        if (dialog is not null)
         {
-            var dpi = VisualTreeHelper.GetDpi(window);
-            var bounds = new Rect(0, 0, content.ActualWidth, content.ActualHeight);
-            var visual = new DrawingVisual();
-            using (var dc = visual.RenderOpen())
-            {
-                dc.DrawRectangle(window.Background, null, bounds);
-                dc.DrawRectangle(new VisualBrush(content), null, bounds);
-            }
-
-            var bitmap = new RenderTargetBitmap(
-                (int)Math.Ceiling(bounds.Width * dpi.DpiScaleX),
-                (int)Math.Ceiling(bounds.Height * dpi.DpiScaleY),
-                dpi.PixelsPerInchX,
-                dpi.PixelsPerInchY,
-                PixelFormats.Pbgra32);
-            bitmap.Render(visual);
-
-            var encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(bitmap));
-            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-            using var stream = File.Create(path);
-            encoder.Save(stream);
+            // The dialogs are modal; open them from a separate dispatcher item so this method goes on.
+            _ = window.Dispatcher.BeginInvoke(() => OpenDialog(viewModel, dialog));
+            await Task.Delay(1500);
+            await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+            target = Windows.OfType<Window>().LastOrDefault(w => w != window) ?? window;
         }
 
+        Capture(target, path);
         Shutdown();
+    }
+
+    private static void OpenDialog(MainViewModel viewModel, string dialog)
+    {
+        var rows = viewModel.Disks.SelectMany(d => d.Rows).ToList();
+        switch (dialog.ToLowerInvariant())
+        {
+            case "settings":
+                viewModel.SettingsCommand.Execute(null);
+                break;
+            case "new" when rows.FirstOrDefault(r => r.CanCreate) is { } row:
+                viewModel.NewPartitionCommand.Execute(row);
+                break;
+            case "resize" when rows.FirstOrDefault(r => r.CanResize) is { } row:
+                viewModel.ResizeCommand.Execute(row);
+                break;
+            case "format" when rows.FirstOrDefault(r => r.CanFormat) is { } row:
+                viewModel.FormatCommand.Execute(row);
+                break;
+            case "delete" when rows.FirstOrDefault(r => r.CanDelete) is { } row:
+                viewModel.DeleteCommand.Execute(row);
+                break;
+        }
+    }
+
+    private static void Capture(Window window, string path)
+    {
+        if (window.Content is not FrameworkElement content)
+        {
+            return;
+        }
+
+        var dpi = VisualTreeHelper.GetDpi(window);
+        var bounds = new Rect(0, 0, content.ActualWidth, content.ActualHeight);
+        var visual = new DrawingVisual();
+        using (var dc = visual.RenderOpen())
+        {
+            dc.DrawRectangle(window.Background, null, bounds);
+            dc.DrawRectangle(new VisualBrush(content), null, bounds);
+        }
+
+        var bitmap = new RenderTargetBitmap(
+            (int)Math.Ceiling(bounds.Width * dpi.DpiScaleX),
+            (int)Math.Ceiling(bounds.Height * dpi.DpiScaleY),
+            dpi.PixelsPerInchX,
+            dpi.PixelsPerInchY,
+            PixelFormats.Pbgra32);
+        bitmap.Render(visual);
+
+        var encoder = new PngBitmapEncoder();
+        encoder.Frames.Add(BitmapFrame.Create(bitmap));
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        using var stream = File.Create(path);
+        encoder.Save(stream);
     }
 
     private static string? ArgumentAfter(string[] args, string name)

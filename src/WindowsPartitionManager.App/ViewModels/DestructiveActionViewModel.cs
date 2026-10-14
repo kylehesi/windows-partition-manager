@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using WindowsPartitionManager.Core.Abstractions;
 using WindowsPartitionManager.Core.Formatting;
+using WindowsPartitionManager.Core.Localization;
 using WindowsPartitionManager.Core.Model;
 using WindowsPartitionManager.Core.Operations;
 
@@ -49,27 +50,29 @@ public sealed class DestructiveActionViewModel : INotifyPropertyChanged
 
     public bool IsFormat { get; }
 
-    public string PartitionName => _partition.DriveLetter is { } l ? $"{l}:" : $"Partition {_partition.Number}";
+    public string PartitionName => _partition.DriveLetter is { } l ? $"{l}:" : Localization.Format("Segment_Partition", _partition.Number);
 
-    public string Title => IsFormat ? $"Format · {PartitionName} on disk {_disk.Number}" : $"Delete · {PartitionName} on disk {_disk.Number}";
+    public string Title => IsFormat
+        ? Localization.Format("Destructive_FormatTitle", PartitionName, _disk.Number)
+        : Localization.Format("Destructive_DeleteTitle", PartitionName, _disk.Number);
 
     public string InfoText
     {
         get
         {
             var volume = _partition.Volume;
-            var fs = volume is null ? _partition.TypeDescription : volume.FileSystem;
+            var fs = volume is null ? CoreText.PartitionType(_partition.TypeDescription) : volume.FileSystem;
             var label = volume?.Label is { Length: > 0 } s ? $" \"{s}\"" : string.Empty;
-            var used = volume is null ? string.Empty : $", {ByteSize.Format(volume.UsedBytes)} in use";
+            var used = volume is null ? string.Empty : Localization.Format("Destructive_InUse", ByteSize.Format(volume.UsedBytes));
             return $"{_disk.FriendlyName} ({_disk.BusType}) · {fs}{label} · {ByteSize.Format(_partition.SizeBytes)}{used}";
         }
     }
 
     public string Explanation => IsFormat
-        ? "Erases the file system on this partition and writes a new, empty one. The partition itself, its size and its drive letter stay. Choose NTFS if you want to be able to shrink or extend it later."
-        : "Removes the partition from the partition table. The space becomes unallocated and can be used for new partitions. Files are not wiped, but they are no longer reachable without recovery tools.";
+        ? Localization.Get("Destructive_FormatExplanation")
+        : Localization.Get("Destructive_DeleteExplanation");
 
-    public string ConfirmationPrompt => $"Type {PartitionName} to confirm:";
+    public string ConfirmationPrompt => Localization.Format("Destructive_ConfirmPrompt", PartitionName);
 
     public IReadOnlyList<string> FileSystems { get; } = PartitionPlanner.SupportedFileSystems;
 
@@ -77,7 +80,7 @@ public sealed class DestructiveActionViewModel : INotifyPropertyChanged
 
     public RelayCommand ExecuteCommand { get; }
 
-    public string ActionText => IsFormat ? "Format" : "Delete partition";
+    public string ActionText => IsFormat ? Localization.Get("Destructive_FormatAction") : Localization.Get("Destructive_DeleteAction");
 
     public string ConfirmationText
     {
@@ -226,11 +229,11 @@ public sealed class DestructiveActionViewModel : INotifyPropertyChanged
             if (IsFormat)
             {
                 var result = await _operations.FormatPartitionAsync(FormatRequest, new Progress<string>(s => Status = s));
-                Status = $"Done: {result.DriveLetter}: is now {result.Volume?.FileSystem}" + (result.Volume?.Label is { Length: > 0 } l ? $" \"{l}\"" : string.Empty) + ".";
+                Status = Localization.Format("Destructive_DoneFormat", result.DriveLetter, result.Volume?.FileSystem, result.Volume?.Label is { Length: > 0 } l ? $" \"{l}\"" : string.Empty);
             }
             else
             {
-                Status = "Deleting partition…";
+                Status = Localization.Get("Destructive_Deleting");
                 await _operations.DeletePartitionAsync(new DeletePartitionRequest
                 {
                     DiskNumber = _disk.Number,
@@ -238,7 +241,7 @@ public sealed class DestructiveActionViewModel : INotifyPropertyChanged
                     ExpectedDisk = DiskFingerprint.Of(_disk),
                     ExpectedPartition = PartitionFingerprint.Of(_partition),
                 });
-                Status = "Done: the partition was deleted and its space is unallocated.";
+                Status = Localization.Get("Destructive_Deleted");
             }
 
             IsDone = true;
@@ -248,7 +251,7 @@ public sealed class DestructiveActionViewModel : INotifyPropertyChanged
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
             Error = ex.Message;
-            Status = "Failed. The disk list has been refreshed to show the current state.";
+            Status = Localization.Get("NewPartition_Failed");
             AttemptFinished?.Invoke(this, EventArgs.Empty);
         }
         finally

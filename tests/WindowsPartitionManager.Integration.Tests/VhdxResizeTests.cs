@@ -125,6 +125,86 @@ public sealed class VhdxResizeTests(ITestOutputHelper output)
         }
     }
 
+    [AdminFact]
+    public async Task ShrinkAndCreateInOneStep()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"wpm-shandcreate-{Guid.NewGuid():N}.vhdx");
+        var provider = new WmiStorageProvider();
+        var operations = new WmiStorageOperations();
+
+        using var vhd = VirtualDisk.Create(path, 2 * GiB);
+        try
+        {
+            vhd.Attach();
+            var diskNumber = vhd.GetDiskNumber();
+            await WaitForDiskAsync(provider, diskNumber, _ => true);
+            await operations.InitializeDiskAsync(diskNumber, PartitionStyle.Gpt);
+            var disk = await WaitForDiskAsync(provider, diskNumber, d => d.Style == PartitionStyle.Gpt);
+
+            var region = FreeSpaceCalculator.Compute(disk).MaxBy(r => r.SizeBytes)!;
+            var created = await operations.CreatePartitionAsync(new CreatePartitionRequest
+            {
+                DiskNumber = diskNumber,
+                OffsetBytes = region.OffsetBytes,
+                SizeBytes = region.SizeBytes,
+                FileSystem = "NTFS",
+                Label = "Source",
+            });
+            var originalSize = created.SizeBytes;
+
+            var dataFile = Path.Combine($"{created.DriveLetter}:\\", "payload.bin");
+            var payload = new byte[32 * MiB];
+            Random.Shared.NextBytes(payload);
+            await File.WriteAllBytesAsync(dataFile, payload);
+
+            disk = await WaitForDiskAsync(provider, diskNumber, d => d.Partitions.Any(p => p.Number == created.Number && p.Volume?.UsedBytes >= 32 * MiB));
+            var partition = disk.Partitions.Single(p => p.Number == created.Number);
+            var limits = await provider.GetSupportedSizeAsync(diskNumber, partition.Number);
+
+            var combined = ShrinkAndCreatePlanner.Normalize(new ShrinkAndCreateRequest
+            {
+                DiskNumber = diskNumber,
+                PartitionNumber = partition.Number,
+                NewSizeBytes = 1 * GiB,
+                FileSystem = "NTFS",
+                Label = "Freed",
+            });
+
+            Assert.DoesNotContain(ShrinkAndCreatePlanner.Validate(disk, partition, combined, limits), i => i.IsError);
+
+            var shrunk = await operations.ResizePartitionAsync(new ResizePartitionRequest
+            {
+                DiskNumber = combined.DiskNumber,
+                PartitionNumber = combined.PartitionNumber,
+                NewSizeBytes = combined.NewSizeBytes,
+            }, new Progress<string>(output.WriteLine));
+
+            var createRequest = ShrinkAndCreatePlanner.CreateRequest(combined, disk, partition)!;
+            var second = await operations.CreatePartitionAsync(createRequest, new Progress<string>(output.WriteLine));
+
+            output.WriteLine($"Shrunk to {shrunk.SizeBytes / MiB} MiB; created {second.DriveLetter}: {second.SizeBytes / MiB} MiB");
+            Assert.InRange(shrunk.SizeBytes, 1 * GiB - 1 * MiB, 1 * GiB + 1 * MiB);
+            Assert.Equal("NTFS", second.Volume?.FileSystem);
+            Assert.Equal("Freed", second.Volume?.Label);
+            Assert.InRange(second.SizeBytes, originalSize - shrunk.SizeBytes - 2 * MiB, originalSize - shrunk.SizeBytes + 2 * MiB);
+            Assert.Equal(payload, await File.ReadAllBytesAsync(dataFile));
+        }
+        finally
+        {
+            try
+            {
+                vhd.Detach();
+            }
+            catch (System.ComponentModel.Win32Exception ex)
+            {
+                output.WriteLine($"Detach failed: {ex.Message}");
+            }
+
+            vhd.Dispose();
+            File.Delete(path);
+        }
+    }
+
     private static async Task<Disk> WaitForDiskAsync(WmiStorageProvider provider, int diskNumber, Func<Disk, bool> condition)
     {
         var stopwatch = Stopwatch.StartNew();

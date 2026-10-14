@@ -39,20 +39,20 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="Size" VerticalAlignment="Center" Margin="0,0,0,8" />
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource Common_Size}" VerticalAlignment="Center" Margin="0,0,0,8" />
                 <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SizeText, UpdateSourceTrigger=PropertyChanged}" Padding="6,4" Margin="0,0,8,8" VerticalContentAlignment="Center" />
-                <Button Grid.Row="0" Grid.Column="2" Content="Use all" Command="{Binding UseAllCommand}" Margin="0,0,0,8" />
+                <Button Grid.Row="0" Grid.Column="2" Content="{DynamicResource NewPartition_UseAll}" Command="{Binding UseAllCommand}" Margin="0,0,0,8" />
 
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="File system" VerticalAlignment="Center" Margin="0,0,0,8" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource Common_FileSystem}" VerticalAlignment="Center" Margin="0,0,0,8" />
                 <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding FileSystems}" SelectedItem="{Binding FileSystem}" Padding="6,4" Margin="0,0,0,8" />
 
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="Label" VerticalAlignment="Center" Margin="0,0,0,8" />
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource Common_Label}" VerticalAlignment="Center" Margin="0,0,0,8" />
                 <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Label, UpdateSourceTrigger=PropertyChanged}" Padding="6,4" Margin="0,0,0,8" VerticalContentAlignment="Center" MaxLength="32" />
 
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="Drive letter" VerticalAlignment="Center" Margin="0,0,0,8" />
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource NewPartition_DriveLetter}" VerticalAlignment="Center" Margin="0,0,0,8" />
                 <ComboBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding Letters}" SelectedItem="{Binding SelectedLetter}" Padding="6,4" Margin="0,0,0,8" />
 
-                <CheckBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Content="Quick format (recommended)" Foreground="{DynamicResource TextPrimary}" IsChecked="{Binding QuickFormat}" />
+                <CheckBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Content="{DynamicResource Common_QuickFormat}" Foreground="{DynamicResource TextPrimary}" IsChecked="{Binding QuickFormat}" />
             </Grid>
         </Border>
 
@@ -63,7 +63,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <TextBlock TextWrapping="Wrap" Margin="0,0,0,4">
-                                <Run Text="{Binding Severity, Mode=OneWay}" FontWeight="SemiBold" />
+                                <Run Text="{Binding Severity, Mode=OneWay, Converter={x:Static controls:Converters.Localized}, ConverterParameter=Severity_}" FontWeight="SemiBold" />
                                 <Run Text=" " />
                                 <Run Text="{Binding Message, Mode=OneWay}" />
                                 <TextBlock.Style>
@@ -94,8 +94,8 @@
         </StackPanel>
 
         <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
-            <Button Content="Close" Click="Close_Click" Margin="0,0,8,0" />
-            <Button Content="Create partition" Command="{Binding CreateCommand}" IsDefault="True" FontWeight="SemiBold" />
+            <Button Content="{DynamicResource Common_Close}" Click="Close_Click" Margin="0,0,8,0" />
+            <Button Content="{DynamicResource NewPartition_Create}" Command="{Binding CreateCommand}" IsDefault="True" FontWeight="SemiBold" />
         </StackPanel>
     </Grid>
 </Window>

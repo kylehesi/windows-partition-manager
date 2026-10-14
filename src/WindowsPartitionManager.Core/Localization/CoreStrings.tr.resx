@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Common_Unknown" xml:space="preserve"><value>bilinmiyor</value></data>
+  <data name="Common_DiskReadOnly" xml:space="preserve"><value>Disk salt okunur.</value></data>
+  <data name="Common_DiskOffline" xml:space="preserve"><value>Disk çevrimdışı.</value></data>
+  <data name="Common_RequestMismatch" xml:space="preserve"><value>İstek, verilen disk ve bölümle eşleşmiyor.</value></data>
+  <data name="Common_UnsupportedFileSystem" xml:space="preserve"><value>Desteklenmeyen dosya sistemi '{0}'. Şunlardan birini kullanın: {1}.</value></data>
+  <data name="Common_Fat32TooLarge" xml:space="preserve"><value>Windows 32 GB'tan büyük FAT32 birimlerini biçimlendiremez. exFAT veya NTFS kullanın.</value></data>
+  <data name="Common_LabelTooLong" xml:space="preserve"><value>Etiket {0} için çok uzun (en fazla {1} karakter).</value></data>
+  <data name="Common_FullFormatSlow" xml:space="preserve"><value>Tam biçimlendirme her sektöre yazar ve büyük bölümlerde saatler sürebilir.</value></data>
+  <data name="Common_VolumeHoldsData" xml:space="preserve"><value>Birimde {0} veri var{1}. Üzerindeki her şey silinir. Önce yedekleyin.</value></data>
+  <data name="Common_EverythingLost" xml:space="preserve"><value>Bölümdeki her şey silinir.</value></data>
+  <data name="PartitionType_Basicdata" xml:space="preserve"><value>Temel veri</value></data>
+  <data name="PartitionType_EFISystem" xml:space="preserve"><value>EFI sistemi</value></data>
+  <data name="PartitionType_MicrosoftReserved" xml:space="preserve"><value>Microsoft ayrılmış</value></data>
+  <data name="PartitionType_Recovery" xml:space="preserve"><value>Kurtarma</value></data>
+  <data name="PartitionType_LDMdata" xml:space="preserve"><value>LDM verisi</value></data>
+  <data name="PartitionType_StorageSpaces" xml:space="preserve"><value>Depolama Alanları</value></data>
+  <data name="PartitionType_Linuxfilesystem" xml:space="preserve"><value>Linux dosya sistemi</value></data>
+  <data name="PartitionType_Linuxswap" xml:space="preserve"><value>Linux takas</value></data>
+  <data name="PartitionType_Extended" xml:space="preserve"><value>Genişletilmiş</value></data>
+  <data name="PartitionType_DynamicLDM" xml:space="preserve"><value>Dinamik (LDM)</value></data>
+  <data name="PartitionType_GPTprotective" xml:space="preserve"><value>GPT koruyucu</value></data>
+  <data name="PartitionType_Unknown" xml:space="preserve"><value>Bilinmiyor</value></data>
+  <data name="Create_WrongDisk" xml:space="preserve"><value>İstek {0} numaralı diski hedefliyor, ancak düzen {1} numaralı diske ait.</value></data>
+  <data name="Create_NoPartitionTable" xml:space="preserve"><value>Diskte bölüm tablosu yok. Bölüm oluşturmadan önce diski başlatın (GPT).</value></data>
+  <data name="Create_DiskOfflineBringOnline" xml:space="preserve"><value>Disk çevrimdışı. Önce çevrimiçi duruma getirin.</value></data>
+  <data name="Create_MbrPrimaryLimit" xml:space="preserve"><value>Bir MBR disk en fazla dört birincil bölüm içerebilir. Diski GPT'ye dönüştürün veya bir bölümü silin.</value></data>
+  <data name="Create_OffsetNotAligned" xml:space="preserve"><value>Başlangıç konumu {0} sınırına hizalanmalıdır; önce Normalize çağrılmalıdır.</value></data>
+  <data name="Create_TooSmall" xml:space="preserve"><value>Bölüm en az {0} olmalıdır.</value></data>
+  <data name="Create_OffsetNotFree" xml:space="preserve"><value>{0} konumu ayrılmamış alanın içinde değil.</value></data>
+  <data name="Create_DoesNotFit" xml:space="preserve"><value>Bölüm sığmıyor: bu konumda en fazla {0} boş, {1} istendi.</value></data>
+  <data name="Create_LargestFreeExtent" xml:space="preserve"><value>Windows bu diskte en fazla {0} bitişik boş alan bildiriyor; {1} istendi.</value></data>
+  <data name="Create_LetterRange" xml:space="preserve"><value>Sürücü harfi C ile Z arasında olmalıdır.</value></data>
+  <data name="Create_LetterInUse" xml:space="preserve"><value>{0}: sürücü harfi zaten kullanımda.</value></data>
+  <data name="Create_NoLetter" xml:space="preserve"><value>Sürücü harfi seçilmedi; Windows sıradaki boş harfi atayacak.</value></data>
+  <data name="Delete_WindowsPartition" xml:space="preserve"><value>Bu bölüm Windows'u veya önyükleme dosyalarını içeriyor. Windows Partition Manager bu bölümü silmez.</value></data>
+  <data name="Delete_NeededToStart" xml:space="preserve"><value>Windows diskindeki '{0}' bölümü bilgisayarı başlatmak, onarmak veya geri yüklemek için gerekli olabilir. Bu diskte yalnızca temel veri bölümleri silinebilir.</value></data>
+  <data name="Delete_LogicalDrivesFirst" xml:space="preserve"><value>Önce genişletilmiş bölümün içindeki mantıksal sürücüleri silin.</value></data>
+  <data name="Format_WindowsPartition" xml:space="preserve"><value>Bu bölüm Windows'u veya önyükleme dosyalarını içeriyor. Windows Partition Manager bu bölümü biçimlendirmez.</value></data>
+  <data name="Format_OnlyBasicData" xml:space="preserve"><value>Yalnızca temel veri bölümleri biçimlendirilebilir; bu bölüm '{0}'.</value></data>
+  <data name="Format_CannotResizeLater" xml:space="preserve"><value>Windows {0} birimlerini daha sonra küçültemez veya genişletemez. Bu bölümü ileride boyutlandırmak isteyebilirseniz NTFS seçin.</value></data>
+  <data name="Resize_OnlyBasicData" xml:space="preserve"><value>Yalnızca temel veri bölümleri boyutlandırılabilir; bu bölüm '{0}'.</value></data>
+  <data name="Resize_NoFileSystem" xml:space="preserve"><value>Bölümün bağlı bir dosya sistemi yok, bu yüzden Windows onu güvenle boyutlandıramaz.</value></data>
+  <data name="Resize_OnlyNtfsReFS" xml:space="preserve"><value>Windows yalnızca NTFS ve ReFS birimlerini küçültüp genişletebilir; bu birim {0}.</value></data>
+  <data name="Resize_NotAligned" xml:space="preserve"><value>Yeni boyut {0} değerinin katı olmalıdır; önce Normalize çağrılmalıdır.</value></data>
+  <data name="Resize_SameSize" xml:space="preserve"><value>Bölüm zaten bu boyutta.</value></data>
+  <data name="Resize_SystemVolume" xml:space="preserve"><value>Bu, Windows sistem birimi. Boyutlandırılması destekleniyor, ancak önce önemli verilerinizi yedekleyin ve işlem sırasında bilgisayarı kapatmayın.</value></data>
+  <data name="Resize_MinimumSize" xml:space="preserve"><value>Bölüm en az {0} kalmalıdır.</value></data>
+  <data name="Resize_BelowData" xml:space="preserve"><value>Birimde {0} veri var; {1} altına küçültülemez.</value></data>
+  <data name="Resize_UnmovableFiles" xml:space="preserve"><value>Windows taşınamayan dosyalar nedeniyle bu birimi {0} altına küçültmez. Hangi dosyalar olduğunu ve engellerin nasıl kaldırılacağını görmek için küçültme analizini çalıştırın.</value></data>
+  <data name="Resize_LittleFreeLeft" xml:space="preserve"><value>Birimde yalnızca {0} boş alan kalır; NTFS en az %5 boş alanla en iyi çalışır.</value></data>
+  <data name="Resize_NoSpaceAfter" xml:space="preserve"><value>Bu bölümden hemen sonra ayrılmamış alan yok, bu yüzden genişletilemez. Alan bitişik olmalı ve bölümden sonra gelmelidir.</value></data>
+  <data name="Resize_NotEnoughAfter" xml:space="preserve"><value>Bu bölümden hemen sonra en fazla {0} boş alan var; istek {1} daha fazlasını gerektiriyor.</value></data>
+  <data name="Resize_WindowsMaximum" xml:space="preserve"><value>Windows bu bölüm için en büyük boyutu {0} olarak bildiriyor.</value></data>
+  <data name="ShrinkCreate_MustShrink" xml:space="preserve"><value>Küçült ve oluştur işlemi bölümü küçültmelidir; mevcut boyuttan daha küçük bir boyut seçin.</value></data>
+  <data name="ShrinkCreate_NotEnoughFreed" xml:space="preserve"><value>Küçültme, yeni bir bölüm için yeterli bitişik alan açmıyor.</value></data>
+  <data name="Safety_BatteryRefused" xml:space="preserve"><value>Bilgisayar pil gücüyle çalışıyor{0}. Bölümleri değiştirmeden önce prize takın.</value></data>
+  <data name="Safety_BatterySystemRefused" xml:space="preserve"><value>Bilgisayar pil gücüyle çalışıyor{0}. Prize takılana kadar Windows sistem biriminin boyutlandırılmasına izin verilmez.</value></data>
+  <data name="Safety_BatteryWarning" xml:space="preserve"><value>Bilgisayar pil gücüyle çalışıyor{0}. İşlem ortasında güç kesilmesi telafi edilebilir, ancak önce prize takmak bu riski ortadan kaldırır.</value></data>
+  <data name="Safety_Removable" xml:space="preserve"><value>Disk {0} çıkarılabilir bir {1} aygıtı. İşlem bitene kadar çıkarmayın.</value></data>
+  <data name="Safety_TheVolume" xml:space="preserve"><value>birim</value></data>
+  <data name="Safety_Dirty" xml:space="preserve"><value>{0} kirli olarak işaretlenmiş: Windows bir sorun veya düzgün yapılmamış bir kapatma algıladı. 'chkdsk {0} /f' komutunu çalıştırın, istenirse yeniden başlatın ve tekrar deneyin.</value></data>
+  <data name="Safety_NeedsRepair" xml:space="preserve"><value>Windows, {0} biriminin onarılması gerektiğini bildiriyor ({1}). Önce 'chkdsk {0} /f' çalıştırın; hasarlı bir dosya sisteminin boyutlandırılmasına izin verilmez.</value></data>
+  <data name="Safety_ScanNeeded" xml:space="preserve"><value>tarama gerekli</value></data>
+  <data name="Safety_SpotFixNeeded" xml:space="preserve"><value>nokta onarımı gerekli</value></data>
+  <data name="Safety_FullRepairNeeded" xml:space="preserve"><value>tam onarım gerekli</value></data>
+  <data name="Guard_RefreshHint" xml:space="preserve"><value>Disk düzeni gösterildiğinden beri değişti. Yenileyip yeniden seçin; hiçbir şey değiştirilmedi.</value></data>
+  <data name="Guard_DiskGone" xml:space="preserve"><value>Disk artık mevcut değil. {0}</value></data>
+  <data name="Guard_DiskChanged" xml:space="preserve"><value>Disk {0} artık '{1}' ({2}), '{3}' ({4}) değil. {5}</value></data>
+  <data name="Guard_PartitionGone" xml:space="preserve"><value>Bölüm {0} artık mevcut değil. {1}</value></data>
+  <data name="Guard_PartitionMoved" xml:space="preserve"><value>Bölüm {0} artık {1} konumunda ve {2} boyutunda; {3} konumunda ve {4} boyutunda değil. {5}</value></data>
+  <data name="Unblock_HibernationTitle" xml:space="preserve"><value>Hazırda bekletmeyi kapat</value></data>
+  <data name="Unblock_HibernationText" xml:space="preserve"><value>'powercfg /h off' komutunu çalıştırır; bu komut hiberfil.sys dosyasını hemen siler. Hızlı Başlatma da onunla birlikte kapanır, bu yüzden sonraki açılış normal bir soğuk açılış olur. Daha sonra 'powercfg /h on' ile yeniden açın (Windows Partition Manager bunu sizin için yapabilir).</value></data>
+  <data name="Unblock_PageFileTitle" xml:space="preserve"><value>Disk belleği dosyasını {0}: sürücüsünden kaldır</value></data>
+  <data name="Unblock_PageFileText" xml:space="preserve"><value>Disk belleği dosyasını {0}: sürücüsünden kaldırır (yeniden başlatmadan sonra etkinleşir). Başka bir dahili NTFS sürücüde en az 8 GB boş alan varsa, bu arada orada sistem tarafından yönetilen bir disk belleği dosyası kurulur; yoksa bilgisayar siz geri yükleyene kadar disk belleği dosyası olmadan çalışır ve çok yoğun bellek kullanımı programların kapanmasına yol açabilir. Yeniden başlatın, küçültmeyi çalıştırın, ardından önceki ayarı geri yükleyin; Windows Partition Manager bu ayarı hatırlar.</value></data>
+  <data name="Unblock_ShadowTitle" xml:space="preserve"><value>{0}: üzerindeki geri yükleme noktalarını sil</value></data>
+  <data name="Unblock_ShadowText" xml:space="preserve"><value>Sistem Geri Yükleme ve 'Önceki Sürümler' özelliğinin {0}: üzerinde tuttuğu gölge kopyaları siler. Hemen etkinleşir. Mevcut geri yükleme noktaları kaybolur; Windows zamanla yenilerini oluşturur.</value></data>
+  <data name="Unblock_NothingRemovable" xml:space="preserve"><value>Kaldırılabilecek bir engel yok.</value></data>
+  <data name="Unblock_SummaryReboot" xml:space="preserve"><value> Adımlardan biri, küçültmenin bu alanı kullanabilmesi için yeniden başlatma gerektiriyor.</value></data>
+  <data name="Unblock_Summary" xml:space="preserve"><value>{0} adım, hedefin ötesindeki {1} taşınamaz veriyi serbest bırakır.{2}</value></data>
+  <data name="Unblock_HibernationOff" xml:space="preserve"><value>Hazırda bekletme kapatılıyor…</value></data>
+  <data name="Unblock_HibernationAlreadyOff" xml:space="preserve"><value>Hazırda bekletme zaten kapalı.</value></data>
+  <data name="Unblock_RemovingPageFile" xml:space="preserve"><value>Disk belleği dosyası {0}: sürücüsünden kaldırılıyor…</value></data>
+  <data name="Unblock_TemporaryPageFile" xml:space="preserve"><value>Siz geri yükleyene kadar {0}: üzerinde sistem tarafından yönetilen bir disk belleği dosyası kullanılacak.</value></data>
+  <data name="Unblock_NoPageFile" xml:space="preserve"><value>Uygun başka bir sürücü bulunamadı: bilgisayar siz geri yükleyene kadar disk belleği dosyası olmadan çalışacak.</value></data>
+  <data name="Unblock_DeletingShadows" xml:space="preserve"><value>{0}: üzerindeki gölge kopyalar siliniyor…</value></data>
+  <data name="Unblock_NothingToRestore" xml:space="preserve"><value>Geri yüklenecek bir şey yok.</value></data>
+  <data name="Unblock_HibernationOn" xml:space="preserve"><value>Hazırda bekletme yeniden açılıyor…</value></data>
+  <data name="Unblock_RestoringPageFile" xml:space="preserve"><value>Disk belleği dosyası ayarı geri yükleniyor…</value></data>
+  <data name="Unblock_Restored" xml:space="preserve"><value>Önceki ayarlar geri yüklendi. Disk belleği değişikliği yeniden başlatmadan sonra uygulanır.</value></data>
+  <data name="Analysis_ReadingBitmap" xml:space="preserve"><value>Ayırma bit eşlemi okunuyor</value></data>
+  <data name="Analysis_Classifying" xml:space="preserve"><value>Dosyalar sınıflandırılıyor</value></data>
+  <data name="Analysis_SelectingFiles" xml:space="preserve"><value>Dosyalar seçiliyor</value></data>
+  <data name="Analysis_ReadingLayout" xml:space="preserve"><value>Dosya düzeni okunuyor</value></data>
+  <data name="Analysis_ReasonImmovable" xml:space="preserve"><value>NTFS bu dosyanın verisini taşınamaz olarak bildiriyor.</value></data>
+  <data name="Analysis_ReasonPageFile" xml:space="preserve"><value>Disk belleği dosyası; bellek yöneticisi onu açık tutar ve Windows taşımaz.</value></data>
+  <data name="Analysis_ReasonHibernation" xml:space="preserve"><value>Hazırda bekletme dosyası; hazırda bekletme açıkken taşınamaz.</value></data>
+  <data name="Analysis_ReasonMetadata" xml:space="preserve"><value>NTFS meta verisi; birim bağlıyken taşınamaz.</value></data>
+  <data name="Analysis_ReasonShadow" xml:space="preserve"><value>Sistem Geri Yükleme / gölge kopya depolaması; Windows bunu taşınamaz kabul eder.</value></data>
+  <data name="Analysis_AdviceWindowsReaches" xml:space="preserve"><value>Windows bu birimi {0} boyutuna küçültebileceğini bildiriyor; bu zaten hedefe ulaşıyor. Disk Yönetimi bunu kabul etmelidir.</value></data>
+  <data name="Analysis_AdvicePageFile" xml:space="preserve"><value>Disk belleği dosyasını başka bir birime taşıyın veya geçici olarak kapatın (Sistem Özellikleri &gt; Gelişmiş &gt; Performans &gt; Sanal bellek), yeniden başlatın, küçültün, sonra eski hâline getirin.</value></data>
+  <data name="Analysis_AdviceHibernation" xml:space="preserve"><value>Hazırda bekletmeyi 'powercfg /h off' ile (yönetici olarak) kapatın, yeniden başlatın, küçültün; geri istiyorsanız 'powercfg /h on' çalıştırın. Bu, Hızlı Başlatma'yı da kapatır.</value></data>
+  <data name="Analysis_AdviceShadow" xml:space="preserve"><value>{0}: üzerindeki geri yükleme noktalarını / gölge kopyaları silin (yönetici olarak 'vssadmin delete shadows /for={0}: /all') veya bu sürücü için Sistem Korumasını kapatın, küçültün, sonra yeniden açın.</value></data>
+  <data name="Analysis_AdviceMetadata" xml:space="preserve"><value>Taşınamaz NTFS verisi {0} konumunda bitiyor; birim bağlıyken bunun altına küçültülemez. Meta verinin taşınması planlanan bir çevrimdışı özelliktir.</value></data>
+  <data name="Analysis_AdviceMovable" xml:space="preserve"><value>Hedefin ötesinde {0:N0} taşınabilir dosya ({1}) var; Windows bunları küçültme sırasında kendiliğinden taşır, ancak önce 'defrag {2}: /X' ile birleştirmek küçültmeyi daha hızlı ve güvenilir yapar.</value></data>
+  <data name="Analysis_AdviceUnattributed" xml:space="preserve"><value>Hedefin ötesindeki {0} kullanılmış alan, listelenen hiçbir dosyaya ait değil; sonucu yaklaşık kabul edin.</value></data>
+  <data name="Analysis_AdviceNothing" xml:space="preserve"><value>Bu hedefi engelleyen bir şey yok. Windows birimi istenen boyuta küçültebilmelidir.</value></data>
+  <data name="Report_Title" xml:space="preserve"><value>{0}: için küçültme analizi</value></data>
+  <data name="Report_VolumeSize" xml:space="preserve"><value>  Birim boyutu       {0,12}   ({1:N0} küme, her biri {2:N0} bayt)</value></data>
+  <data name="Report_Used" xml:space="preserve"><value>  Kullanılan         {0,12}</value></data>
+  <data name="Report_Mft" xml:space="preserve"><value>  $MFT               başlangıç {0}, {1} kullanımda</value></data>
+  <data name="Report_FilesScanned" xml:space="preserve"><value>  Taranan dosyalar   {0,12:N0}   {1:N0} parça, {2} hesaba katıldı, {3:F1} sn</value></data>
+  <data name="Report_TargetSize" xml:space="preserve"><value>  Hedef boyut        {0,12}   {1}</value></data>
+  <data name="Report_TargetRequested" xml:space="preserve"><value>(istenen)</value></data>
+  <data name="Report_TargetDefault" xml:space="preserve"><value>(kullanılan veri + %10 pay)</value></data>
+  <data name="Report_ShrinkableBy" xml:space="preserve"><value>  Kazanılabilecek    {0,12}   hedefe ulaşılırsa</value></data>
+  <data name="Report_HowFar" xml:space="preserve"><value>Birim ne kadar küçülebilir:</value></data>
+  <data name="Report_WithoutMoving" xml:space="preserve"><value>  Hiçbir şey taşımadan           {0,10}   ({1} boşalır)</value></data>
+  <data name="Report_WindowsDiskManagement" xml:space="preserve"><value>  Windows Disk Yönetimi          {0,10}   ({1} boşalır)</value></data>
+  <data name="Report_AfterMovable" xml:space="preserve"><value>  Taşınabilir dosyalar taşınınca {0,10}   ({1} boşalır)</value></data>
+  <data name="Report_AfterBlockers" xml:space="preserve"><value>  Engeller de kaldırılınca       {0,10}   ({1} boşalır; yalnızca taşınamaz NTFS verisi kalır)</value></data>
+  <data name="Report_NoBlockers" xml:space="preserve"><value>Hedefin ötesinde taşınamaz dosya yok.</value></data>
+  <data name="Report_Blockers" xml:space="preserve"><value>Hedefin ötesindeki taşınamaz dosyalar ({0}), en uzaktakiler önce:</value></data>
+  <data name="Report_BlockerEnds" xml:space="preserve"><value>      {0} konumunda bitiyor; {2} içinden {1} hedefin ötesinde</value></data>
+  <data name="Report_More" xml:space="preserve"><value>  ... ve {0} tane daha.</value></data>
+  <data name="Report_BlockersBelow" xml:space="preserve"><value>Hedefin altındaki taşınamaz dosyalar: {0:N0} (bu hedefi etkilemezler).</value></data>
+  <data name="Report_Movable" xml:space="preserve"><value>Hedefin ötesindeki taşınabilir dosyalar: {0:N0} ({1}); Windows bunları kendisi taşır.</value></data>
+  <data name="Report_Unattributed" xml:space="preserve"><value>Hedefin ötesinde hiçbir dosyaya ait olmayan kullanılmış alan: {0}.</value></data>
+  <data name="Report_WhatToDo" xml:space="preserve"><value>Ne yapılmalı:</value></data>
+  <data name="Ops_Failed" xml:space="preserve"><value>{0} başarısız oldu ({1}): {2}</value></data>
+  <data name="Ops_RefusedPrefix" xml:space="preserve"><value>Diske dokunulmadan reddedildi: </value></data>
+  <data name="Ops_PartitionNotFound" xml:space="preserve"><value>Disk {1} üzerindeki {0} numaralı bölüm bulunamadı. {2}</value></data>
+  <data name="Ops_InitializeOffline" xml:space="preserve"><value>Disk çevrimdışı. Önce Disk Yönetimi'nde çevrimiçi duruma getirin; Windows Partition Manager bunu kendiliğinden yapmaz.</value></data>
+  <data name="Ops_AlreadyHasTable" xml:space="preserve"><value>Diskte zaten bir bölüm tablosu var.</value></data>
+  <data name="Ops_CreatingPartition" xml:space="preserve"><value>Bölüm oluşturuluyor…</value></data>
+  <data name="Ops_NoPartitionReturned" xml:space="preserve"><value>Windows başarılı olduğunu bildirdi ancak bir bölüm döndürmedi.</value></data>
+  <data name="Ops_WaitingForVolume" xml:space="preserve"><value>Birim bekleniyor…</value></data>
+  <data name="Ops_CleanedUp" xml:space="preserve"><value>Az önce oluşturulan boş bölüm yeniden kaldırıldı; disk eski hâlinde.</value></data>
+  <data name="Ops_CleanupFailed" xml:space="preserve"><value>Yeni, boş {0} numaralı bölüm otomatik olarak kaldırılamadı; yenileyip silin.</value></data>
+  <data name="Ops_AssigningLetter" xml:space="preserve"><value>Sürücü harfi atanıyor…</value></data>
+  <data name="Ops_ReadingBack" xml:space="preserve"><value>Geri okunuyor…</value></data>
+  <data name="Ops_LetterFallback" xml:space="preserve"><value>{0}: sürücü harfi kullanılamadı ({1}); harfi Windows seçecek.</value></data>
+  <data name="Ops_NoLetter" xml:space="preserve"><value>Bölüm oluşturuldu ve biçimlendirildi, ancak sürücü harfi atanamadı ({0}). Disk Yönetimi'nden bir harf atayın.</value></data>
+  <data name="Ops_LocatingVolume" xml:space="preserve"><value>Birim bulunuyor…</value></data>
+  <data name="Ops_Shrinking" xml:space="preserve"><value>Dosya sistemi ve bölüm küçültülüyor… Windows dosyaları yoldan çekiyor; bu biraz sürebilir.</value></data>
+  <data name="Ops_Extending" xml:space="preserve"><value>Bölüm ve dosya sistemi genişletiliyor…</value></data>
+  <data name="Ops_VolumeTimeout" xml:space="preserve"><value>Bölüm oluşturuldu ancak birimi 30 saniye içinde görünmedi.</value></data>
+  <data name="Ops_AdminRequired" xml:space="preserve"><value>{0}: biriminin açılması yönetici hakları gerektirir.</value></data>
+  <data name="Ops_NoFileLayout" xml:space="preserve"><value>Bu birim FSCTL_QUERY_FILE_LAYOUT desteklemiyor (Windows 8 veya sonrasında NTFS gerekir).</value></data>
+  <data name="Ops_NotNtfs" xml:space="preserve"><value>Birim NTFS değil.</value></data>
+  <data name="StorageCode_1" xml:space="preserve"><value>Desteklenmiyor.</value></data>
+  <data name="StorageCode_2" xml:space="preserve"><value>Belirtilmemiş hata.</value></data>
+  <data name="StorageCode_3" xml:space="preserve"><value>Zaman aşımı.</value></data>
+  <data name="StorageCode_4" xml:space="preserve"><value>Başarısız oldu (Windows ayrıntı vermedi). Birim hâlâ meşgul olabilir, ör. biçimlendirmeden hemen sonra; birkaç saniye bekleyip tekrar deneyin. Hata sürerse birimde chkdsk çalıştırın.</value></data>
+  <data name="StorageCode_5" xml:space="preserve"><value>Geçersiz parametre.</value></data>
+  <data name="StorageCode_6" xml:space="preserve"><value>Disk kullanımda.</value></data>
+  <data name="StorageCode_8" xml:space="preserve"><value>Nesne bulunamadı.</value></data>
+  <data name="StorageCode_4097" xml:space="preserve"><value>Boyut desteklenmiyor.</value></data>
+  <data name="StorageCode_40000" xml:space="preserve"><value>Yeterli boş alan yok (boyut, Windows'un gördüğü en büyük boş alanı aşıyor).</value></data>
+  <data name="StorageCode_40001" xml:space="preserve"><value>Erişim reddedildi (yönetici hakları gerekir).</value></data>
+  <data name="StorageCode_40002" xml:space="preserve"><value>İşlemi tamamlamak için yeterli kaynak yok.</value></data>
+  <data name="StorageCode_40003" xml:space="preserve"><value>Önbellek güncel değil; yenileyip tekrar deneyin.</value></data>
+  <data name="StorageCode_40004" xml:space="preserve"><value>Beklenmeyen bir G/Ç hatası oluştu.</value></data>
+  <data name="StorageCode_40005" xml:space="preserve"><value>Size veya UseMaximumSize değerlerinden yalnızca birini belirtin.</value></data>
+  <data name="StorageCode_41000" xml:space="preserve"><value>Disk başlatılmamış.</value></data>
+  <data name="StorageCode_41001" xml:space="preserve"><value>Disk zaten başlatılmış.</value></data>
+  <data name="StorageCode_41002" xml:space="preserve"><value>Disk salt okunur.</value></data>
+  <data name="StorageCode_41003" xml:space="preserve"><value>Disk çevrimdışı.</value></data>
+  <data name="StorageCode_41004" xml:space="preserve"><value>Diskin bölüm sınırına ulaşıldı.</value></data>
+  <data name="StorageCode_41005" xml:space="preserve"><value>Bölüm hizalaması geçerli değil.</value></data>
+  <data name="StorageCode_41006" xml:space="preserve"><value>Bir parametre bu bölüm türü için geçerli değil.</value></data>
+  <data name="StorageCode_41010" xml:space="preserve"><value>Bölüm türü geçerli değil.</value></data>
+  <data name="StorageCode_41011" xml:space="preserve"><value>MBR disklerde yalnızca ilk 2 TB kullanılabilir.</value></data>
+  <data name="StorageCode_41012" xml:space="preserve"><value>Konum geçerli değil.</value></data>
+  <data name="StorageCode_41014" xml:space="preserve"><value>Disk GPT için çok küçük.</value></data>
+  <data name="StorageCode_41017" xml:space="preserve"><value>Bölüm düzeni geçersiz.</value></data>
+  <data name="StorageCode_42000" xml:space="preserve"><value>Bölüm silindi ancak erişim yolları silinmedi.</value></data>
+  <data name="StorageCode_42002" xml:space="preserve"><value>İstenen sürücü harfi veya yol zaten kullanımda.</value></data>
+  <data name="StorageCode_42004" xml:space="preserve"><value>Gizli bölümlere erişim yolu atanamaz.</value></data>
+  <data name="StorageCode_42007" xml:space="preserve"><value>Erişim yolu geçerli değil.</value></data>
+  <data name="StorageCode_42008" xml:space="preserve"><value>Birimi hatalı olan bir bölüm küçültülemez.</value></data>
+  <data name="StorageCode_42009" xml:space="preserve"><value>Dosya sistemi bilinmeyen bir bölüm boyutlandırılamaz.</value></data>
+  <data name="StorageCode_42010" xml:space="preserve"><value>Sistem veya kritik bir bölümde izin verilmez.</value></data>
+  <data name="StorageCode_42011" xml:space="preserve"><value>Yalnızca veri bölümlerinde desteklenir.</value></data>
+  <data name="StorageCode_42013" xml:space="preserve"><value>Bu tür bir bölüme sürücü harfi atanamaz.</value></data>
+  <data name="StorageCode_43000" xml:space="preserve"><value>Küme boyutu geçersiz.</value></data>
+  <data name="StorageCode_43001" xml:space="preserve"><value>Dosya sistemi desteklenmiyor.</value></data>
+  <data name="StorageCode_43002" xml:space="preserve"><value>Birim hızlı biçimlendirilemez.</value></data>
+  <data name="StorageCode_43003" xml:space="preserve"><value>Küme sayısı 32 biti aşıyor (birim bu dosya sistemi için çok büyük).</value></data>
+  <data name="StorageCode_43006" xml:space="preserve"><value>Sürücü salt okunur.</value></data>
+  <data name="StorageCode_Other" xml:space="preserve"><value>Storage Management API dönüş kodlarına bakın</value></data>
+</root>

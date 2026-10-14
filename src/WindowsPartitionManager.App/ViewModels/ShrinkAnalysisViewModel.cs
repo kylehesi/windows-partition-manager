@@ -21,7 +21,7 @@ public sealed class ShrinkAnalysisViewModel : INotifyPropertyChanged, IDisposabl
     private CancellationTokenSource? _cancellation;
 
     private string _targetText = string.Empty;
-    private string _status = "Press Analyze to start.";
+    private string _status = Localization.Get("ShrinkAnalysis_Start");
     private string _progressText = string.Empty;
     private double _progressFraction;
     private bool _progressIndeterminate;
@@ -64,7 +64,7 @@ public sealed class ShrinkAnalysisViewModel : INotifyPropertyChanged, IDisposabl
 
     public char DriveLetter { get; }
 
-    public string Title => $"Shrink analysis · {DriveLetter}:";
+    public string Title => Localization.Format("ShrinkAnalysis_Title", DriveLetter);
 
     public RelayCommand AnalyzeCommand { get; }
 
@@ -153,7 +153,7 @@ public sealed class ShrinkAnalysisViewModel : INotifyPropertyChanged, IDisposabl
         {
             if (!ByteSize.TryParse(TargetText, out var parsed))
             {
-                Error = $"Could not understand the size '{TargetText}'. Try something like 300GB or 1.5TB.";
+                Error = Localization.Format("Common_BadSize", TargetText);
                 return;
             }
 
@@ -168,7 +168,7 @@ public sealed class ShrinkAnalysisViewModel : INotifyPropertyChanged, IDisposabl
         UnblockCommand.RaiseCanExecuteChanged();
         ProgressIndeterminate = true;
         ProgressFraction = 0;
-        Status = "Opening volume…";
+        Status = Localization.Get("ShrinkAnalysis_Opening");
         var stopwatch = Stopwatch.StartNew();
 
         _cancellation = new CancellationTokenSource();
@@ -199,7 +199,7 @@ public sealed class ShrinkAnalysisViewModel : INotifyPropertyChanged, IDisposabl
 
             // Show our result right away; Windows' own estimate is slow and only informative.
             ReportText = ShrinkReportFormatter.ToText(report, maxBlockers: 200);
-            Status = $"Analysed in {stopwatch.Elapsed.TotalSeconds:F1} s. Waiting for Windows' own shrink estimate…";
+            Status = Localization.Format("ShrinkAnalysis_Analysed", stopwatch.Elapsed.TotalSeconds.ToString("F1", CultureInfo.InvariantCulture));
             ProgressIndeterminate = true;
 
             SupportedSize? supported = null;
@@ -217,21 +217,21 @@ public sealed class ShrinkAnalysisViewModel : INotifyPropertyChanged, IDisposabl
             _unblockSteps = UnblockPlanner.Plan(report);
             OnPropertyChanged(nameof(UnblockText));
             UnblockCommand.RaiseCanExecuteChanged();
-            Status = $"Done in {stopwatch.Elapsed.TotalSeconds:F1} s.";
+            Status = Localization.Format("ShrinkAnalysis_Done", stopwatch.Elapsed.TotalSeconds.ToString("F1", CultureInfo.InvariantCulture));
         }
         catch (OperationCanceledException)
         {
-            Status = "Cancelled.";
+            Status = Localization.Get("ShrinkAnalysis_Cancelled");
         }
         catch (UnauthorizedAccessException ex)
         {
-            Error = ex.Message + " Start Windows Partition Manager as administrator.";
-            Status = "Failed.";
+            Error = ex.Message + Localization.Get("ShrinkAnalysis_AdminHint");
+            Status = Localization.Get("ShrinkAnalysis_Failed");
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
             Error = ex.Message;
-            Status = "Failed.";
+            Status = Localization.Get("ShrinkAnalysis_Failed");
         }
         finally
         {

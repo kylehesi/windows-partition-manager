@@ -12,8 +12,9 @@ namespace WindowsPartitionManager.App.ViewModels;
 /// <summary>Form for creating a formatted partition inside one unallocated region.</summary>
 public sealed class NewPartitionViewModel : INotifyPropertyChanged
 {
-    private const string AutomaticLetter = "Automatic";
     private const ulong MiB = 1024 * 1024;
+
+    private static string AutomaticLetter => Localization.Get("NewPartition_Automatic");
 
     private readonly IStorageOperations _operations;
     private readonly IPowerStatusProvider _power;
@@ -60,9 +61,9 @@ public sealed class NewPartitionViewModel : INotifyPropertyChanged
     /// <summary>Raised after every attempt, successful or not, so the disk list can be refreshed.</summary>
     public event EventHandler? AttemptFinished;
 
-    public string Title => $"New partition · Disk {_disk.Number}";
+    public string Title => Localization.Format("NewPartition_Title", _disk.Number);
 
-    public string RegionText => $"{_disk.FriendlyName} · unallocated space at {ByteSize.Format(_region.OffsetBytes)}, {ByteSize.Format(_region.SizeBytes)} available";
+    public string RegionText => Localization.Format("NewPartition_Region", _disk.FriendlyName, ByteSize.Format(_region.OffsetBytes), ByteSize.Format(_region.SizeBytes));
 
     public ulong MaximumSizeBytes { get; }
 
@@ -197,7 +198,7 @@ public sealed class NewPartitionViewModel : INotifyPropertyChanged
         parseError = null;
         if (!ByteSize.TryParse(SizeText, out var size) || size == 0)
         {
-            parseError = $"Could not understand the size '{SizeText}'. Try 500GB, 1.5TB or 20480MB.";
+            parseError = Localization.Format("Common_BadSize", SizeText);
             return null;
         }
 
@@ -235,10 +236,18 @@ public sealed class NewPartitionViewModel : INotifyPropertyChanged
                 Issues.Add(issue);
             }
 
-            Summary = $"Create a {ByteSize.Format(request.SizeBytes)} {request.FileSystem} partition" +
-                      (request.Label.Length > 0 ? $" \"{request.Label}\"" : string.Empty) +
-                      $" at {ByteSize.Format(request.OffsetBytes)} on disk {_disk.Number}" +
-                      (request.DriveLetter is { } l ? $" as {l}:" : " with an automatic drive letter") + ".";
+            var labelPart = request.Label.Length > 0 ? $" \"{request.Label}\"" : string.Empty;
+            var letterPart = request.DriveLetter is { } l
+                ? Localization.Format("NewPartition_AsLetter", l)
+                : Localization.Get("NewPartition_AutomaticLetter");
+            Summary = Localization.Format(
+                "NewPartition_Summary",
+                ByteSize.Format(request.SizeBytes),
+                request.FileSystem,
+                labelPart,
+                ByteSize.Format(request.OffsetBytes),
+                _disk.Number,
+                letterPart);
             OnPropertyChanged(nameof(Summary));
         }
 
@@ -255,7 +264,8 @@ public sealed class NewPartitionViewModel : INotifyPropertyChanged
             return;
         }
 
-        if (!_confirm($"{Summary}\n\nThis writes to the partition table of disk {_disk.Number} ({_disk.FriendlyName}). Existing partitions are not touched. Continue?"))
+        var confirm = Localization.Format("NewPartition_ConfirmBody", _disk.Number, _disk.FriendlyName);
+        if (!_confirm(Summary + "\n\n" + confirm))
         {
             return;
         }
@@ -266,8 +276,12 @@ public sealed class NewPartitionViewModel : INotifyPropertyChanged
         {
             var progress = new Progress<string>(s => Status = s);
             var created = await _operations.CreatePartitionAsync(request, progress);
-            Status = $"Done: {created.DriveLetter}: {created.Volume?.FileSystem} {ByteSize.Format(created.SizeBytes)}" +
-                     (created.Volume?.Label is { Length: > 0 } label ? $" \"{label}\"" : string.Empty);
+            Status = Localization.Format(
+                "NewPartition_Done",
+                created.DriveLetter,
+                created.Volume?.FileSystem,
+                ByteSize.Format(created.SizeBytes),
+                created.Volume?.Label is { Length: > 0 } label ? $" \"{label}\"" : string.Empty);
             IsDone = true;
             Completed?.Invoke(this, created);
             AttemptFinished?.Invoke(this, EventArgs.Empty);
@@ -275,7 +289,7 @@ public sealed class NewPartitionViewModel : INotifyPropertyChanged
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
             Error = ex.Message;
-            Status = "Failed. The disk list has been refreshed to show the current state.";
+            Status = Localization.Get("NewPartition_Failed");
             AttemptFinished?.Invoke(this, EventArgs.Empty);
         }
         finally

@@ -6,6 +6,7 @@ using System.Runtime.Versioning;
 using System.Text;
 using WindowsPartitionManager.Core.Abstractions;
 using WindowsPartitionManager.Core.Analysis;
+using WindowsPartitionManager.Core.Localization;
 using WindowsPartitionManager.Platform.Windows.Interop;
 using Microsoft.Win32.SafeHandles;
 
@@ -79,7 +80,7 @@ internal sealed unsafe class NtfsVolumeInspection : IVolumeInspection
             var error = Marshal.GetLastPInvokeError();
             volume.Dispose();
             throw error == Kernel32.ERROR_ACCESS_DENIED
-                ? new UnauthorizedAccessException($"Opening volume {driveLetter}: requires administrator rights.")
+                ? new UnauthorizedAccessException(CoreText.Format("Ops_AdminRequired", driveLetter))
                 : new Win32Exception(error);
         }
 
@@ -119,7 +120,7 @@ internal sealed unsafe class NtfsVolumeInspection : IVolumeInspection
         {
             EnsureLayout(progress, cancellationToken);
 
-            progress?.Report(new InspectProgress("Selecting files", 0, _files.Count));
+            progress?.Report(new InspectProgress(CoreText.Get("Analysis_SelectingFiles"), 0, _files.Count));
             var results = new List<FileExtents>();
 
             for (var i = 0; i < _files.Count; i++)
@@ -127,7 +128,7 @@ internal sealed unsafe class NtfsVolumeInspection : IVolumeInspection
                 if ((i & 0xFFFF) == 0)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    progress?.Report(new InspectProgress("Selecting files", i, _files.Count));
+                    progress?.Report(new InspectProgress(CoreText.Get("Analysis_SelectingFiles"), i, _files.Count));
                 }
 
                 var file = _files[i];
@@ -156,7 +157,7 @@ internal sealed unsafe class NtfsVolumeInspection : IVolumeInspection
                 }
             }
 
-            progress?.Report(new InspectProgress("Selecting files", _files.Count, _files.Count));
+            progress?.Report(new InspectProgress(CoreText.Get("Analysis_SelectingFiles"), _files.Count, _files.Count));
             return results;
         }
     }
@@ -212,7 +213,7 @@ internal sealed unsafe class NtfsVolumeInspection : IVolumeInspection
         }
 
         var stopwatch = Stopwatch.StartNew();
-        progress?.Report(new InspectProgress("Reading file layout", 0, 0));
+        progress?.Report(new InspectProgress(CoreText.Get("Analysis_ReadingLayout"), 0, 0));
 
         var buffer = new byte[4 * 1024 * 1024];
         var input = new Kernel32.QUERY_FILE_LAYOUT_INPUT
@@ -249,7 +250,7 @@ internal sealed unsafe class NtfsVolumeInspection : IVolumeInspection
                     }
 
                     throw error is Kernel32.ERROR_INVALID_FUNCTION or Kernel32.ERROR_NOT_SUPPORTED or Kernel32.ERROR_INVALID_PARAMETER
-                        ? new NotSupportedException("This volume does not support FSCTL_QUERY_FILE_LAYOUT (NTFS on Windows 8 or later is required).")
+                        ? new NotSupportedException(CoreText.Get("Ops_NoFileLayout"))
                         : new Win32Exception(error, "FSCTL_QUERY_FILE_LAYOUT failed");
                 }
 
@@ -281,7 +282,7 @@ internal sealed unsafe class NtfsVolumeInspection : IVolumeInspection
                     offset += next;
                 }
 
-                progress?.Report(new InspectProgress("Reading file layout", _files.Count, 0));
+                progress?.Report(new InspectProgress(CoreText.Get("Analysis_ReadingLayout"), _files.Count, 0));
             }
         }
 
@@ -441,7 +442,7 @@ internal sealed unsafe class NtfsVolumeInspection : IVolumeInspection
         {
             var error = Marshal.GetLastPInvokeError();
             throw error == Kernel32.ERROR_INVALID_FUNCTION
-                ? new NotSupportedException("The volume is not NTFS.")
+                ? new NotSupportedException(CoreText.Get("Ops_NotNtfs"))
                 : new Win32Exception(error, "FSCTL_GET_NTFS_VOLUME_DATA failed");
         }
 

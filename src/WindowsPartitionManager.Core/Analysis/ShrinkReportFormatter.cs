@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using WindowsPartitionManager.Core.Formatting;
+using WindowsPartitionManager.Core.Localization;
 
 namespace WindowsPartitionManager.Core.Analysis;
 
@@ -15,67 +16,67 @@ public static class ShrinkReportFormatter
         var volumeSize = g.VolumeSizeBytes;
         var sb = new StringBuilder();
 
-        sb.AppendLine(CultureInfo.InvariantCulture, $"Shrink analysis for {report.DriveLetter}:");
-        sb.AppendLine(CultureInfo.InvariantCulture, $"  Volume size        {ByteSize.Format(volumeSize),12}   ({g.TotalClusters:N0} clusters of {g.BytesPerCluster:N0} bytes)");
-        sb.AppendLine(CultureInfo.InvariantCulture, $"  Used               {ByteSize.Format(report.UsedBytes),12}");
-        sb.AppendLine(CultureInfo.InvariantCulture, $"  $MFT               starts at {ByteSize.Format(g.ClustersToBytes(g.MftStartLcn))}, {ByteSize.Format(g.MftValidDataLength)} in use");
+        sb.AppendLine(CoreText.Format("Report_Title", report.DriveLetter));
+        sb.AppendLine(CoreText.Format("Report_VolumeSize", ByteSize.Format(volumeSize), g.TotalClusters, g.BytesPerCluster));
+        sb.AppendLine(CoreText.Format("Report_Used", ByteSize.Format(report.UsedBytes)));
+        sb.AppendLine(CoreText.Format("Report_Mft", ByteSize.Format(g.ClustersToBytes(g.MftStartLcn)), ByteSize.Format(g.MftValidDataLength)));
         if (report.LayoutStats is { } stats)
         {
             var accounted = g.ClustersToBytes(stats.AllocatedClusters);
-            sb.AppendLine(CultureInfo.InvariantCulture, $"  Files scanned      {stats.FileCount,12:N0}   {stats.ExtentCount:N0} extents, {ByteSize.Format(accounted)} accounted for, in {stats.Elapsed.TotalSeconds:F1} s");
+            sb.AppendLine(CoreText.Format("Report_FilesScanned", stats.FileCount, stats.ExtentCount, ByteSize.Format(accounted), stats.Elapsed.TotalSeconds));
         }
 
         sb.AppendLine();
 
-        sb.AppendLine(CultureInfo.InvariantCulture, $"  Target size        {ByteSize.Format(report.TargetSizeBytes),12}   {(report.TargetWasExplicit ? "(requested)" : "(used data + 10 % headroom)")}");
-        sb.AppendLine(CultureInfo.InvariantCulture, $"  Shrinkable by      {Shrink(volumeSize, report.TargetSizeBytes),12}   if the target is reached");
+        sb.AppendLine(CoreText.Format("Report_TargetSize", ByteSize.Format(report.TargetSizeBytes), CoreText.Get(report.TargetWasExplicit ? "Report_TargetRequested" : "Report_TargetDefault")));
+        sb.AppendLine(CoreText.Format("Report_ShrinkableBy", Shrink(volumeSize, report.TargetSizeBytes)));
         sb.AppendLine();
 
-        sb.AppendLine("How far the volume can shrink:");
-        sb.AppendLine(CultureInfo.InvariantCulture, $"  Without moving anything       to {ByteSize.Format(report.MinimumSizeWithoutMovingBytes),10}   (frees {Shrink(volumeSize, report.MinimumSizeWithoutMovingBytes)})");
+        sb.AppendLine(CoreText.Get("Report_HowFar"));
+        sb.AppendLine(CoreText.Format("Report_WithoutMoving", ByteSize.Format(report.MinimumSizeWithoutMovingBytes), Shrink(volumeSize, report.MinimumSizeWithoutMovingBytes)));
         if (report.WindowsMinimumSizeBytes is { } win)
         {
-            sb.AppendLine(CultureInfo.InvariantCulture, $"  Windows Disk Management       to {ByteSize.Format(win),10}   (frees {Shrink(volumeSize, win)})");
+            sb.AppendLine(CoreText.Format("Report_WindowsDiskManagement", ByteSize.Format(win), Shrink(volumeSize, win)));
         }
 
-        sb.AppendLine(CultureInfo.InvariantCulture, $"  After moving movable files    to {ByteSize.Format(report.MinimumSizeWithBlockersBytes),10}   (frees {Shrink(volumeSize, report.MinimumSizeWithBlockersBytes)})");
-        sb.AppendLine(CultureInfo.InvariantCulture, $"  After removing blockers too   to {ByteSize.Format(report.MinimumSizeMetadataOnlyBytes),10}   (frees {Shrink(volumeSize, report.MinimumSizeMetadataOnlyBytes)}; only immovable NTFS data remains)");
+        sb.AppendLine(CoreText.Format("Report_AfterMovable", ByteSize.Format(report.MinimumSizeWithBlockersBytes), Shrink(volumeSize, report.MinimumSizeWithBlockersBytes)));
+        sb.AppendLine(CoreText.Format("Report_AfterBlockers", ByteSize.Format(report.MinimumSizeMetadataOnlyBytes), Shrink(volumeSize, report.MinimumSizeMetadataOnlyBytes)));
         sb.AppendLine();
 
         if (report.BlockersPastTarget.Count == 0)
         {
-            sb.AppendLine("No unmovable files past the target.");
+            sb.AppendLine(CoreText.Get("Report_NoBlockers"));
         }
         else
         {
-            sb.AppendLine(CultureInfo.InvariantCulture, $"Unmovable files past the target ({report.BlockersPastTarget.Count}), furthest first:");
+            sb.AppendLine(CoreText.Format("Report_Blockers", report.BlockersPastTarget.Count));
             foreach (var blocker in report.BlockersPastTarget.Take(maxBlockers))
             {
                 sb.AppendLine(CultureInfo.InvariantCulture, $"  [{blocker.Kind}] {blocker.Path}");
-                sb.AppendLine(CultureInfo.InvariantCulture, $"      ends at {ByteSize.Format(g.ClustersToBytes(blocker.FurthestEndLcn))}, {ByteSize.Format(g.ClustersToBytes(blocker.ClustersBeyondTarget))} of {ByteSize.Format(g.ClustersToBytes(blocker.TotalClusters))} past the target");
+                sb.AppendLine(CoreText.Format("Report_BlockerEnds", ByteSize.Format(g.ClustersToBytes(blocker.FurthestEndLcn)), ByteSize.Format(g.ClustersToBytes(blocker.ClustersBeyondTarget)), ByteSize.Format(g.ClustersToBytes(blocker.TotalClusters))));
                 sb.AppendLine(CultureInfo.InvariantCulture, $"      {blocker.Reason}");
             }
 
             if (report.BlockersPastTarget.Count > maxBlockers)
             {
-                sb.AppendLine(CultureInfo.InvariantCulture, $"  ... and {report.BlockersPastTarget.Count - maxBlockers} more.");
+                sb.AppendLine(CoreText.Format("Report_More", report.BlockersPastTarget.Count - maxBlockers));
             }
         }
 
         if (report.BlockersBelowTarget > 0)
         {
-            sb.AppendLine(CultureInfo.InvariantCulture, $"Unmovable files below the target: {report.BlockersBelowTarget:N0} (they do not affect this target).");
+            sb.AppendLine(CoreText.Format("Report_BlockersBelow", report.BlockersBelowTarget));
         }
 
         sb.AppendLine();
-        sb.AppendLine(CultureInfo.InvariantCulture, $"Movable files past the target: {report.MovableFilesBeyondTarget:N0} ({ByteSize.Format(report.MovableBytesBeyondTarget)}); Windows moves these itself.");
+        sb.AppendLine(CoreText.Format("Report_Movable", report.MovableFilesBeyondTarget, ByteSize.Format(report.MovableBytesBeyondTarget)));
         if (report.UnattributedBytesBeyondTarget > 0)
         {
-            sb.AppendLine(CultureInfo.InvariantCulture, $"Unattributed used space past the target: {ByteSize.Format(report.UnattributedBytesBeyondTarget)}.");
+            sb.AppendLine(CoreText.Format("Report_Unattributed", ByteSize.Format(report.UnattributedBytesBeyondTarget)));
         }
 
         sb.AppendLine();
-        sb.AppendLine("What to do:");
+        sb.AppendLine(CoreText.Get("Report_WhatToDo"));
         foreach (var line in report.Advice)
         {
             sb.AppendLine("  - " + line);

@@ -7,6 +7,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/WindowsPartitionManager.Core.Tests/WindowsPartitionManager.Core.Tests.csproj" />
+    <Project Path="tests/WindowsPartitionManager.App.Tests/WindowsPartitionManager.App.Tests.csproj" />
     <Project Path="tests/WindowsPartitionManager.Integration.Tests/WindowsPartitionManager.Integration.Tests.csproj" />
   </Folder>
 </Solution>

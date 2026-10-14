@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using WindowsPartitionManager.Core.Abstractions;
 using WindowsPartitionManager.Core.Formatting;
 using WindowsPartitionManager.Core.Operations;
+using WindowsPartitionManager.Platform.Windows;
 
 namespace WindowsPartitionManager.App.ViewModels;
 
@@ -22,14 +23,14 @@ public sealed class UnblockStepViewModel(UnblockStep step) : INotifyPropertyChan
     {
         get
         {
-            var parts = new List<string> { $"{ByteSize.Format(Step.BytesPastTarget)} past the target" };
-            if (Step.RequiresReboot) parts.Add("needs a reboot");
-            parts.Add(Step.Reversible ? "Windows Partition Manager can undo this" : "cannot be undone");
+            var parts = new List<string> { Localization.Format("Unblock_PastTarget", ByteSize.Format(Step.BytesPastTarget)) };
+            if (Step.RequiresReboot) parts.Add(Localization.Get("Unblock_NeedsReboot"));
+            parts.Add(Step.Reversible ? Localization.Get("Unblock_CanUndo") : Localization.Get("Unblock_CannotUndo"));
             return string.Join(" · ", parts);
         }
     }
 
-    public string FilesText => string.Join("\n", Step.Files.Take(6)) + (Step.Files.Count > 6 ? $"\n… and {Step.Files.Count - 6} more" : string.Empty);
+    public string FilesText => string.Join("\n", Step.Files.Take(6)) + (Step.Files.Count > 6 ? "\n" + Localization.Format("Unblock_MoreFiles", Step.Files.Count - 6) : string.Empty);
 
     public bool IsSelected
     {
@@ -76,7 +77,7 @@ public sealed class UnblockViewModel : INotifyPropertyChanged
 
     public char DriveLetter { get; }
 
-    public string Title => $"Unblock shrink · {DriveLetter}:";
+    public string Title => Localization.Format("Unblock_Title", DriveLetter);
 
     public string Summary => UnblockPlanner.Summarize(Steps.Select(s => s.Step).ToList());
 
@@ -91,8 +92,8 @@ public sealed class UnblockViewModel : INotifyPropertyChanged
     public bool HasPendingRestore => _operations.LoadState() is { HasSomethingToRestore: true };
 
     public string RestoreText => _operations.LoadState() is { } s
-        ? $"Windows Partition Manager changed settings on {s.AppliedAt:yyyy-MM-dd HH:mm} for {s.Volume}: and can restore them."
-        : "No settings to restore.";
+        ? Localization.Format("Unblock_RestoreText", LanguagePreference.FormatTimestamp(s.AppliedAt), s.Volume)
+        : Localization.Get("Unblock_NoRestore");
 
     public bool IsBusy
     {
@@ -148,9 +149,9 @@ public sealed class UnblockViewModel : INotifyPropertyChanged
         }
 
         var lines = string.Join("\n", selected.Select(s => "• " + s.Title));
-        var irreversible = selected.Any(s => !s.Reversible) ? "\n\nDeleting restore points cannot be undone." : string.Empty;
-        var reboot = selected.Any(s => s.RequiresReboot) ? "\n\nThe page file change takes effect after a reboot." : string.Empty;
-        if (!_confirm($"Apply these steps on {DriveLetter}:?\n\n{lines}{irreversible}{reboot}"))
+        var irreversible = selected.Any(s => !s.Reversible) ? "\n\n" + Localization.Get("Unblock_Irreversible") : string.Empty;
+        var reboot = selected.Any(s => s.RequiresReboot) ? "\n\n" + Localization.Get("Unblock_RebootNote") : string.Empty;
+        if (!_confirm(Localization.Format("Unblock_ApplyTitle", DriveLetter) + "\n\n" + lines + irreversible + reboot))
         {
             return;
         }
@@ -161,10 +162,10 @@ public sealed class UnblockViewModel : INotifyPropertyChanged
         {
             var state = await _runner.ApplyAsync(DriveLetter, selected.Select(s => s.Action), new Progress<string>(s => Status = s));
             Status = selected.Any(s => s.RequiresReboot)
-                ? "Done. Reboot, then run the shrink. Afterwards come back here and press Restore to put the settings back."
+                ? Localization.Get("Unblock_DoneReboot")
                 : state.HasSomethingToRestore
-                    ? "Done. Run the shrink now; afterwards press Restore to put the settings back."
-                    : "Done. Run the shrink now.";
+                    ? Localization.Get("Unblock_DoneRestore")
+                    : Localization.Get("Unblock_Done");
             IsDone = true;
             OnPropertyChanged(nameof(HasPendingRestore));
             OnPropertyChanged(nameof(RestoreText));
@@ -173,7 +174,7 @@ public sealed class UnblockViewModel : INotifyPropertyChanged
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
             Error = ex.Message;
-            Status = "Failed. Settings that were already changed are recorded and can be restored.";
+            Status = Localization.Get("Unblock_Failed");
             OnPropertyChanged(nameof(HasPendingRestore));
             RestoreCommand.RaiseCanExecuteChanged();
         }
@@ -185,7 +186,7 @@ public sealed class UnblockViewModel : INotifyPropertyChanged
 
     private async Task RestoreAsync()
     {
-        if (IsBusy || !_confirm("Restore hibernation and page file settings to what they were before Windows Partition Manager changed them?"))
+        if (IsBusy || !_confirm(Localization.Get("Common_RestoreConfirm")))
         {
             return;
         }

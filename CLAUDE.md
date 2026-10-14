@@ -26,7 +26,10 @@ until a human answers it. The same applies to `wpm analyze`, which needs an elev
 
 To check the layout without asking the user for a screenshot, run the dev build with
 `--screenshot <file.png> [--size 1020x700]`: it loads the disks, renders the main window to PNG
-and exits. 1020 px is the window's minimum width; the table must fit there.
+and exits. 1020 px is the window's minimum width; the table must fit there. Add `--theme Dark|Night`
+and `--language Turkish` to check other themes and translations without touching the user's saved
+settings, and `--dialog settings|new|resize|format|delete` to capture a dialog instead (opened
+only, never applied).
 
 Integration tests (`tests/WindowsPartitionManager.Integration.Tests`) need an elevated test host; they skip
 otherwise. Run them through `Start-Process cmd -Verb RunAs` with output redirected to a file in
@@ -58,7 +61,13 @@ write-through to `%LOCALAPPDATA%\WindowsPartitionManager\test-trace.log`; read i
   the UI, and tests against a VHDX, never against the developer's real disks.
 - Sizes are `ulong` bytes in the model; format only at the UI edge with `ByteSize.Format`.
 - Keep the UI dependency-free until there is a concrete need for an MVVM or theming library.
-- The UI and all code stay in English (user requirement); no Turkish strings or identifiers.
+- Code, identifiers and comments stay in English, and English is the default UI language (Turkish is an option in Settings). User-facing UI strings are localizable: English
+  is the neutral `Strings.resx`, satellites like `Strings.tr.resx` provide translations, and XAML
+  / view models must read them through `{DynamicResource}` / `Localization.Get` rather than
+  hardcoding new strings. Messages produced in Core or the platform layer go through `CoreText`
+  (`Core/Localization/CoreStrings*.resx`), never through string literals; never branch on
+  message text.
+- How to add a language setting: see `docs/ADDING_A_LANGUAGE.md`.
 - Partition colours live in `PartitionColors`; the disk map and the table swatches must share them.
 
 ## Packaging
