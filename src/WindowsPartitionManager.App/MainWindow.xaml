@@ -78,13 +78,21 @@
         <!-- One menu per row: every item is a RowAction; the row itself is the command parameter. -->
         <ContextMenu x:Key="RowActionsMenu" x:Shared="False" ItemsSource="{Binding Actions}">
             <ContextMenu.ItemContainerStyle>
-                <Style TargetType="MenuItem">
+                <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
                     <Setter Property="Header" Value="{Binding Name}" />
+                    <!-- The header text follows the item's Foreground, so destructive items stay red. -->
+                    <Setter Property="HeaderTemplate">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=MenuItem}}" />
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
                     <Setter Property="Command" Value="{Binding Command}" />
                     <Setter Property="CommandParameter" Value="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding IsDestructive}" Value="True">
-                            <Setter Property="Foreground" Value="#D13438" />
+                            <Setter Property="Foreground" Value="{DynamicResource Danger}" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
@@ -101,10 +109,17 @@
 
         <!-- Toolbar: acts on the selected row; the Actions menu on each row does the same. -->
         <Border Grid.Row="0" Background="{DynamicResource CardBackground}" BorderBrush="{DynamicResource CardBorder}" BorderThickness="0,0,0,1" Padding="10,6">
-            <DockPanel>
-                <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center" Style="{StaticResource Secondary}" Margin="12,0,6,0"
-                           Text="{Binding SelectionText}" />
-                <StackPanel Orientation="Horizontal">
+            <!-- The buttons always get their full width; the hint takes what is left and wraps or
+                 trims, so longer translations can never push a button out of the window. -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Right" Style="{StaticResource Secondary}" Margin="12,0,6,0"
+                           TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="40"
+                           Text="{Binding SelectionText}" ToolTip="{Binding SelectionText}" />
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
                     <Button Style="{StaticResource ToolbarButton}" Command="{Binding RefreshCommand}" ToolTip="{DynamicResource Main_RefreshTip}">
                         <StackPanel>
                             <TextBlock Style="{StaticResource ToolbarGlyph}" Text="&#xE72C;" Foreground="#0078D4" />
@@ -150,7 +165,7 @@
                         </StackPanel>
                     </Button>
                 </StackPanel>
-            </DockPanel>
+            </Grid>
         </Border>
 
         <!-- Disk list -->
@@ -229,12 +244,12 @@
                                                             <TextBlock Text="{DynamicResource Col_Type}" />
                                                         </GridViewColumn.Header>
                                                     </GridViewColumn>
-                                                    <GridViewColumn Width="90" DisplayMemberBinding="{Binding FileSystem}">
+                                                    <GridViewColumn Width="100" DisplayMemberBinding="{Binding FileSystem}">
                                                         <GridViewColumn.Header>
                                                             <TextBlock Text="{DynamicResource Col_FileSystem}" />
                                                         </GridViewColumn.Header>
                                                     </GridViewColumn>
-                                                    <GridViewColumn Width="130" DisplayMemberBinding="{Binding Label}">
+                                                    <GridViewColumn Width="120" DisplayMemberBinding="{Binding Label}">
                                                         <GridViewColumn.Header>
                                                             <TextBlock Text="{DynamicResource Col_Label}" />
                                                         </GridViewColumn.Header>

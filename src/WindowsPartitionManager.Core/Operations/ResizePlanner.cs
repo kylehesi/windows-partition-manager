@@ -1,6 +1,7 @@
 using WindowsPartitionManager.Core.Abstractions;
 using WindowsPartitionManager.Core.Formatting;
 using WindowsPartitionManager.Core.Layout;
+using WindowsPartitionManager.Core.Localization;
 using WindowsPartitionManager.Core.Model;
 
 namespace WindowsPartitionManager.Core.Operations;
@@ -62,35 +63,35 @@ public static class ResizePlanner
 
         if (request.DiskNumber != disk.Number || request.PartitionNumber != partition.Number)
         {
-            Error("The request does not match the given disk and partition.");
+            Error(CoreText.Get("Common_RequestMismatch"));
             return issues;
         }
 
         if (disk.IsReadOnly)
         {
-            Error("The disk is read-only.");
+            Error(CoreText.Get("Common_DiskReadOnly"));
         }
 
         if (disk.IsOffline)
         {
-            Error("The disk is offline.");
+            Error(CoreText.Get("Common_DiskOffline"));
         }
 
         if (partition.Kind != PartitionKind.Basic)
         {
-            Error($"Only basic data partitions can be resized; this one is '{partition.TypeDescription}'.");
+            Error(CoreText.Format("Resize_OnlyBasicData", CoreText.PartitionType(partition.TypeDescription)));
             return issues;
         }
 
         if (partition.Volume is not { } volume)
         {
-            Error("The partition has no mounted file system, so Windows cannot resize it safely.");
+            Error(CoreText.Get("Resize_NoFileSystem"));
             return issues;
         }
 
         if (!ResizableFileSystems.Contains(volume.FileSystem, StringComparer.OrdinalIgnoreCase))
         {
-            Error($"Windows can only shrink or extend NTFS and ReFS volumes; this one is {(volume.FileSystem.Length == 0 ? "unknown" : volume.FileSystem)}.");
+            Error(CoreText.Format("Resize_OnlyNtfsReFS", volume.FileSystem.Length == 0 ? CoreText.Get("Common_Unknown") : volume.FileSystem));
             return issues;
         }
 
@@ -98,12 +99,12 @@ public static class ResizePlanner
 
         if (request.NewSizeBytes % Alignment != 0)
         {
-            Error($"The new size must be a multiple of {ByteSize.Format(Alignment)}; call Normalize first.");
+            Error(CoreText.Format("Resize_NotAligned", ByteSize.Format(Alignment)));
         }
 
         if (request.NewSizeBytes == partition.SizeBytes)
         {
-            Error("The partition already has that size.");
+            Error(CoreText.Get("Resize_SameSize"));
             return issues;
         }
 
@@ -120,7 +121,7 @@ public static class ResizePlanner
 
         if (partition.IsBoot || partition.IsSystem)
         {
-            Warn("This is the Windows system volume. Resizing it is supported, but back up important data first and do not power off during the operation.");
+            Warn(CoreText.Get("Resize_SystemVolume"));
         }
 
         return issues;
@@ -131,26 +132,26 @@ public static class ResizePlanner
         var floor = MinimumSize(partition);
         if (request.NewSizeBytes < PartitionPlanner.MinimumSizeBytes)
         {
-            error($"The partition must stay at least {ByteSize.Format(PartitionPlanner.MinimumSizeBytes)}.");
+            error(CoreText.Format("Resize_MinimumSize", ByteSize.Format(PartitionPlanner.MinimumSizeBytes)));
             return;
         }
 
         if (request.NewSizeBytes < floor)
         {
-            error($"The volume holds {ByteSize.Format(volume.UsedBytes)} of data; it cannot shrink below {ByteSize.Format(floor)}.");
+            error(CoreText.Format("Resize_BelowData", ByteSize.Format(volume.UsedBytes), ByteSize.Format(floor)));
             return;
         }
 
         if (limits is { } l && request.NewSizeBytes < l.MinimumBytes)
         {
-            error($"Windows will not shrink this volume below {ByteSize.Format(l.MinimumBytes)} because of unmovable files. Run the shrink analysis to see which files, and how to unblock them.");
+            error(CoreText.Format("Resize_UnmovableFiles", ByteSize.Format(l.MinimumBytes)));
             return;
         }
 
         var freeAfter = request.NewSizeBytes - volume.UsedBytes;
         if (freeAfter < (ulong)(request.NewSizeBytes * ComfortableHeadroom))
         {
-            warn($"Only {ByteSize.Format(freeAfter)} would stay free on the volume; NTFS works best with at least 5 % free.");
+            warn(CoreText.Format("Resize_LittleFreeLeft", ByteSize.Format(freeAfter)));
         }
     }
 
@@ -159,19 +160,19 @@ public static class ResizePlanner
         var max = MaximumSize(disk, partition);
         if (max == partition.SizeBytes)
         {
-            error("There is no unallocated space directly after this partition, so it cannot be extended. Space must be contiguous and come after the partition.");
+            error(CoreText.Get("Resize_NoSpaceAfter"));
             return;
         }
 
         if (request.NewSizeBytes > max)
         {
-            error($"At most {ByteSize.Format(max - partition.SizeBytes)} is free right after this partition; the request needs {ByteSize.Format(request.NewSizeBytes - partition.SizeBytes)} more.");
+            error(CoreText.Format("Resize_NotEnoughAfter", ByteSize.Format(max - partition.SizeBytes), ByteSize.Format(request.NewSizeBytes - partition.SizeBytes)));
             return;
         }
 
         if (limits is { } l && request.NewSizeBytes > l.MaximumBytes)
         {
-            error($"Windows reports a maximum size of {ByteSize.Format(l.MaximumBytes)} for this partition.");
+            error(CoreText.Format("Resize_WindowsMaximum", ByteSize.Format(l.MaximumBytes)));
         }
     }
 }

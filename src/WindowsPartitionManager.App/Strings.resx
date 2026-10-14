@@ -173,4 +173,13 @@
   <data name="Unblock_Done" xml:space="preserve"><value>Done. Run the shrink now.</value></data>
   <data name="Unblock_Failed" xml:space="preserve"><value>Failed. Settings that were already changed are recorded and can be restored.</value></data>
   <data name="Unblock_ApplySelected" xml:space="preserve"><value>Apply selected</value></data>
+  <data name="Severity_Error" xml:space="preserve"><value>Error</value></data>
+  <data name="Severity_Warning" xml:space="preserve"><value>Warning</value></data>
+  <data name="Theme_White" xml:space="preserve"><value>White</value></data>
+  <data name="Theme_Dark" xml:space="preserve"><value>Dark</value></data>
+  <data name="Theme_Night" xml:space="preserve"><value>Night</value></data>
+  <data name="Language_English" xml:space="preserve"><value>English</value></data>
+  <data name="Language_Turkish" xml:space="preserve"><value>Türkçe</value></data>
+  <data name="Map_Location" xml:space="preserve"><value>{0} at {1}</value></data>
+  <data name="Map_UsedFree" xml:space="preserve"><value>{0} used, {1} free</value></data>
 </root>

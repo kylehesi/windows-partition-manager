@@ -1,5 +1,6 @@
 using WindowsPartitionManager.Core.Formatting;
 using WindowsPartitionManager.Core.Layout;
+using WindowsPartitionManager.Core.Localization;
 using WindowsPartitionManager.Core.Model;
 
 namespace WindowsPartitionManager.Core.Operations;
@@ -72,70 +73,71 @@ public static class PartitionPlanner
 
         if (request.DiskNumber != disk.Number)
         {
-            Error($"Request targets disk {request.DiskNumber} but the layout is for disk {disk.Number}.");
+            Error(CoreText.Format("Create_WrongDisk", request.DiskNumber, disk.Number));
             return issues;
         }
 
         if (disk.Style is PartitionStyle.Raw or PartitionStyle.Unknown)
         {
-            Error("The disk has no partition table. Initialize it (GPT) before creating partitions.");
+            Error(CoreText.Get("Create_NoPartitionTable"));
         }
 
         if (disk.IsReadOnly)
         {
-            Error("The disk is read-only.");
+            Error(CoreText.Get("Common_DiskReadOnly"));
         }
 
         if (disk.IsOffline)
         {
-            Error("The disk is offline. Bring it online first.");
+            Error(CoreText.Get("Create_DiskOfflineBringOnline"));
         }
 
         if (disk.Style == PartitionStyle.Mbr && disk.Partitions.Count(p => p.Kind != PartitionKind.Extended) >= MbrPrimaryPartitionLimit)
         {
-            Error("An MBR disk can hold at most four primary partitions. Convert the disk to GPT or delete a partition.");
+            Error(CoreText.Get("Create_MbrPrimaryLimit"));
         }
 
         if (request.OffsetBytes % Alignment != 0)
         {
-            Error($"The start offset must be aligned to {ByteSize.Format(Alignment)}; call Normalize first.");
+            Error(CoreText.Format("Create_OffsetNotAligned", ByteSize.Format(Alignment)));
         }
 
         if (request.SizeBytes < MinimumSizeBytes)
         {
-            Error($"The partition must be at least {ByteSize.Format(MinimumSizeBytes)}.");
+            Error(CoreText.Format("Create_TooSmall", ByteSize.Format(MinimumSizeBytes)));
         }
 
-        if (issues.Count == 0 || !issues.Any(i => i.IsError && i.Message.Contains("partition table", StringComparison.Ordinal)))
+        // Without a partition table there is no free region to look for.
+        if (disk.Style is not (PartitionStyle.Raw or PartitionStyle.Unknown))
         {
             if (FindContainingRegion(disk, request) is null)
             {
                 var max = MaximumSizeAt(disk, request.OffsetBytes);
                 Error(max == 0
-                    ? $"Offset {ByteSize.Format(request.OffsetBytes)} is not inside unallocated space."
-                    : $"The partition does not fit: at most {ByteSize.Format(max)} is free at that offset, {ByteSize.Format(request.SizeBytes)} requested.");
+                    ? CoreText.Format("Create_OffsetNotFree", ByteSize.Format(request.OffsetBytes))
+                    : CoreText.Format("Create_DoesNotFit", ByteSize.Format(max), ByteSize.Format(request.SizeBytes)));
             }
         }
 
         // Windows' own number is the final word: CreatePartition fails with "not enough free space" above it.
         if (disk.LargestFreeExtentBytes > 0 && request.SizeBytes > disk.LargestFreeExtentBytes)
         {
-            Error($"Windows reports at most {ByteSize.Format(disk.LargestFreeExtentBytes)} of contiguous free space on this disk; {ByteSize.Format(request.SizeBytes)} requested.");
+            Error(CoreText.Format("Create_LargestFreeExtent", ByteSize.Format(disk.LargestFreeExtentBytes), ByteSize.Format(request.SizeBytes)));
         }
 
         if (!SupportedFileSystems.Contains(request.FileSystem, StringComparer.OrdinalIgnoreCase))
         {
-            Error($"Unsupported file system '{request.FileSystem}'. Use one of: {string.Join(", ", SupportedFileSystems)}.");
+            Error(CoreText.Format("Common_UnsupportedFileSystem", request.FileSystem, string.Join(", ", SupportedFileSystems)));
         }
         else if (request.FileSystem.Equals("FAT32", StringComparison.OrdinalIgnoreCase) && request.SizeBytes > Fat32MaximumBytes)
         {
-            Error("Windows cannot format FAT32 volumes larger than 32 GB. Use exFAT or NTFS.");
+            Error(CoreText.Get("Common_Fat32TooLarge"));
         }
 
         var labelLimit = request.FileSystem.Equals("FAT32", StringComparison.OrdinalIgnoreCase) ? 11 : 32;
         if (request.Label.Length > labelLimit)
         {
-            Error($"The label is too long for {request.FileSystem} (maximum {labelLimit} characters).");
+            Error(CoreText.Format("Common_LabelTooLong", request.FileSystem, labelLimit));
         }
 
         if (request.DriveLetter is { } letter)
@@ -143,21 +145,21 @@ public static class PartitionPlanner
             var upper = char.ToUpperInvariant(letter);
             if (upper < 'C' || upper > 'Z')
             {
-                Error("Drive letter must be between C and Z.");
+                Error(CoreText.Get("Create_LetterRange"));
             }
             else if (lettersInUse is not null && lettersInUse.Contains(upper))
             {
-                Error($"Drive letter {upper}: is already in use.");
+                Error(CoreText.Format("Create_LetterInUse", upper));
             }
         }
         else
         {
-            Warn("No drive letter chosen; Windows will assign the next free one.");
+            Warn(CoreText.Get("Create_NoLetter"));
         }
 
         if (!request.QuickFormat)
         {
-            Warn("A full format writes every sector and can take hours on large partitions.");
+            Warn(CoreText.Get("Common_FullFormatSlow"));
         }
 
         issues.AddRange(SafetyChecks.Disk(disk));
@@ -180,35 +182,35 @@ public static class PartitionPlanner
 
         if (disk.IsReadOnly)
         {
-            Error("The disk is read-only.");
+            Error(CoreText.Get("Common_DiskReadOnly"));
         }
 
         if (disk.IsOffline)
         {
-            Error("The disk is offline.");
+            Error(CoreText.Get("Common_DiskOffline"));
         }
 
         if (partition.IsBoot || partition.IsSystem)
         {
-            Error("This partition holds Windows or its boot files. Windows Partition Manager refuses to delete it.");
+            Error(CoreText.Get("Delete_WindowsPartition"));
         }
         else if ((disk.IsSystem || disk.IsBoot) && partition.Kind != PartitionKind.Basic)
         {
-            Error($"'{partition.TypeDescription}' on the Windows disk may be needed to start, repair or restore the computer. Only basic data partitions can be deleted there.");
+            Error(CoreText.Format("Delete_NeededToStart", CoreText.PartitionType(partition.TypeDescription)));
         }
 
         if (partition.Kind == PartitionKind.Extended)
         {
-            Error("Delete the logical drives inside the extended partition first.");
+            Error(CoreText.Get("Delete_LogicalDrivesFirst"));
         }
 
         if (partition.Volume is { } volume && volume.UsedBytes > 0)
         {
-            Warn($"The volume holds {ByteSize.Format(volume.UsedBytes)} of data" + (volume.Label is { Length: > 0 } l ? $" (\"{l}\")" : string.Empty) + ". Everything on it is lost. Back it up first.");
+            Warn(CoreText.Format("Common_VolumeHoldsData", ByteSize.Format(volume.UsedBytes), volume.Label is { Length: > 0 } l ? $" (\"{l}\")" : string.Empty));
         }
         else
         {
-            Warn("Everything on the partition is lost.");
+            Warn(CoreText.Get("Common_EverythingLost"));
         }
 
         issues.AddRange(SafetyChecks.Disk(disk));

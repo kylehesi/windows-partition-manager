@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using WindowsPartitionManager.Core.Formatting;
+using WindowsPartitionManager.Core.Localization;
 using WindowsPartitionManager.Core.Model;
 
 namespace WindowsPartitionManager.App.Controls;
@@ -52,7 +53,7 @@ public sealed class DiskMapControl : FrameworkElement
 
         var title = partition.DriveLetter is { } letter
             ? (partition.Volume?.Label is { Length: > 0 } label ? $"{letter}: {label}" : $"{letter}:")
-            : partition.TypeDescription;
+            : CoreText.PartitionType(partition.TypeDescription);
         return (title, size);
     }
 
@@ -129,11 +130,11 @@ public sealed class DiskMapControl : FrameworkElement
             {
                 var segment = segments[i];
                 var text = segment.Partition is { } p
-                    ? $"{(p.DriveLetter is { } l ? $"{l}: " : string.Empty)}{p.TypeDescription}" +
+                    ? $"{(p.DriveLetter is { } l ? $"{l}: " : string.Empty)}{CoreText.PartitionType(p.TypeDescription)}" +
                       (p.Volume is { } v ? $" ({v.FileSystem}{(v.Label is { Length: > 0 } label ? $" \"{label}\"" : string.Empty)})" : string.Empty) +
-                      $"\n{ByteSize.Format(segment.SizeBytes)} at {ByteSize.Format(segment.OffsetBytes)}" +
-                      (p.Volume is { } vol ? $"\n{ByteSize.Format(vol.UsedBytes)} used, {ByteSize.Format(vol.FreeBytes)} free" : string.Empty)
-                    : $"{Localization.Get("Common_Unallocated")}\n{ByteSize.Format(segment.SizeBytes)} at {ByteSize.Format(segment.OffsetBytes)}";
+                      "\n" + Localization.Format("Map_Location", ByteSize.Format(segment.SizeBytes), ByteSize.Format(segment.OffsetBytes)) +
+                      (p.Volume is { } vol ? "\n" + Localization.Format("Map_UsedFree", ByteSize.Format(vol.UsedBytes), ByteSize.Format(vol.FreeBytes)) : string.Empty)
+                    : $"{Localization.Get("Common_Unallocated")}\n" + Localization.Format("Map_Location", ByteSize.Format(segment.SizeBytes), ByteSize.Format(segment.OffsetBytes));
 
                 if (!Equals(ToolTip, text))
                 {

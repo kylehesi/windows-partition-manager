@@ -158,10 +158,12 @@ The **Settings** window lets you pick one of three colour themes — **White** (
 and **Night** (blue) — a UI font (Segoe UI, Arial, Calibri, Consolas or Times New Roman), and a
 UI language (English, the default, or Turkish). Changing any of them takes effect immediately and is remembered
 on the next launch. The language sets the culture used for dates and numbers — in the app and in
-the `wpm` command-line tool — and translates the interface strings to Turkish when Turkish is
-chosen (the `wpm` command-line output and the shrink-analysis report stay in English). Log and
-analysis output stay in a monospace font; the partition colours in the disk map and table are not
-changed by the theme.
+the `wpm` command-line tool — and, when Turkish is chosen, translates the whole desktop app:
+the interface, the validation and safety warnings, the partition type names, progress messages,
+Windows' error descriptions and the shrink-analysis report. The `wpm` command-line output stays
+in English. Every control, including drop-down lists, menus and tooltips, follows the chosen
+theme. Log and analysis output stay in a monospace font; the partition colours in the disk map
+and table are not changed by the theme.
 
 ### Typical use: a new drive from the free space of C:
 

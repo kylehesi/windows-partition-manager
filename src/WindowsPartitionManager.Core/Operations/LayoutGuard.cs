@@ -1,4 +1,5 @@
 using WindowsPartitionManager.Core.Formatting;
+using WindowsPartitionManager.Core.Localization;
 using WindowsPartitionManager.Core.Model;
 
 namespace WindowsPartitionManager.Core.Operations;
@@ -51,31 +52,31 @@ public sealed record PartitionFingerprint(int Number, ulong OffsetBytes, ulong S
 /// </summary>
 public static class LayoutGuard
 {
-    public const string RefreshHint = "The disk layout changed since it was shown. Refresh and choose again; nothing was changed.";
+    public static string RefreshHint => CoreText.Get("Guard_RefreshHint");
 
     /// <summary>Returns an error issue when the fresh layout does not match what the user saw, otherwise null.</summary>
     public static ValidationIssue? Check(Disk? current, DiskFingerprint? expectedDisk, Partition? currentPartition = null, PartitionFingerprint? expectedPartition = null)
     {
         if (current is null)
         {
-            return new ValidationIssue(IssueSeverity.Error, $"The disk is no longer present. {RefreshHint}");
+            return new ValidationIssue(IssueSeverity.Error, CoreText.Format("Guard_DiskGone", RefreshHint));
         }
 
         if (expectedDisk is not null && !expectedDisk.Matches(current))
         {
-            return new ValidationIssue(IssueSeverity.Error, $"Disk {current.Number} is now '{current.FriendlyName}' ({ByteSize.Format(current.SizeBytes)}), not '{expectedDisk.FriendlyName}' ({ByteSize.Format(expectedDisk.SizeBytes)}). {RefreshHint}");
+            return new ValidationIssue(IssueSeverity.Error, CoreText.Format("Guard_DiskChanged", current.Number, current.FriendlyName, ByteSize.Format(current.SizeBytes), expectedDisk.FriendlyName, ByteSize.Format(expectedDisk.SizeBytes), RefreshHint));
         }
 
         if (expectedPartition is not null)
         {
             if (currentPartition is null)
             {
-                return new ValidationIssue(IssueSeverity.Error, $"Partition {expectedPartition.Number} no longer exists. {RefreshHint}");
+                return new ValidationIssue(IssueSeverity.Error, CoreText.Format("Guard_PartitionGone", expectedPartition.Number, RefreshHint));
             }
 
             if (!expectedPartition.Matches(currentPartition))
             {
-                return new ValidationIssue(IssueSeverity.Error, $"Partition {expectedPartition.Number} is now at {ByteSize.Format(currentPartition.OffsetBytes)} with {ByteSize.Format(currentPartition.SizeBytes)}, not at {ByteSize.Format(expectedPartition.OffsetBytes)} with {ByteSize.Format(expectedPartition.SizeBytes)}. {RefreshHint}");
+                return new ValidationIssue(IssueSeverity.Error, CoreText.Format("Guard_PartitionMoved", expectedPartition.Number, ByteSize.Format(currentPartition.OffsetBytes), ByteSize.Format(currentPartition.SizeBytes), ByteSize.Format(expectedPartition.OffsetBytes), ByteSize.Format(expectedPartition.SizeBytes), RefreshHint));
             }
         }
 

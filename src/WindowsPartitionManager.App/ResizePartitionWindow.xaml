@@ -79,7 +79,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <TextBlock TextWrapping="Wrap" Margin="0,0,0,4">
-                                <Run Text="{Binding Severity, Mode=OneWay}" FontWeight="SemiBold" />
+                                <Run Text="{Binding Severity, Mode=OneWay, Converter={x:Static controls:Converters.Localized}, ConverterParameter=Severity_}" FontWeight="SemiBold" />
                                 <Run Text=" " />
                                 <Run Text="{Binding Message, Mode=OneWay}" />
                                 <TextBlock.Style>

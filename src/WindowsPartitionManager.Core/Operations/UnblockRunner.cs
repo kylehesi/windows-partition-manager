@@ -1,4 +1,5 @@
 using WindowsPartitionManager.Core.Abstractions;
+using WindowsPartitionManager.Core.Localization;
 
 namespace WindowsPartitionManager.Core.Operations;
 
@@ -25,19 +26,19 @@ public sealed class UnblockRunner(IUnblockOperations operations)
                 case UnblockAction.DisableHibernation:
                     if (operations.IsHibernationEnabled())
                     {
-                        progress?.Report("Turning hibernation off…");
+                        progress?.Report(CoreText.Get("Unblock_HibernationOff"));
                         await operations.SetHibernationAsync(false, cancellationToken).ConfigureAwait(false);
                         state = Record(state with { HibernationWasEnabled = true });
                     }
                     else
                     {
-                        progress?.Report("Hibernation is already off.");
+                        progress?.Report(CoreText.Get("Unblock_HibernationAlreadyOff"));
                     }
 
                     break;
 
                 case UnblockAction.DisablePageFile:
-                    progress?.Report($"Removing the page file from {volume}:…");
+                    progress?.Report(CoreText.Format("Unblock_RemovingPageFile", volume));
                     var wasAutomatic = operations.IsPageFileAutomatic();
 
                     // Record the intent first: if the change below half-succeeds, restore still knows what to undo.
@@ -49,12 +50,12 @@ public sealed class UnblockRunner(IUnblockOperations operations)
                         TemporaryPageFileVolume = change.TemporaryVolume ?? state.TemporaryPageFileVolume,
                     });
                     progress?.Report(change.TemporaryVolume is { } temp
-                        ? $"A system-managed page file will be used on {temp}: until you restore."
-                        : "No other suitable drive was found: the computer will run without a page file until you restore.");
+                        ? CoreText.Format("Unblock_TemporaryPageFile", temp)
+                        : CoreText.Get("Unblock_NoPageFile"));
                     break;
 
                 case UnblockAction.DeleteShadowCopies:
-                    progress?.Report($"Deleting shadow copies on {volume}:…");
+                    progress?.Report(CoreText.Format("Unblock_DeletingShadows", volume));
                     var deleted = await operations.DeleteShadowCopiesAsync(volume, cancellationToken).ConfigureAwait(false);
                     state = Record(state with { ShadowCopiesDeleted = state.ShadowCopiesDeleted + deleted });
                     break;
@@ -69,26 +70,26 @@ public sealed class UnblockRunner(IUnblockOperations operations)
         var state = operations.LoadState();
         if (state is null)
         {
-            progress?.Report("Nothing to restore.");
+            progress?.Report(CoreText.Get("Unblock_NothingToRestore"));
             return;
         }
 
         if (state.HibernationWasEnabled)
         {
-            progress?.Report("Turning hibernation back on…");
+            progress?.Report(CoreText.Get("Unblock_HibernationOn"));
             await operations.SetHibernationAsync(true, cancellationToken).ConfigureAwait(false);
             state = Record(state with { HibernationWasEnabled = false });
         }
 
         if (state.PageFileChanged)
         {
-            progress?.Report("Restoring the page file setting…");
+            progress?.Report(CoreText.Get("Unblock_RestoringPageFile"));
             await operations.RestorePageFileAsync(state.RemovedPageFile, state.PageFileWasAutomatic, state.TemporaryPageFileVolume, cancellationToken).ConfigureAwait(false);
             state = Record(state with { PageFileChanged = false, RemovedPageFile = null, TemporaryPageFileVolume = null, PageFileWasAutomatic = false });
         }
 
         operations.SaveState(null);
-        progress?.Report("Previous settings restored. A reboot applies the page file change.");
+        progress?.Report(CoreText.Get("Unblock_Restored"));
     }
 
     /// <summary>Persists the state now (or clears it when nothing is left to restore) and returns it.</summary>

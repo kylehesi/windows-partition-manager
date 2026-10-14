@@ -1,5 +1,6 @@
 using WindowsPartitionManager.Core.Abstractions;
 using WindowsPartitionManager.Core.Layout;
+using WindowsPartitionManager.Core.Localization;
 using WindowsPartitionManager.Core.Model;
 
 namespace WindowsPartitionManager.Core.Operations;
@@ -72,13 +73,13 @@ public static class ShrinkAndCreatePlanner
 
         if (request.DiskNumber != disk.Number || request.PartitionNumber != partition.Number)
         {
-            Error("The request does not match the given disk and partition.");
+            Error(CoreText.Get("Common_RequestMismatch"));
             return issues;
         }
 
         if (request.NewSizeBytes >= partition.SizeBytes)
         {
-            Error("Shrink and create must shrink the partition; choose a size smaller than the current one.");
+            Error(CoreText.Get("ShrinkCreate_MustShrink"));
             return issues;
         }
 
@@ -96,7 +97,7 @@ public static class ShrinkAndCreatePlanner
         var create = CreateRequest(request, disk, partition);
         if (create is null)
         {
-            Error("The shrink does not free enough contiguous space for a new partition.");
+            Error(CoreText.Get("ShrinkCreate_NotEnoughFreed"));
         }
         else
         {

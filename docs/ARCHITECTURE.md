@@ -208,8 +208,20 @@ form, other cultures use their short date/time. The user-facing strings live in 
 `ResourceDictionary` of every key for the chosen culture and swaps it into the application's
 merged dictionaries (the same pattern as the theme), and the view models read strings through
 `Localization.Get` / `Localization.Format`. The XAML reads them with `DynamicResource` (column
-headers are wrapped in `TextBlock`s because `GridViewColumn` is not a `FrameworkElement`). The
-code, identifiers, comments and the CLI's analysis output stay in English. At startup
+headers are wrapped in `TextBlock`s because `GridViewColumn` is not a `FrameworkElement`).
+Messages that originate below the UI (planner and `SafetyChecks` issues, `LayoutGuard`
+refusals, unblock steps and progress, the shrink analysis and its report, partition type names,
+Storage Management API return codes and the operations layer's own messages) come from
+`CoreText` in Core, backed by `Localization/CoreStrings.resx` and `CoreStrings.tr.resx`. Its
+culture is a property rather than the thread culture: it stays English unless `Localization`
+switches it with the user's choice, so the CLI and the tests keep English output whatever language
+Windows runs in. No rule depends on message text. The code, identifiers and comments stay in
+English.
+
+Implicit styles in `App.xaml` give every stock control the theme brushes. The ComboBox, GroupBox,
+ContextMenu and MenuItem need full templates: their stock templates hardcode light colours (the
+ComboBox's drop-down button, the GroupBox's white inner border), and menus and tooltips open in
+their own popup windows. At startup
 `ThemeManager` also points WPF's default element `Language` at the UI
 culture, and changing the language updates the open windows' `Language` immediately. `SettingsStore`
 reads and writes `%LOCALAPPDATA%\WindowsPartitionManager\settings.json` (atomically, temp file
@@ -218,9 +230,11 @@ The choices apply immediately and are applied on startup. `PartitionColors` (the
 swatch palette) and the toolbar action-glyph / status-indicator colours are deliberately untouched
 by themes.
 
-**Developer aid.** `--screenshot file.png [--size 1020x700]` loads the disks, renders the main
-window to PNG and exits; it is used to check the layout without a human (1020 px is the minimum
-window width and the table must fit there).
+**Developer aid.** `--screenshot file.png [--size 1020x700] [--theme Dark] [--language Turkish]
+[--dialog settings|new|resize|format|delete]` loads the disks, renders the main window (or the
+named dialog, opened for the first row that allows it) to PNG and exits; it is used to check the
+layout without a human (1020 px is the minimum window width and the table must fit there). The
+theme and language options are not saved, and a dialog is only opened, never applied.
 
 ## Command-line tool (`WindowsPartitionManager.Cli`)
 

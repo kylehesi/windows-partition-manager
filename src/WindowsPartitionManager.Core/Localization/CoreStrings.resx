@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Common_Unknown" xml:space="preserve"><value>unknown</value></data>
+  <data name="Common_DiskReadOnly" xml:space="preserve"><value>The disk is read-only.</value></data>
+  <data name="Common_DiskOffline" xml:space="preserve"><value>The disk is offline.</value></data>
+  <data name="Common_RequestMismatch" xml:space="preserve"><value>The request does not match the given disk and partition.</value></data>
+  <data name="Common_UnsupportedFileSystem" xml:space="preserve"><value>Unsupported file system '{0}'. Use one of: {1}.</value></data>
+  <data name="Common_Fat32TooLarge" xml:space="preserve"><value>Windows cannot format FAT32 volumes larger than 32 GB. Use exFAT or NTFS.</value></data>
+  <data name="Common_LabelTooLong" xml:space="preserve"><value>The label is too long for {0} (maximum {1} characters).</value></data>
+  <data name="Common_FullFormatSlow" xml:space="preserve"><value>A full format writes every sector and can take hours on large partitions.</value></data>
+  <data name="Common_VolumeHoldsData" xml:space="preserve"><value>The volume holds {0} of data{1}. Everything on it is lost. Back it up first.</value></data>
+  <data name="Common_EverythingLost" xml:space="preserve"><value>Everything on the partition is lost.</value></data>
+  <data name="PartitionType_Basicdata" xml:space="preserve"><value>Basic data</value></data>
+  <data name="PartitionType_EFISystem" xml:space="preserve"><value>EFI System</value></data>
+  <data name="PartitionType_MicrosoftReserved" xml:space="preserve"><value>Microsoft Reserved</value></data>
+  <data name="PartitionType_Recovery" xml:space="preserve"><value>Recovery</value></data>
+  <data name="PartitionType_LDMdata" xml:space="preserve"><value>LDM data</value></data>
+  <data name="PartitionType_StorageSpaces" xml:space="preserve"><value>Storage Spaces</value></data>
+  <data name="PartitionType_Linuxfilesystem" xml:space="preserve"><value>Linux filesystem</value></data>
+  <data name="PartitionType_Linuxswap" xml:space="preserve"><value>Linux swap</value></data>
+  <data name="PartitionType_Extended" xml:space="preserve"><value>Extended</value></data>
+  <data name="PartitionType_DynamicLDM" xml:space="preserve"><value>Dynamic (LDM)</value></data>
+  <data name="PartitionType_GPTprotective" xml:space="preserve"><value>GPT protective</value></data>
+  <data name="PartitionType_Unknown" xml:space="preserve"><value>Unknown</value></data>
+  <data name="Create_WrongDisk" xml:space="preserve"><value>Request targets disk {0} but the layout is for disk {1}.</value></data>
+  <data name="Create_NoPartitionTable" xml:space="preserve"><value>The disk has no partition table. Initialize it (GPT) before creating partitions.</value></data>
+  <data name="Create_DiskOfflineBringOnline" xml:space="preserve"><value>The disk is offline. Bring it online first.</value></data>
+  <data name="Create_MbrPrimaryLimit" xml:space="preserve"><value>An MBR disk can hold at most four primary partitions. Convert the disk to GPT or delete a partition.</value></data>
+  <data name="Create_OffsetNotAligned" xml:space="preserve"><value>The start offset must be aligned to {0}; call Normalize first.</value></data>
+  <data name="Create_TooSmall" xml:space="preserve"><value>The partition must be at least {0}.</value></data>
+  <data name="Create_OffsetNotFree" xml:space="preserve"><value>Offset {0} is not inside unallocated space.</value></data>
+  <data name="Create_DoesNotFit" xml:space="preserve"><value>The partition does not fit: at most {0} is free at that offset, {1} requested.</value></data>
+  <data name="Create_LargestFreeExtent" xml:space="preserve"><value>Windows reports at most {0} of contiguous free space on this disk; {1} requested.</value></data>
+  <data name="Create_LetterRange" xml:space="preserve"><value>Drive letter must be between C and Z.</value></data>
+  <data name="Create_LetterInUse" xml:space="preserve"><value>Drive letter {0}: is already in use.</value></data>
+  <data name="Create_NoLetter" xml:space="preserve"><value>No drive letter chosen; Windows will assign the next free one.</value></data>
+  <data name="Delete_WindowsPartition" xml:space="preserve"><value>This partition holds Windows or its boot files. Windows Partition Manager refuses to delete it.</value></data>
+  <data name="Delete_NeededToStart" xml:space="preserve"><value>'{0}' on the Windows disk may be needed to start, repair or restore the computer. Only basic data partitions can be deleted there.</value></data>
+  <data name="Delete_LogicalDrivesFirst" xml:space="preserve"><value>Delete the logical drives inside the extended partition first.</value></data>
+  <data name="Format_WindowsPartition" xml:space="preserve"><value>This partition holds Windows or its boot files. Windows Partition Manager refuses to format it.</value></data>
+  <data name="Format_OnlyBasicData" xml:space="preserve"><value>Only basic data partitions can be formatted; this one is '{0}'.</value></data>
+  <data name="Format_CannotResizeLater" xml:space="preserve"><value>Windows cannot shrink or extend {0} volumes later. Choose NTFS if you may want to resize this partition.</value></data>
+  <data name="Resize_OnlyBasicData" xml:space="preserve"><value>Only basic data partitions can be resized; this one is '{0}'.</value></data>
+  <data name="Resize_NoFileSystem" xml:space="preserve"><value>The partition has no mounted file system, so Windows cannot resize it safely.</value></data>
+  <data name="Resize_OnlyNtfsReFS" xml:space="preserve"><value>Windows can only shrink or extend NTFS and ReFS volumes; this one is {0}.</value></data>
+  <data name="Resize_NotAligned" xml:space="preserve"><value>The new size must be a multiple of {0}; call Normalize first.</value></data>
+  <data name="Resize_SameSize" xml:space="preserve"><value>The partition already has that size.</value></data>
+  <data name="Resize_SystemVolume" xml:space="preserve"><value>This is the Windows system volume. Resizing it is supported, but back up important data first and do not power off during the operation.</value></data>
+  <data name="Resize_MinimumSize" xml:space="preserve"><value>The partition must stay at least {0}.</value></data>
+  <data name="Resize_BelowData" xml:space="preserve"><value>The volume holds {0} of data; it cannot shrink below {1}.</value></data>
+  <data name="Resize_UnmovableFiles" xml:space="preserve"><value>Windows will not shrink this volume below {0} because of unmovable files. Run the shrink analysis to see which files, and how to unblock them.</value></data>
+  <data name="Resize_LittleFreeLeft" xml:space="preserve"><value>Only {0} would stay free on the volume; NTFS works best with at least 5 % free.</value></data>
+  <data name="Resize_NoSpaceAfter" xml:space="preserve"><value>There is no unallocated space directly after this partition, so it cannot be extended. Space must be contiguous and come after the partition.</value></data>
+  <data name="Resize_NotEnoughAfter" xml:space="preserve"><value>At most {0} is free right after this partition; the request needs {1} more.</value></data>
+  <data name="Resize_WindowsMaximum" xml:space="preserve"><value>Windows reports a maximum size of {0} for this partition.</value></data>
+  <data name="ShrinkCreate_MustShrink" xml:space="preserve"><value>Shrink and create must shrink the partition; choose a size smaller than the current one.</value></data>
+  <data name="ShrinkCreate_NotEnoughFreed" xml:space="preserve"><value>The shrink does not free enough contiguous space for a new partition.</value></data>
+  <data name="Safety_BatteryRefused" xml:space="preserve"><value>The computer is running on battery{0}. Plug it in before changing partitions.</value></data>
+  <data name="Safety_BatterySystemRefused" xml:space="preserve"><value>The computer is running on battery{0}. Resizing the Windows system volume is refused until it is plugged in.</value></data>
+  <data name="Safety_BatteryWarning" xml:space="preserve"><value>The computer is running on battery{0}. A power loss mid-operation is recoverable, but plugging in first avoids the question.</value></data>
+  <data name="Safety_Removable" xml:space="preserve"><value>Disk {0} is a removable {1} device. Do not unplug it until the operation has finished.</value></data>
+  <data name="Safety_TheVolume" xml:space="preserve"><value>the volume</value></data>
+  <data name="Safety_Dirty" xml:space="preserve"><value>{0} is marked dirty: Windows saw a problem or an unclean shutdown. Run 'chkdsk {0} /f', reboot if asked, then try again.</value></data>
+  <data name="Safety_NeedsRepair" xml:space="preserve"><value>Windows reports that {0} needs repair ({1}). Run 'chkdsk {0} /f' first; resizing a damaged file system is refused.</value></data>
+  <data name="Safety_ScanNeeded" xml:space="preserve"><value>scan needed</value></data>
+  <data name="Safety_SpotFixNeeded" xml:space="preserve"><value>spot fix needed</value></data>
+  <data name="Safety_FullRepairNeeded" xml:space="preserve"><value>full repair needed</value></data>
+  <data name="Guard_RefreshHint" xml:space="preserve"><value>The disk layout changed since it was shown. Refresh and choose again; nothing was changed.</value></data>
+  <data name="Guard_DiskGone" xml:space="preserve"><value>The disk is no longer present. {0}</value></data>
+  <data name="Guard_DiskChanged" xml:space="preserve"><value>Disk {0} is now '{1}' ({2}), not '{3}' ({4}). {5}</value></data>
+  <data name="Guard_PartitionGone" xml:space="preserve"><value>Partition {0} no longer exists. {1}</value></data>
+  <data name="Guard_PartitionMoved" xml:space="preserve"><value>Partition {0} is now at {1} with {2}, not at {3} with {4}. {5}</value></data>
+  <data name="Unblock_HibernationTitle" xml:space="preserve"><value>Turn hibernation off</value></data>
+  <data name="Unblock_HibernationText" xml:space="preserve"><value>Runs 'powercfg /h off', which deletes hiberfil.sys right away. Fast Startup is disabled with it, so the next boot is a normal cold boot. Turn it back on afterwards with 'powercfg /h on' (Windows Partition Manager can do this for you).</value></data>
+  <data name="Unblock_PageFileTitle" xml:space="preserve"><value>Move the page file off {0}:</value></data>
+  <data name="Unblock_PageFileText" xml:space="preserve"><value>Removes the page file from {0}: (takes effect after a reboot). If another internal NTFS drive has at least 8 GB free, a system-managed page file is set up there in the meantime; otherwise the computer runs without a page file until you restore, and very heavy memory use could make programs close. Restart, run the shrink, then restore the previous setting; Windows Partition Manager remembers it.</value></data>
+  <data name="Unblock_ShadowTitle" xml:space="preserve"><value>Delete restore points on {0}:</value></data>
+  <data name="Unblock_ShadowText" xml:space="preserve"><value>Deletes the shadow copies that System Restore and 'Previous Versions' keep on {0}:. Takes effect immediately. Existing restore points are lost; Windows creates new ones over time.</value></data>
+  <data name="Unblock_NothingRemovable" xml:space="preserve"><value>Nothing removable stands in the way.</value></data>
+  <data name="Unblock_SummaryReboot" xml:space="preserve"><value> One step needs a reboot before the shrink can use the space.</value></data>
+  <data name="Unblock_Summary" xml:space="preserve"><value>{0} step(s) would free {1} of unmovable data past the target.{2}</value></data>
+  <data name="Unblock_HibernationOff" xml:space="preserve"><value>Turning hibernation off…</value></data>
+  <data name="Unblock_HibernationAlreadyOff" xml:space="preserve"><value>Hibernation is already off.</value></data>
+  <data name="Unblock_RemovingPageFile" xml:space="preserve"><value>Removing the page file from {0}:…</value></data>
+  <data name="Unblock_TemporaryPageFile" xml:space="preserve"><value>A system-managed page file will be used on {0}: until you restore.</value></data>
+  <data name="Unblock_NoPageFile" xml:space="preserve"><value>No other suitable drive was found: the computer will run without a page file until you restore.</value></data>
+  <data name="Unblock_DeletingShadows" xml:space="preserve"><value>Deleting shadow copies on {0}:…</value></data>
+  <data name="Unblock_NothingToRestore" xml:space="preserve"><value>Nothing to restore.</value></data>
+  <data name="Unblock_HibernationOn" xml:space="preserve"><value>Turning hibernation back on…</value></data>
+  <data name="Unblock_RestoringPageFile" xml:space="preserve"><value>Restoring the page file setting…</value></data>
+  <data name="Unblock_Restored" xml:space="preserve"><value>Previous settings restored. A reboot applies the page file change.</value></data>
+  <data name="Analysis_ReadingBitmap" xml:space="preserve"><value>Reading allocation bitmap</value></data>
+  <data name="Analysis_Classifying" xml:space="preserve"><value>Classifying files</value></data>
+  <data name="Analysis_SelectingFiles" xml:space="preserve"><value>Selecting files</value></data>
+  <data name="Analysis_ReadingLayout" xml:space="preserve"><value>Reading file layout</value></data>
+  <data name="Analysis_ReasonImmovable" xml:space="preserve"><value>NTFS reports this file's data as immovable.</value></data>
+  <data name="Analysis_ReasonPageFile" xml:space="preserve"><value>Page file; the memory manager keeps it open and Windows will not move it.</value></data>
+  <data name="Analysis_ReasonHibernation" xml:space="preserve"><value>Hibernation file; cannot be moved while hibernation is enabled.</value></data>
+  <data name="Analysis_ReasonMetadata" xml:space="preserve"><value>NTFS metadata; cannot be moved while the volume is mounted.</value></data>
+  <data name="Analysis_ReasonShadow" xml:space="preserve"><value>System Restore / shadow copy storage; Windows treats it as unmovable.</value></data>
+  <data name="Analysis_AdviceWindowsReaches" xml:space="preserve"><value>Windows itself reports it can shrink this volume to {0}, which already reaches the target. Disk Management should accept it.</value></data>
+  <data name="Analysis_AdvicePageFile" xml:space="preserve"><value>Move the page file to another volume or disable it temporarily (System Properties &gt; Advanced &gt; Performance &gt; Virtual memory), reboot, shrink, then restore it.</value></data>
+  <data name="Analysis_AdviceHibernation" xml:space="preserve"><value>Turn hibernation off with 'powercfg /h off' (as administrator), reboot, shrink, then 'powercfg /h on' if you want it back. This also disables Fast Startup.</value></data>
+  <data name="Analysis_AdviceShadow" xml:space="preserve"><value>Delete restore points / shadow copies on {0}: ('vssadmin delete shadows /for={0}: /all' as administrator) or turn System Protection off for this drive, shrink, then turn it back on.</value></data>
+  <data name="Analysis_AdviceMetadata" xml:space="preserve"><value>Immovable NTFS data ends at {0}; the volume cannot be shrunk below that while mounted. Moving metadata is a planned offline feature.</value></data>
+  <data name="Analysis_AdviceMovable" xml:space="preserve"><value>{0:N0} movable file(s) ({1}) sit past the target; Windows relocates these automatically during a shrink, but consolidating first with 'defrag {2}: /X' makes the shrink faster and more reliable.</value></data>
+  <data name="Analysis_AdviceUnattributed" xml:space="preserve"><value>{0} of used space past the target belongs to no enumerated file; treat the result as approximate.</value></data>
+  <data name="Analysis_AdviceNothing" xml:space="preserve"><value>Nothing blocks this target. Windows should be able to shrink the volume to the requested size.</value></data>
+  <data name="Report_Title" xml:space="preserve"><value>Shrink analysis for {0}:</value></data>
+  <data name="Report_VolumeSize" xml:space="preserve"><value>  Volume size        {0,12}   ({1:N0} clusters of {2:N0} bytes)</value></data>
+  <data name="Report_Used" xml:space="preserve"><value>  Used               {0,12}</value></data>
+  <data name="Report_Mft" xml:space="preserve"><value>  $MFT               starts at {0}, {1} in use</value></data>
+  <data name="Report_FilesScanned" xml:space="preserve"><value>  Files scanned      {0,12:N0}   {1:N0} extents, {2} accounted for, in {3:F1} s</value></data>
+  <data name="Report_TargetSize" xml:space="preserve"><value>  Target size        {0,12}   {1}</value></data>
+  <data name="Report_TargetRequested" xml:space="preserve"><value>(requested)</value></data>
+  <data name="Report_TargetDefault" xml:space="preserve"><value>(used data + 10 % headroom)</value></data>
+  <data name="Report_ShrinkableBy" xml:space="preserve"><value>  Shrinkable by      {0,12}   if the target is reached</value></data>
+  <data name="Report_HowFar" xml:space="preserve"><value>How far the volume can shrink:</value></data>
+  <data name="Report_WithoutMoving" xml:space="preserve"><value>  Without moving anything       to {0,10}   (frees {1})</value></data>
+  <data name="Report_WindowsDiskManagement" xml:space="preserve"><value>  Windows Disk Management       to {0,10}   (frees {1})</value></data>
+  <data name="Report_AfterMovable" xml:space="preserve"><value>  After moving movable files    to {0,10}   (frees {1})</value></data>
+  <data name="Report_AfterBlockers" xml:space="preserve"><value>  After removing blockers too   to {0,10}   (frees {1}; only immovable NTFS data remains)</value></data>
+  <data name="Report_NoBlockers" xml:space="preserve"><value>No unmovable files past the target.</value></data>
+  <data name="Report_Blockers" xml:space="preserve"><value>Unmovable files past the target ({0}), furthest first:</value></data>
+  <data name="Report_BlockerEnds" xml:space="preserve"><value>      ends at {0}, {1} of {2} past the target</value></data>
+  <data name="Report_More" xml:space="preserve"><value>  ... and {0} more.</value></data>
+  <data name="Report_BlockersBelow" xml:space="preserve"><value>Unmovable files below the target: {0:N0} (they do not affect this target).</value></data>
+  <data name="Report_Movable" xml:space="preserve"><value>Movable files past the target: {0:N0} ({1}); Windows moves these itself.</value></data>
+  <data name="Report_Unattributed" xml:space="preserve"><value>Unattributed used space past the target: {0}.</value></data>
+  <data name="Report_WhatToDo" xml:space="preserve"><value>What to do:</value></data>
+  <data name="Ops_Failed" xml:space="preserve"><value>{0} failed ({1}): {2}</value></data>
+  <data name="Ops_RefusedPrefix" xml:space="preserve"><value>Refused before touching the disk: </value></data>
+  <data name="Ops_PartitionNotFound" xml:space="preserve"><value>Partition {0} on disk {1} was not found. {2}</value></data>
+  <data name="Ops_InitializeOffline" xml:space="preserve"><value>The disk is offline. Bring it online in Disk Management first; Windows Partition Manager does not do that automatically.</value></data>
+  <data name="Ops_AlreadyHasTable" xml:space="preserve"><value>The disk already has a partition table.</value></data>
+  <data name="Ops_CreatingPartition" xml:space="preserve"><value>Creating partition…</value></data>
+  <data name="Ops_NoPartitionReturned" xml:space="preserve"><value>Windows reported success but returned no partition.</value></data>
+  <data name="Ops_WaitingForVolume" xml:space="preserve"><value>Waiting for the volume…</value></data>
+  <data name="Ops_CleanedUp" xml:space="preserve"><value>The empty partition that had just been created was removed again; the disk is as it was before.</value></data>
+  <data name="Ops_CleanupFailed" xml:space="preserve"><value>The new, empty partition {0} could not be removed automatically; refresh and delete it.</value></data>
+  <data name="Ops_AssigningLetter" xml:space="preserve"><value>Assigning drive letter…</value></data>
+  <data name="Ops_ReadingBack" xml:space="preserve"><value>Reading back…</value></data>
+  <data name="Ops_LetterFallback" xml:space="preserve"><value>Drive letter {0}: could not be used ({1}); letting Windows choose one.</value></data>
+  <data name="Ops_NoLetter" xml:space="preserve"><value>The partition was created and formatted, but no drive letter could be assigned ({0}). Assign one in Disk Management.</value></data>
+  <data name="Ops_LocatingVolume" xml:space="preserve"><value>Locating the volume…</value></data>
+  <data name="Ops_Shrinking" xml:space="preserve"><value>Shrinking the file system and partition… Windows is moving files out of the way; this can take a while.</value></data>
+  <data name="Ops_Extending" xml:space="preserve"><value>Extending the partition and file system…</value></data>
+  <data name="Ops_VolumeTimeout" xml:space="preserve"><value>The partition was created but its volume did not appear within 30 seconds.</value></data>
+  <data name="Ops_AdminRequired" xml:space="preserve"><value>Opening volume {0}: requires administrator rights.</value></data>
+  <data name="Ops_NoFileLayout" xml:space="preserve"><value>This volume does not support FSCTL_QUERY_FILE_LAYOUT (NTFS on Windows 8 or later is required).</value></data>
+  <data name="Ops_NotNtfs" xml:space="preserve"><value>The volume is not NTFS.</value></data>
+  <data name="StorageCode_1" xml:space="preserve"><value>Not supported.</value></data>
+  <data name="StorageCode_2" xml:space="preserve"><value>Unspecified error.</value></data>
+  <data name="StorageCode_3" xml:space="preserve"><value>Timeout.</value></data>
+  <data name="StorageCode_4" xml:space="preserve"><value>Failed (Windows gave no detail). The volume may still be busy, e.g. right after a format; wait a few seconds and try again. If it keeps failing, run chkdsk on it.</value></data>
+  <data name="StorageCode_5" xml:space="preserve"><value>Invalid parameter.</value></data>
+  <data name="StorageCode_6" xml:space="preserve"><value>The disk is in use.</value></data>
+  <data name="StorageCode_8" xml:space="preserve"><value>Object not found.</value></data>
+  <data name="StorageCode_4097" xml:space="preserve"><value>Size not supported.</value></data>
+  <data name="StorageCode_40000" xml:space="preserve"><value>Not enough free space (the size exceeds the largest free extent Windows sees).</value></data>
+  <data name="StorageCode_40001" xml:space="preserve"><value>Access denied (administrator rights are required).</value></data>
+  <data name="StorageCode_40002" xml:space="preserve"><value>Not enough resources to complete the operation.</value></data>
+  <data name="StorageCode_40003" xml:space="preserve"><value>Cache out of date; refresh and try again.</value></data>
+  <data name="StorageCode_40004" xml:space="preserve"><value>An unexpected I/O error occurred.</value></data>
+  <data name="StorageCode_40005" xml:space="preserve"><value>Specify either Size or UseMaximumSize, not both.</value></data>
+  <data name="StorageCode_41000" xml:space="preserve"><value>The disk has not been initialized.</value></data>
+  <data name="StorageCode_41001" xml:space="preserve"><value>The disk is already initialized.</value></data>
+  <data name="StorageCode_41002" xml:space="preserve"><value>The disk is read-only.</value></data>
+  <data name="StorageCode_41003" xml:space="preserve"><value>The disk is offline.</value></data>
+  <data name="StorageCode_41004" xml:space="preserve"><value>The disk's partition limit has been reached.</value></data>
+  <data name="StorageCode_41005" xml:space="preserve"><value>The partition alignment is not valid.</value></data>
+  <data name="StorageCode_41006" xml:space="preserve"><value>A parameter is not valid for this type of partition.</value></data>
+  <data name="StorageCode_41010" xml:space="preserve"><value>The partition type is not valid.</value></data>
+  <data name="StorageCode_41011" xml:space="preserve"><value>Only the first 2 TB are usable on MBR disks.</value></data>
+  <data name="StorageCode_41012" xml:space="preserve"><value>The offset is not valid.</value></data>
+  <data name="StorageCode_41014" xml:space="preserve"><value>The disk is too small for GPT.</value></data>
+  <data name="StorageCode_41017" xml:space="preserve"><value>The partition layout is invalid.</value></data>
+  <data name="StorageCode_42000" xml:space="preserve"><value>The partition was deleted but its access paths were not.</value></data>
+  <data name="StorageCode_42002" xml:space="preserve"><value>The requested drive letter or path is already in use.</value></data>
+  <data name="StorageCode_42004" xml:space="preserve"><value>Hidden partitions cannot receive access paths.</value></data>
+  <data name="StorageCode_42007" xml:space="preserve"><value>The access path is not valid.</value></data>
+  <data name="StorageCode_42008" xml:space="preserve"><value>Cannot shrink a partition whose volume has errors.</value></data>
+  <data name="StorageCode_42009" xml:space="preserve"><value>Cannot resize a partition with an unknown file system.</value></data>
+  <data name="StorageCode_42010" xml:space="preserve"><value>Not allowed on a system or critical partition.</value></data>
+  <data name="StorageCode_42011" xml:space="preserve"><value>Only supported on data partitions.</value></data>
+  <data name="StorageCode_42013" xml:space="preserve"><value>This type of partition cannot have a drive letter.</value></data>
+  <data name="StorageCode_43000" xml:space="preserve"><value>The cluster size is invalid.</value></data>
+  <data name="StorageCode_43001" xml:space="preserve"><value>The file system is not supported.</value></data>
+  <data name="StorageCode_43002" xml:space="preserve"><value>The volume cannot be quick-formatted.</value></data>
+  <data name="StorageCode_43003" xml:space="preserve"><value>The number of clusters exceeds 32 bits (volume too large for this file system).</value></data>
+  <data name="StorageCode_43006" xml:space="preserve"><value>The drive is read-only.</value></data>
+  <data name="StorageCode_Other" xml:space="preserve"><value>see Storage Management API return codes</value></data>
+</root>

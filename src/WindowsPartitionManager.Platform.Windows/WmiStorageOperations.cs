@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Management;
 using System.Runtime.Versioning;
 using WindowsPartitionManager.Core.Abstractions;
+using WindowsPartitionManager.Core.Localization;
 using WindowsPartitionManager.Core.Model;
 using WindowsPartitionManager.Core.Operations;
 
@@ -89,7 +90,7 @@ public sealed class WmiStorageOperations : IStorageOperations
         var errors = issues.Where(i => i is { IsError: true }).Select(i => i!.Message).ToList();
         if (errors.Count > 0)
         {
-            throw new StorageOperationException(operation, 0, "Refused before touching the disk: " + string.Join(" ", errors));
+            throw new StorageOperationException(operation, 0, CoreText.Get("Ops_RefusedPrefix") + string.Join(" ", errors));
         }
     }
 
@@ -125,12 +126,12 @@ public sealed class WmiStorageOperations : IStorageOperations
 
         if (Wmi.Get<bool>(disk, "IsOffline"))
         {
-            throw new StorageOperationException("Initialize", 41003, "The disk is offline. Bring it online in Disk Management first; Windows Partition Manager does not do that automatically.");
+            throw new StorageOperationException("Initialize", 41003, CoreText.Get("Ops_InitializeOffline"));
         }
 
         if (Wmi.Get<ushort>(disk, "PartitionStyle") != 0)
         {
-            throw new StorageOperationException("Initialize", 41001, "The disk already has a partition table.");
+            throw new StorageOperationException("Initialize", 41001, CoreText.Get("Ops_AlreadyHasTable"));
         }
 
         Wmi.Invoke(disk, "Initialize", p => p["PartitionStyle"] = (ushort)(style == PartitionStyle.Gpt ? 2 : 1)).Dispose();
@@ -147,7 +148,7 @@ public sealed class WmiStorageOperations : IStorageOperations
         using var disk = GetDisk(scope, request.DiskNumber);
         var isGpt = Wmi.Get<ushort>(disk, "PartitionStyle") == 2;
 
-        progress?.Report("Creating partition\u2026");
+        progress?.Report(CoreText.Get("Ops_CreatingPartition"));
         uint partitionNumber;
         string[] accessPaths;
         using (var result = Wmi.Invoke(disk, "CreatePartition", p =>
@@ -168,7 +169,7 @@ public sealed class WmiStorageOperations : IStorageOperations
         {
             if (Wmi.GetRaw(result, "CreatedPartition") is not ManagementBaseObject created)
             {
-                throw new StorageOperationException("CreatePartition", 0, "Windows reported success but returned no partition.");
+                throw new StorageOperationException("CreatePartition", 0, CoreText.Get("Ops_NoPartitionReturned"));
             }
 
             using (created)
@@ -182,7 +183,7 @@ public sealed class WmiStorageOperations : IStorageOperations
         // remove it again so the user is not left with an unexplained empty partition.
         try
         {
-            progress?.Report("Waiting for the volume\u2026");
+            progress?.Report(CoreText.Get("Ops_WaitingForVolume"));
             using var volume = WaitForVolume(scope, request.DiskNumber, (int)partitionNumber, accessPaths, cancellationToken);
 
             progress?.Report($"Formatting {request.FileSystem}\u2026");
@@ -191,15 +192,15 @@ public sealed class WmiStorageOperations : IStorageOperations
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
             var cleanup = TryDeleteJustCreated(scope, request, (int)partitionNumber)
-                ? "The empty partition that had just been created was removed again; the disk is as it was before."
-                : $"The new, empty partition {partitionNumber} could not be removed automatically; refresh and delete it.";
+                ? CoreText.Get("Ops_CleanedUp")
+                : CoreText.Format("Ops_CleanupFailed", partitionNumber);
             throw new StorageOperationException("CreatePartition", (ex as StorageOperationException)?.ReturnValue ?? 0, $"{ex.Message} {cleanup}");
         }
 
-        progress?.Report("Assigning drive letter\u2026");
+        progress?.Report(CoreText.Get("Ops_AssigningLetter"));
         AssignLetter(scope, request, (int)partitionNumber, progress);
 
-        progress?.Report("Reading back\u2026");
+        progress?.Report(CoreText.Get("Ops_ReadingBack"));
         return ReadBack(request.DiskNumber, (int)partitionNumber, "CreatePartition", cancellationToken);
     }
 
@@ -217,7 +218,7 @@ public sealed class WmiStorageOperations : IStorageOperations
             }
             catch (StorageOperationException ex)
             {
-                progress?.Report($"Drive letter {letter}: could not be used ({ex.Message}); letting Windows choose one.");
+                progress?.Report(CoreText.Format("Ops_LetterFallback", letter, ex.Message));
             }
         }
 
@@ -227,7 +228,7 @@ public sealed class WmiStorageOperations : IStorageOperations
         }
         catch (StorageOperationException ex)
         {
-            progress?.Report($"The partition was created and formatted, but no drive letter could be assigned ({ex.Message}). Assign one in Disk Management.");
+            progress?.Report(CoreText.Format("Ops_NoLetter", ex.Message));
         }
     }
 
@@ -260,7 +261,7 @@ public sealed class WmiStorageOperations : IStorageOperations
         RefuseOnErrors("Format", [LayoutGuard.Check(fresh, request.ExpectedDisk, target, request.ExpectedPartition)]);
         if (target is null)
         {
-            throw new StorageOperationException("Format", 0, $"Partition {request.PartitionNumber} on disk {request.DiskNumber} was not found. {LayoutGuard.RefreshHint}".Insert(0, "Refused before touching the disk: "));
+            throw new StorageOperationException("Format", 0, CoreText.Get("Ops_RefusedPrefix") + CoreText.Format("Ops_PartitionNotFound", request.PartitionNumber, request.DiskNumber, LayoutGuard.RefreshHint));
         }
 
         RefuseOnErrors("Format", FormatPlanner.Validate(fresh!, target, request));
@@ -273,13 +274,13 @@ public sealed class WmiStorageOperations : IStorageOperations
             accessPaths = Wmi.GetRaw(partition, "AccessPaths") as string[] ?? [];
         }
 
-        progress?.Report("Locating the volume\u2026");
+        progress?.Report(CoreText.Get("Ops_LocatingVolume"));
         using var volume = WaitForVolume(scope, request.DiskNumber, request.PartitionNumber, accessPaths, cancellationToken);
 
         progress?.Report($"Formatting {request.FileSystem}\u2026");
         FormatVolume(volume, request.FileSystem, request.Label, request.QuickFormat);
 
-        progress?.Report("Reading back\u2026");
+        progress?.Report(CoreText.Get("Ops_ReadingBack"));
         return ReadBack(request.DiskNumber, request.PartitionNumber, "Format", cancellationToken);
     }
 
@@ -301,7 +302,7 @@ public sealed class WmiStorageOperations : IStorageOperations
         RefuseOnErrors("DeletePartition", [LayoutGuard.Check(fresh, request.ExpectedDisk, target, request.ExpectedPartition)]);
         if (target is null)
         {
-            throw new StorageOperationException("DeletePartition", 0, $"Partition {request.PartitionNumber} on disk {request.DiskNumber} was not found. {LayoutGuard.RefreshHint}".Insert(0, "Refused before touching the disk: "));
+            throw new StorageOperationException("DeletePartition", 0, CoreText.Get("Ops_RefusedPrefix") + CoreText.Format("Ops_PartitionNotFound", request.PartitionNumber, request.DiskNumber, LayoutGuard.RefreshHint));
         }
 
         RefuseOnErrors("DeletePartition", PartitionPlanner.ValidateDelete(fresh!, target));
@@ -319,7 +320,7 @@ public sealed class WmiStorageOperations : IStorageOperations
         RefuseOnErrors("Resize", [LayoutGuard.Check(fresh, request.ExpectedDisk, before, request.ExpectedPartition)]);
         if (before is null)
         {
-            throw new StorageOperationException("Resize", 0, $"Partition {request.PartitionNumber} on disk {request.DiskNumber} was not found. {LayoutGuard.RefreshHint}".Insert(0, "Refused before touching the disk: "));
+            throw new StorageOperationException("Resize", 0, CoreText.Get("Ops_RefusedPrefix") + CoreText.Format("Ops_PartitionNotFound", request.PartitionNumber, request.DiskNumber, LayoutGuard.RefreshHint));
         }
 
         // Never resize a volume Windows already considers damaged; checked first so the message is specific.
@@ -336,13 +337,13 @@ public sealed class WmiStorageOperations : IStorageOperations
         {
             var current = Wmi.Get<ulong>(partition, "Size");
             progress?.Report(request.NewSizeBytes < current
-                ? "Shrinking the file system and partition\u2026 Windows is moving files out of the way; this can take a while."
-                : "Extending the partition and file system\u2026");
+                ? CoreText.Get("Ops_Shrinking")
+                : CoreText.Get("Ops_Extending"));
 
             Wmi.Invoke(partition, "Resize", p => p["Size"] = request.NewSizeBytes).Dispose();
         }
 
-        progress?.Report("Reading back\u2026");
+        progress?.Report(CoreText.Get("Ops_ReadingBack"));
         return ReadBack(request.DiskNumber, request.PartitionNumber, "Resize", cancellationToken);
     }
 
@@ -392,7 +393,7 @@ public sealed class WmiStorageOperations : IStorageOperations
 
             if (stopwatch.Elapsed > VolumeWaitTimeout)
             {
-                throw new StorageOperationException("CreatePartition", 0, "The partition was created but its volume did not appear within 30 seconds.");
+                throw new StorageOperationException("CreatePartition", 0, CoreText.Get("Ops_VolumeTimeout"));
             }
 
             accessPaths = [];

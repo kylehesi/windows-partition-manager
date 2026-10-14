@@ -1,4 +1,5 @@
 using WindowsPartitionManager.Core.Formatting;
+using WindowsPartitionManager.Core.Localization;
 using WindowsPartitionManager.Core.Model;
 
 namespace WindowsPartitionManager.Core.Operations;
@@ -43,61 +44,61 @@ public static class FormatPlanner
 
         if (request.DiskNumber != disk.Number || request.PartitionNumber != partition.Number)
         {
-            Error("The request does not match the given disk and partition.");
+            Error(CoreText.Get("Common_RequestMismatch"));
             return issues;
         }
 
         if (disk.IsReadOnly)
         {
-            Error("The disk is read-only.");
+            Error(CoreText.Get("Common_DiskReadOnly"));
         }
 
         if (disk.IsOffline)
         {
-            Error("The disk is offline.");
+            Error(CoreText.Get("Common_DiskOffline"));
         }
 
         if (partition.IsBoot || partition.IsSystem)
         {
-            Error("This partition holds Windows or its boot files. Windows Partition Manager refuses to format it.");
+            Error(CoreText.Get("Format_WindowsPartition"));
         }
         else if (partition.Kind != PartitionKind.Basic)
         {
-            Error($"Only basic data partitions can be formatted; this one is '{partition.TypeDescription}'.");
+            Error(CoreText.Format("Format_OnlyBasicData", CoreText.PartitionType(partition.TypeDescription)));
         }
 
         if (!PartitionPlanner.SupportedFileSystems.Contains(request.FileSystem, StringComparer.OrdinalIgnoreCase))
         {
-            Error($"Unsupported file system '{request.FileSystem}'. Use one of: {string.Join(", ", PartitionPlanner.SupportedFileSystems)}.");
+            Error(CoreText.Format("Common_UnsupportedFileSystem", request.FileSystem, string.Join(", ", PartitionPlanner.SupportedFileSystems)));
         }
         else if (request.FileSystem.Equals("FAT32", StringComparison.OrdinalIgnoreCase) && partition.SizeBytes > PartitionPlanner.Fat32MaximumBytes)
         {
-            Error("Windows cannot format FAT32 volumes larger than 32 GB. Use exFAT or NTFS.");
+            Error(CoreText.Get("Common_Fat32TooLarge"));
         }
 
         var labelLimit = request.FileSystem.Equals("FAT32", StringComparison.OrdinalIgnoreCase) ? 11 : 32;
         if (request.Label.Length > labelLimit)
         {
-            Error($"The label is too long for {request.FileSystem} (maximum {labelLimit} characters).");
+            Error(CoreText.Format("Common_LabelTooLong", request.FileSystem, labelLimit));
         }
 
         if (partition.Volume is { } volume && volume.UsedBytes > 0)
         {
-            Warn($"The volume holds {ByteSize.Format(volume.UsedBytes)} of data" + (volume.Label is { Length: > 0 } l ? $" (\"{l}\")" : string.Empty) + ". Everything on it is lost. Back it up first.");
+            Warn(CoreText.Format("Common_VolumeHoldsData", ByteSize.Format(volume.UsedBytes), volume.Label is { Length: > 0 } l ? $" (\"{l}\")" : string.Empty));
         }
         else
         {
-            Warn("Everything on the partition is lost.");
+            Warn(CoreText.Get("Common_EverythingLost"));
         }
 
         if (!request.QuickFormat)
         {
-            Warn("A full format writes every sector and can take hours on large partitions.");
+            Warn(CoreText.Get("Common_FullFormatSlow"));
         }
 
         if (request.FileSystem.Equals("exFAT", StringComparison.OrdinalIgnoreCase) || request.FileSystem.Equals("FAT32", StringComparison.OrdinalIgnoreCase))
         {
-            Warn($"Windows cannot shrink or extend {request.FileSystem} volumes later. Choose NTFS if you may want to resize this partition.");
+            Warn(CoreText.Format("Format_CannotResizeLater", request.FileSystem));
         }
 
         issues.AddRange(SafetyChecks.Disk(disk));

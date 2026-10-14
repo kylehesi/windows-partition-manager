@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Resources;
 using System.Text;
 using System.Windows;
+using WindowsPartitionManager.Core.Localization;
 using WindowsPartitionManager.Platform.Windows;
 
 namespace WindowsPartitionManager.App;
@@ -43,6 +44,8 @@ public static class Localization
     {
         var culture = new CultureInfo(LanguagePreference.ResolveCulture(languageName));
         CultureInfo.CurrentUICulture = culture;
+        // Validation issues, safety warnings and progress come from Core in its own string table.
+        CoreText.Culture = culture;
 
         if (Application.Current is not { } app || !app.Dispatcher.CheckAccess())
         {

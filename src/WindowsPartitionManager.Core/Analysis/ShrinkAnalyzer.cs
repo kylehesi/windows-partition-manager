@@ -1,5 +1,6 @@
 using WindowsPartitionManager.Core.Abstractions;
 using WindowsPartitionManager.Core.Formatting;
+using WindowsPartitionManager.Core.Localization;
 
 namespace WindowsPartitionManager.Core.Analysis;
 
@@ -25,7 +26,7 @@ public static class ShrinkAnalyzer
         var bitmap = volume.Bitmap;
         var clusterSize = geometry.BytesPerCluster;
 
-        progress?.Report(new InspectProgress("Reading allocation bitmap", 0, 1));
+        progress?.Report(new InspectProgress(CoreText.Get("Analysis_ReadingBitmap"), 0, 1));
         var usedClusters = bitmap.UsedCount;
         var lastUsedLcn = bitmap.LastUsedLcn ?? 0;
 
@@ -35,7 +36,7 @@ public static class ShrinkAnalyzer
         targetClusters = Math.Max(targetClusters, 1);
 
         var files = await volume.GetFilesAsync(targetClusters, IsUnmovableByPolicy, progress, cancellationToken).ConfigureAwait(false);
-        progress?.Report(new InspectProgress("Classifying files", 0, 1));
+        progress?.Report(new InspectProgress(CoreText.Get("Analysis_Classifying"), 0, 1));
 
         var blockers = new List<ShrinkBlocker>();
         var movableFiles = 0;
@@ -147,7 +148,7 @@ public static class ShrinkAnalyzer
 
         if (file.IsImmovable)
         {
-            return (BlockerKind.FileSystemImmovable, "NTFS reports this file's data as immovable.");
+            return (BlockerKind.FileSystemImmovable, CoreText.Get("Analysis_ReasonImmovable"));
         }
 
         return null;
@@ -164,23 +165,23 @@ public static class ShrinkAnalyzer
             if (name.Equals("pagefile.sys", StringComparison.OrdinalIgnoreCase) ||
                 name.Equals("swapfile.sys", StringComparison.OrdinalIgnoreCase))
             {
-                return (BlockerKind.PageFile, "Page file; the memory manager keeps it open and Windows will not move it.");
+                return (BlockerKind.PageFile, CoreText.Get("Analysis_ReasonPageFile"));
             }
 
             if (name.Equals("hiberfil.sys", StringComparison.OrdinalIgnoreCase))
             {
-                return (BlockerKind.HibernationFile, "Hibernation file; cannot be moved while hibernation is enabled.");
+                return (BlockerKind.HibernationFile, CoreText.Get("Analysis_ReasonHibernation"));
             }
         }
 
         if (name.StartsWith('$') && (isRoot || path.StartsWith("$Extend\\", StringComparison.OrdinalIgnoreCase)))
         {
-            return (BlockerKind.NtfsMetadata, "NTFS metadata; cannot be moved while the volume is mounted.");
+            return (BlockerKind.NtfsMetadata, CoreText.Get("Analysis_ReasonMetadata"));
         }
 
         if (path.StartsWith("System Volume Information\\", StringComparison.OrdinalIgnoreCase))
         {
-            return (BlockerKind.ShadowCopyStorage, "System Restore / shadow copy storage; Windows treats it as unmovable.");
+            return (BlockerKind.ShadowCopyStorage, CoreText.Get("Analysis_ReasonShadow"));
         }
 
         return null;
@@ -193,42 +194,42 @@ public static class ShrinkAnalyzer
 
         if (report.WindowsMinimumSizeBytes is { } windowsMin && windowsMin <= report.TargetSizeBytes && report.BlockersPastTarget.Count == 0)
         {
-            advice.Add($"Windows itself reports it can shrink this volume to {ByteSize.Format(windowsMin)}, which already reaches the target. Disk Management should accept it.");
+            advice.Add(CoreText.Format("Analysis_AdviceWindowsReaches", ByteSize.Format(windowsMin)));
         }
 
         if (kinds.Contains(BlockerKind.PageFile))
         {
-            advice.Add("Move the page file to another volume or disable it temporarily (System Properties > Advanced > Performance > Virtual memory), reboot, shrink, then restore it.");
+            advice.Add(CoreText.Get("Analysis_AdvicePageFile"));
         }
 
         if (kinds.Contains(BlockerKind.HibernationFile))
         {
-            advice.Add("Turn hibernation off with 'powercfg /h off' (as administrator), reboot, shrink, then 'powercfg /h on' if you want it back. This also disables Fast Startup.");
+            advice.Add(CoreText.Get("Analysis_AdviceHibernation"));
         }
 
         if (kinds.Contains(BlockerKind.ShadowCopyStorage))
         {
-            advice.Add($"Delete restore points / shadow copies on {report.DriveLetter}: ('vssadmin delete shadows /for={report.DriveLetter}: /all' as administrator) or turn System Protection off for this drive, shrink, then turn it back on.");
+            advice.Add(CoreText.Format("Analysis_AdviceShadow", report.DriveLetter));
         }
 
         if (kinds.Contains(BlockerKind.NtfsMetadata) || kinds.Contains(BlockerKind.FileSystemImmovable))
         {
-            advice.Add($"Immovable NTFS data ends at {ByteSize.Format(report.MinimumSizeMetadataOnlyBytes)}; the volume cannot be shrunk below that while mounted. Moving metadata is a planned offline feature.");
+            advice.Add(CoreText.Format("Analysis_AdviceMetadata", ByteSize.Format(report.MinimumSizeMetadataOnlyBytes)));
         }
 
         if (report.MovableFilesBeyondTarget > 0)
         {
-            advice.Add($"{report.MovableFilesBeyondTarget:N0} movable file(s) ({ByteSize.Format(report.MovableBytesBeyondTarget)}) sit past the target; Windows relocates these automatically during a shrink, but consolidating first with 'defrag {report.DriveLetter}: /X' makes the shrink faster and more reliable.");
+            advice.Add(CoreText.Format("Analysis_AdviceMovable", report.MovableFilesBeyondTarget, ByteSize.Format(report.MovableBytesBeyondTarget), report.DriveLetter));
         }
 
         if (report.UnattributedBytesBeyondTarget > 0)
         {
-            advice.Add($"{ByteSize.Format(report.UnattributedBytesBeyondTarget)} of used space past the target belongs to no enumerated file; treat the result as approximate.");
+            advice.Add(CoreText.Format("Analysis_AdviceUnattributed", ByteSize.Format(report.UnattributedBytesBeyondTarget)));
         }
 
         if (advice.Count == 0)
         {
-            advice.Add("Nothing blocks this target. Windows should be able to shrink the volume to the requested size.");
+            advice.Add(CoreText.Get("Analysis_AdviceNothing"));
         }
 
         return advice;

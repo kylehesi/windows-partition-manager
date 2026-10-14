@@ -47,8 +47,13 @@ language:
 
 1. Add `Strings.<code>.resx` (e.g. `Strings.de.resx`) next to `Strings.resx`, with the same keys
    and the translated values. Missing keys fall back to the English neutral resource.
-2. Include the culture in `SatelliteResourceLanguages` in
+2. Add `src/WindowsPartitionManager.Core/Localization/CoreStrings.<code>.resx` the same way. It
+   holds the messages Core and the platform layer produce: validation and safety warnings,
+   partition type names, progress, Windows' error descriptions and the shrink report (whose
+   column labels are padded, so keep the alignment). `CoreTextTests` checks that every key exists
+   with the same `{n}` placeholders; extend it for the new culture.
+3. Include the culture in `SatelliteResourceLanguages` in
    `src/WindowsPartitionManager.App/WindowsPartitionManager.App.csproj` (e.g. `en;tr;de`) so its
-   satellite assembly is produced.
-
-The per-language rollout is tracked in `future/README.txt` (day1–day4).
+   satellite assemblies are produced.
+4. Add `Language_<Name>` (the language's own name for itself) to every `Strings*.resx`, so the
+   Settings list shows it.

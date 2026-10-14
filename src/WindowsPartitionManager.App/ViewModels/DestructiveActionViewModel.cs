@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using WindowsPartitionManager.Core.Abstractions;
 using WindowsPartitionManager.Core.Formatting;
+using WindowsPartitionManager.Core.Localization;
 using WindowsPartitionManager.Core.Model;
 using WindowsPartitionManager.Core.Operations;
 
@@ -60,7 +61,7 @@ public sealed class DestructiveActionViewModel : INotifyPropertyChanged
         get
         {
             var volume = _partition.Volume;
-            var fs = volume is null ? _partition.TypeDescription : volume.FileSystem;
+            var fs = volume is null ? CoreText.PartitionType(_partition.TypeDescription) : volume.FileSystem;
             var label = volume?.Label is { Length: > 0 } s ? $" \"{s}\"" : string.Empty;
             var used = volume is null ? string.Empty : Localization.Format("Destructive_InUse", ByteSize.Format(volume.UsedBytes));
             return $"{_disk.FriendlyName} ({_disk.BusType}) · {fs}{label} · {ByteSize.Format(_partition.SizeBytes)}{used}";

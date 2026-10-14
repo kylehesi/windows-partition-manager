@@ -238,7 +238,7 @@ public sealed class NewPartitionViewModel : INotifyPropertyChanged
 
             var labelPart = request.Label.Length > 0 ? $" \"{request.Label}\"" : string.Empty;
             var letterPart = request.DriveLetter is { } l
-                ? Localization.Format("NewPartition_AsLetter", $"{l}:")
+                ? Localization.Format("NewPartition_AsLetter", l)
                 : Localization.Get("NewPartition_AutomaticLetter");
             Summary = Localization.Format(
                 "NewPartition_Summary",

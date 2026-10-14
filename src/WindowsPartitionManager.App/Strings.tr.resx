@@ -25,8 +25,8 @@
   <data name="Common_RestoreConfirm" xml:space="preserve"><value>Hazırda bekletme ve sayfa dosyası ayarları, Windows Partition Manager bunları değiştirmeden önceki durumuna geri yüklensin mi?</value></data>
 
   <data name="Main_Refresh" xml:space="preserve"><value>Yenile</value></data>
-  <data name="Main_Analyze" xml:space="preserve"><value>Analiz Et</value></data>
-  <data name="Main_Resize" xml:space="preserve"><value>Yeniden Boyutlandır</value></data>
+  <data name="Main_Analyze" xml:space="preserve"><value>Analiz</value></data>
+  <data name="Main_Resize" xml:space="preserve"><value>Boyutlandır</value></data>
   <data name="Main_NewPartition" xml:space="preserve"><value>Yeni bölüm</value></data>
   <data name="Main_Delete" xml:space="preserve"><value>Sil</value></data>
   <data name="Main_Format" xml:space="preserve"><value>Biçimlendir</value></data>
@@ -98,9 +98,9 @@
   <data name="NewPartition_Create" xml:space="preserve"><value>Bölüm oluştur</value></data>
   <data name="NewPartition_Automatic" xml:space="preserve"><value>Otomatik</value></data>
   <data name="NewPartition_Region" xml:space="preserve"><value>{0} · {1} konumunda ayrılmamış alan, {2} kullanılabilir</value></data>
-  <data name="NewPartition_Summary" xml:space="preserve"><value>Disk {4} üzerinde {3} konumunda {0} boyutunda {1} bölümü{2} oluştur{5}.</value></data>
-  <data name="NewPartition_AsLetter" xml:space="preserve"><value> {0}: olarak</value></data>
-  <data name="NewPartition_AutomaticLetter" xml:space="preserve"><value> otomatik sürücü harfiyle</value></data>
+  <data name="NewPartition_Summary" xml:space="preserve"><value>{0} boyutunda bir {1} bölümü{2} oluştur: disk {4}, konum {3}{5}.</value></data>
+  <data name="NewPartition_AsLetter" xml:space="preserve"><value>, sürücü harfi {0}:</value></data>
+  <data name="NewPartition_AutomaticLetter" xml:space="preserve"><value>, sürücü harfi otomatik</value></data>
   <data name="NewPartition_ConfirmBody" xml:space="preserve"><value>Bu işlem, disk {0} ({1}) bölüm tablosuna yazar. Mevcut bölümlere dokunulmaz. Devam edilsin mi?</value></data>
   <data name="NewPartition_Done" xml:space="preserve"><value>Tamam: {0}: {1} {2}{3}</value></data>
   <data name="NewPartition_Failed" xml:space="preserve"><value>Başarısız. Disk listesi geçerli durumu gösterecek şekilde yenilendi.</value></data>
@@ -110,7 +110,7 @@
   <data name="Resize_Largest" xml:space="preserve"><value>En büyük</value></data>
   <data name="Resize_SmallestTip" xml:space="preserve"><value>Windows'un ve verilerin izin verdiği en küçük boyut</value></data>
   <data name="Resize_LargestTip" xml:space="preserve"><value>Bölümden hemen sonraki boş alanı doldur</value></data>
-  <data name="Resize_Action" xml:space="preserve"><value>Yeniden Boyutlandır</value></data>
+  <data name="Resize_Action" xml:space="preserve"><value>Boyutlandır</value></data>
   <data name="Resize_Title" xml:space="preserve"><value>Yeniden boyutlandır · disk {1} üzerinde {0}</value></data>
   <data name="Resize_Info" xml:space="preserve"><value>{0} · {1}{2} · geçerli boyut {3}, {4} kullanımda</value></data>
   <data name="Resize_LimitsLoading" xml:space="preserve"><value>Windows'a bu birimin ne kadar küçülüp büyüyebileceği soruluyor…</value></data>
@@ -145,7 +145,7 @@
   <data name="ShrinkAnalysis_Subtitle" xml:space="preserve"><value>Windows'un taşımayı reddettiği dosyaları bulur ve bu birimin gerçekte ne kadar küçülebileceğini gösterir. Salt okunur: hiçbir şey değiştirilmez.</value></data>
   <data name="ShrinkAnalysis_Cancel" xml:space="preserve"><value>İptal</value></data>
   <data name="ShrinkAnalysis_Unblock" xml:space="preserve"><value>Engelleri kaldır…</value></data>
-  <data name="ShrinkAnalysis_Analyze" xml:space="preserve"><value>Analiz Et</value></data>
+  <data name="ShrinkAnalysis_Analyze" xml:space="preserve"><value>Analiz</value></data>
   <data name="ShrinkAnalysis_TargetSize" xml:space="preserve"><value>Hedef boyut</value></data>
   <data name="ShrinkAnalysis_TargetTip" xml:space="preserve"><value>Ulaşmak istediğiniz birim boyutu, örn. 300GB. Kullanılan veri + %10 için boş bırakın.</value></data>
   <data name="ShrinkAnalysis_Title" xml:space="preserve"><value>Küçültme analizi · {0}:</value></data>
@@ -173,4 +173,13 @@
   <data name="Unblock_Done" xml:space="preserve"><value>Tamam. Küçültmeyi şimdi çalıştırın.</value></data>
   <data name="Unblock_Failed" xml:space="preserve"><value>Başarısız. Daha önce değiştirilen ayarlar kaydedildi ve geri yüklenebilir.</value></data>
   <data name="Unblock_ApplySelected" xml:space="preserve"><value>Seçileni uygula</value></data>
+  <data name="Severity_Error" xml:space="preserve"><value>Hata</value></data>
+  <data name="Severity_Warning" xml:space="preserve"><value>Uyarı</value></data>
+  <data name="Theme_White" xml:space="preserve"><value>Beyaz</value></data>
+  <data name="Theme_Dark" xml:space="preserve"><value>Koyu</value></data>
+  <data name="Theme_Night" xml:space="preserve"><value>Gece</value></data>
+  <data name="Language_English" xml:space="preserve"><value>English</value></data>
+  <data name="Language_Turkish" xml:space="preserve"><value>Türkçe</value></data>
+  <data name="Map_Location" xml:space="preserve"><value>{1} konumunda {0}</value></data>
+  <data name="Map_UsedFree" xml:space="preserve"><value>{0} kullanılan, {1} boş</value></data>
 </root>

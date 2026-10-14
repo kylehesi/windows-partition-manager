@@ -1,3 +1,4 @@
+using WindowsPartitionManager.Core.Localization;
 using WindowsPartitionManager.Core.Model;
 using WindowsPartitionManager.Core.Operations;
 
@@ -37,7 +38,7 @@ public interface IPowerStatusProvider
 
 /// <summary>Raised when the Storage Management API refuses an operation.</summary>
 public sealed class StorageOperationException(string operation, uint returnValue, string message)
-    : Exception($"{operation} failed ({returnValue}): {message}")
+    : Exception(CoreText.Format("Ops_Failed", operation, returnValue, message))
 {
     public string Operation { get; } = operation;
 

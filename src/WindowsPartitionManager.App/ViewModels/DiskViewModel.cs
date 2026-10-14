@@ -3,6 +3,7 @@ using System.Windows.Media;
 using WindowsPartitionManager.App.Controls;
 using WindowsPartitionManager.Core.Formatting;
 using WindowsPartitionManager.Core.Layout;
+using WindowsPartitionManager.Core.Localization;
 using WindowsPartitionManager.Core.Model;
 using WindowsPartitionManager.Core.Operations;
 
@@ -81,7 +82,7 @@ public sealed class SegmentRow
         PartitionNumber = partition.Number;
         DriveLetter = partition.DriveLetter;
         Name = partition.DriveLetter is { } letter ? $"{letter}:" : Localization.Format("Segment_Partition", partition.Number);
-        Type = partition.TypeDescription;
+        Type = CoreText.PartitionType(partition.TypeDescription);
 
         CanResize = ResizePlanner.CanResize(partition) && !disk.IsReadOnly && !disk.IsOffline;
         CanDelete = !PartitionPlanner.ValidateDelete(disk, partition).Any(i => i.IsError);
