@@ -10,6 +10,29 @@ public enum VolumeHealth
     FullRepairNeeded,
 }
 
+/// <summary>Where BitLocker stands on a volume (Win32_EncryptableVolume conversion status).</summary>
+public enum EncryptionState
+{
+    NotEncrypted,
+    Encrypted,
+    Encrypting,
+    Decrypting,
+    Paused,
+    Unknown,
+}
+
+/// <summary>
+/// BitLocker as Windows reports it. <see cref="ProtectionOn"/> is false for a volume that is
+/// encrypted but has protection suspended; <see cref="Locked"/> means the contents cannot be read
+/// until the volume is unlocked with its password or recovery key.
+/// </summary>
+public sealed record BitLockerStatus(EncryptionState State, bool ProtectionOn, bool Locked, int? PercentEncrypted = null)
+{
+    public bool IsConverting => State is EncryptionState.Encrypting or EncryptionState.Decrypting or EncryptionState.Paused;
+
+    public bool IsEncrypted => State is not (EncryptionState.NotEncrypted or EncryptionState.Unknown);
+}
+
 /// <summary>A formatted file system that Windows mounted from a partition.</summary>
 public sealed record Volume
 {
@@ -31,6 +54,9 @@ public sealed record Volume
 
     /// <summary>The NTFS dirty bit: set when the volume was not cleanly dismounted or errors were seen; chkdsk clears it.</summary>
     public bool IsDirty { get; init; }
+
+    /// <summary>BitLocker status, or null when it could not be read (no administrator rights, or no BitLocker on this Windows).</summary>
+    public BitLockerStatus? BitLocker { get; init; }
 
     public ulong UsedBytes => SizeBytes >= FreeBytes ? SizeBytes - FreeBytes : 0;
 

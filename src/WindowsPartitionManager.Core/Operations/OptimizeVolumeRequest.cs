@@ -71,6 +71,12 @@ public static class OptimizePlanner
             return issues;
         }
 
+        if (partition.Volume is { } encrypted && SafetyChecks.Encryption(encrypted, EncryptionUse.Contents) is { Count: > 0 } locked)
+        {
+            issues.AddRange(locked);
+            return issues;
+        }
+
         if (!Available(disk, partition, media).Contains(request.Mode))
         {
             issues.Add(new ValidationIssue(IssueSeverity.Error, disk.IsReadOnly

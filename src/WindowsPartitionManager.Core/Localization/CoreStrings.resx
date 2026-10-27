@@ -261,4 +261,8 @@
   <data name="StorageCode_43027" xml:space="preserve"><value>The optimization was cancelled.</value></data>
   <data name="StorageCode_43028" xml:space="preserve"><value>A file on the volume could not be opened.</value></data>
   <data name="StorageCode_43032" xml:space="preserve"><value>The optimization stopped because the file system's master file table is too fragmented.</value></data>
+  <data name="BitLocker_Locked" xml:space="preserve"><value>{0} is locked by BitLocker; its contents cannot be read. Unlock it first (File Explorer, or its password or recovery key).</value></data>
+  <data name="BitLocker_LockedWillBeLost" xml:space="preserve"><value>{0} is encrypted and locked by BitLocker. Its contents cannot be read here and will be lost for good.</value></data>
+  <data name="BitLocker_Converting" xml:space="preserve"><value>BitLocker is still encrypting or decrypting {0} ({1} % encrypted). Resize it once BitLocker has finished.</value></data>
+  <data name="BitLocker_KeepRecoveryKey" xml:space="preserve"><value>{0} is encrypted with BitLocker. Resizing is supported, but make sure you can find its recovery key (account.microsoft.com/devices/recoverykey) before you start.</value></data>
 </root>

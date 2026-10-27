@@ -78,6 +78,8 @@ public static class LabelPlanner
             return issues;
         }
 
+        issues.AddRange(SafetyChecks.Encryption(volume, EncryptionUse.Contents));
+
         var label = request.Label;
         var limit = MaximumLength(volume.FileSystem);
         if (label.Length > limit)

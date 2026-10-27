@@ -89,6 +89,14 @@ public static class ResizePlanner
             return issues;
         }
 
+        // Before the file system test: a locked volume reports no file system at all.
+        var encryption = SafetyChecks.Encryption(volume, EncryptionUse.Resize);
+        if (encryption.Any(i => i.IsError))
+        {
+            issues.AddRange(encryption);
+            return issues;
+        }
+
         if (!ResizableFileSystems.Contains(volume.FileSystem, StringComparer.OrdinalIgnoreCase))
         {
             Error(CoreText.Format("Resize_OnlyNtfsReFS", volume.FileSystem.Length == 0 ? CoreText.Get("Common_Unknown") : volume.FileSystem));
@@ -96,6 +104,7 @@ public static class ResizePlanner
         }
 
         issues.AddRange(SafetyChecks.VolumeHealth(volume));
+        issues.AddRange(encryption);
 
         if (request.NewSizeBytes % Alignment != 0)
         {

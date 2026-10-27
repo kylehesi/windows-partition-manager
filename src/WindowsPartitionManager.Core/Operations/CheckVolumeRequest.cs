@@ -99,6 +99,12 @@ public static class CheckPlanner
             return issues;
         }
 
+        if (partition.Volume is { } encrypted && SafetyChecks.Encryption(encrypted, EncryptionUse.Contents) is { Count: > 0 } locked)
+        {
+            issues.AddRange(locked);
+            return issues;
+        }
+
         if (Available(disk, partition).Contains(request.Mode))
         {
             var letter = partition.DriveLetter is { } l ? $"{char.ToUpperInvariant(l)}:" : CoreText.Get("Safety_TheVolume");

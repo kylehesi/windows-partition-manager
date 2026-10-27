@@ -82,6 +82,11 @@ public static class FormatPlanner
             Error(CoreText.Format("Common_LabelTooLong", request.FileSystem, labelLimit));
         }
 
+        if (partition.Volume is { } encrypted)
+        {
+            issues.AddRange(SafetyChecks.Encryption(encrypted, EncryptionUse.Destroy));
+        }
+
         if (partition.Volume is { } volume && volume.UsedBytes > 0)
         {
             Warn(CoreText.Format("Common_VolumeHoldsData", ByteSize.Format(volume.UsedBytes), volume.Label is { Length: > 0 } l ? $" (\"{l}\")" : string.Empty));

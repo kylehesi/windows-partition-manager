@@ -261,4 +261,8 @@
   <data name="StorageCode_43027" xml:space="preserve"><value>İyileştirme iptal edildi.</value></data>
   <data name="StorageCode_43028" xml:space="preserve"><value>Birimdeki bir dosya açılamadı.</value></data>
   <data name="StorageCode_43032" xml:space="preserve"><value>Dosya sisteminin ana dosya tablosu çok parçalı olduğu için iyileştirme durdu.</value></data>
+  <data name="BitLocker_Locked" xml:space="preserve"><value>{0} BitLocker ile kilitli; içeriği okunamaz. Önce kilidini açın (Dosya Gezgini ya da parolası veya kurtarma anahtarıyla).</value></data>
+  <data name="BitLocker_LockedWillBeLost" xml:space="preserve"><value>{0} BitLocker ile şifrelenmiş ve kilitli. İçeriği burada okunamaz ve kalıcı olarak kaybolur.</value></data>
+  <data name="BitLocker_Converting" xml:space="preserve"><value>BitLocker {0} birimini hâlâ şifreliyor veya şifresini çözüyor (%{1} şifreli). BitLocker işini bitirdikten sonra boyutlandırın.</value></data>
+  <data name="BitLocker_KeepRecoveryKey" xml:space="preserve"><value>{0} BitLocker ile şifreli. Boyutlandırma destekleniyor, ancak başlamadan önce kurtarma anahtarına ulaşabildiğinizden emin olun (account.microsoft.com/devices/recoverykey).</value></data>
 </root>

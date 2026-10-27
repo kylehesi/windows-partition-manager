@@ -56,6 +56,41 @@ public static class SafetyChecks
         return [];
     }
 
+    /// <summary>
+    /// BitLocker rules. A locked volume cannot be read, so nothing that works with its contents
+    /// may run; a volume being encrypted or decrypted is not resized until BitLocker is done; and
+    /// resizing an encrypted volume is fine but the recovery key should be at hand.
+    /// </summary>
+    public static IReadOnlyList<ValidationIssue> Encryption(Volume volume, EncryptionUse use)
+    {
+        ArgumentNullException.ThrowIfNull(volume);
+        if (volume.BitLocker is not { } bitLocker)
+        {
+            return [];
+        }
+
+        var letter = volume.DriveLetter is { } l ? $"{l}:" : CoreText.Get("Safety_TheVolume");
+        if (bitLocker.Locked)
+        {
+            return [use == EncryptionUse.Destroy
+                ? new ValidationIssue(IssueSeverity.Warning, CoreText.Format("BitLocker_LockedWillBeLost", letter))
+                : new ValidationIssue(IssueSeverity.Error, CoreText.Format("BitLocker_Locked", letter))];
+        }
+
+        if (use == EncryptionUse.Resize && bitLocker.IsConverting)
+        {
+            var percent = bitLocker.PercentEncrypted?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "?";
+            return [new ValidationIssue(IssueSeverity.Error, CoreText.Format("BitLocker_Converting", letter, percent))];
+        }
+
+        if (use == EncryptionUse.Resize && bitLocker.IsEncrypted)
+        {
+            return [new ValidationIssue(IssueSeverity.Warning, CoreText.Format("BitLocker_KeepRecoveryKey", letter))];
+        }
+
+        return [];
+    }
+
     public static IReadOnlyList<ValidationIssue> VolumeHealth(Volume volume)
     {
         ArgumentNullException.ThrowIfNull(volume);

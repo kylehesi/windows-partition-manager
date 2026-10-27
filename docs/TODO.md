@@ -26,3 +26,4 @@ date in one pass before the release. Everything below still needs to be written 
 - Optimize: TRIM and defragment (`OptimizePlanner`, `OptimizeVolumeRequest`); recommended mode by media type; defrag on SSD and TRIM on HDD are explained.
 - CLI: `wpm optimize <disk> <partition> [--trim | --defrag]` (default: what suits the media type).
 - UI: "Optimize…" row action (`OptimizeVolumeWindow`): the media type is read first so the right mode is preselected and marked recommended; runs without confirmation. Screenshot aid `--dialog optimize`.
+- BitLocker: `Volume.BitLocker` (`BitLockerStatus`, `EncryptionState`), `SafetyChecks.Encryption` with `EncryptionUse`; locked volumes refused for resize/check/optimize/rename, warned before format/delete; resize waits while converting; recovery-key reminder before resizing an encrypted volume.
