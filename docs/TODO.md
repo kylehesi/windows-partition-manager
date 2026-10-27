@@ -12,3 +12,4 @@ date in one pass before the release. Everything below still needs to be written 
 - CLI: `wpm disk <disk> (online | offline | readonly | writable)`.
 - UI: "Disk ▾" menu in each disk card (online/offline, read-only/writable); hidden on Windows' own disk.
 - Auto refresh: the disk list re-reads itself 1.5 s after a drive is plugged in or removed (WM_DEVICECHANGE); deferred while a dialog is open.
+- UI: Settings > "Show history" opens the operation history table (`HistoryWindow`, `OperationHistory` parser); screenshot aid `--dialog history`.

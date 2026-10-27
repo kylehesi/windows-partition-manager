@@ -63,6 +63,7 @@
                 <TextBlock Text="{DynamicResource Settings_LogDescription}" TextWrapping="Wrap" Style="{StaticResource Secondary}" />
                 <TextBox Text="{Binding LogPath, Mode=OneWay}" IsReadOnly="True" BorderThickness="0" Background="Transparent" Margin="0,6,0,6" FontFamily="Cascadia Mono, Consolas" FontSize="12" />
                 <StackPanel Orientation="Horizontal">
+                    <Button Content="{DynamicResource Settings_ShowHistory}" Click="ShowHistory_Click" Margin="0,0,8,0" FontWeight="SemiBold" />
                     <Button Content="{DynamicResource Settings_OpenLog}" Command="{Binding OpenLogCommand}" Margin="0,0,8,0" />
                     <Button Content="{DynamicResource Settings_OpenFolder}" Command="{Binding OpenLogFolderCommand}" />
                 </StackPanel>

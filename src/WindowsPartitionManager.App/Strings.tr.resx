@@ -210,4 +210,23 @@
   <data name="DiskAction_ReadOnly_Prompt" xml:space="preserve"><value>Disk {0} ({1}) salt okunur yapılsın mı? Üzerindeki hiçbir şey silinmez.</value></data>
   <data name="DiskAction_Writable_Prompt" xml:space="preserve"><value>Disk {0} ({1}) yeniden yazılabilir yapılsın mı?</value></data>
   <data name="DiskAction_Working" xml:space="preserve"><value>Disk {0} değiştiriliyor…</value></data>
+  <data name="Settings_ShowHistory" xml:space="preserve"><value>Geçmişi göster</value></data>
+  <data name="History_Title" xml:space="preserve"><value>İşlem geçmişi</value></data>
+  <data name="History_Time" xml:space="preserve"><value>Zaman</value></data>
+  <data name="History_Operation" xml:space="preserve"><value>İşlem</value></data>
+  <data name="History_Details" xml:space="preserve"><value>Ayrıntılar</value></data>
+  <data name="History_Result" xml:space="preserve"><value>Sonuç</value></data>
+  <data name="History_Empty" xml:space="preserve"><value>Henüz hiçbir şey değiştirilmedi. Bu programla yapılan her değişiklik burada listelenir.</value></data>
+  <data name="History_Summary" xml:space="preserve"><value>{0} işlem, {1} tanesi başarısız oldu ya da reddedildi. En yenisi en üstte.</value></data>
+  <data name="History_Op_Initialize" xml:space="preserve"><value>Diski başlat</value></data>
+  <data name="History_Op_CreatePartition" xml:space="preserve"><value>Yeni bölüm</value></data>
+  <data name="History_Op_Format" xml:space="preserve"><value>Biçimlendir</value></data>
+  <data name="History_Op_DeletePartition" xml:space="preserve"><value>Bölümü sil</value></data>
+  <data name="History_Op_Resize" xml:space="preserve"><value>Boyutlandır</value></data>
+  <data name="History_Op_ChangeDriveLetter" xml:space="preserve"><value>Sürücü harfini değiştir</value></data>
+  <data name="History_Op_SetLabel" xml:space="preserve"><value>Birimi yeniden adlandır</value></data>
+  <data name="History_Op_SetDiskState" xml:space="preserve"><value>Disk durumu</value></data>
+  <data name="History_Op_Hibernation" xml:space="preserve"><value>Hazırda bekletme</value></data>
+  <data name="History_Op_PageFile" xml:space="preserve"><value>Disk belleği dosyası</value></data>
+  <data name="History_Op_ShadowCopies" xml:space="preserve"><value>Geri yükleme noktaları</value></data>
 </root>
