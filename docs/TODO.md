@@ -15,3 +15,4 @@ date in one pass before the release. Everything below still needs to be written 
 - UI: Settings > "Show history" opens the operation history table (`HistoryWindow`, `OperationHistory` parser); screenshot aid `--dialog history`.
 - CLI: `wpm list --json` (schemaVersion 1, sizes in bytes, camelCase; `DiskJson`).
 - Virtual disks: create/attach/detach (`IVirtualDiskOperations`, `VirtualDiskPlanner`, `Disk.VirtualDiskPath`).
+- CLI: `wpm vhd attach <file>`; `vhd new` now attaches with drive letters; `vhd detach` finds the disk by its file.

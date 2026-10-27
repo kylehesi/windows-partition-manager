@@ -76,7 +76,8 @@ static int Usage(string? error = null)
     Console.WriteLine("                                   reboot), restore points. Remembers what it changed.");
     Console.WriteLine("wpm unblock --restore            Put hibernation and page file settings back the way they were.");
     Console.WriteLine("wpm vhd new <file.vhdx> --size <size>   Create a VHDX, attach it (permanently) and initialize GPT.");
-    Console.WriteLine("wpm vhd detach <file.vhdx>              Detach a VHDX.");
+    Console.WriteLine("wpm vhd attach <file.vhdx>              Attach an existing VHD or VHDX; its drives get letters.");
+    Console.WriteLine("wpm vhd detach <file.vhdx>              Detach a VHD or VHDX; the file is kept.");
     return error is null ? 0 : 1;
 }
 
@@ -798,10 +799,11 @@ static async Task<int> VhdAsync(string[] args)
 {
     if (args.Length < 2)
     {
-        return Usage("vhd needs a sub-command: new <file> --size <size>, or detach <file>.");
+        return Usage("vhd needs a sub-command: new <file> --size <size>, attach <file>, or detach <file>.");
     }
 
     var path = Path.GetFullPath(args[1]);
+    var vhds = new VirtualDiskOperations(new WmiStorageOperations());
     try
     {
         switch (args[0].ToLowerInvariant())
@@ -814,31 +816,30 @@ static async Task<int> VhdAsync(string[] args)
                     return Usage("vhd new needs --size <size>, e.g. --size 4GB.");
                 }
 
-                using var vhd = VirtualDisk.Create(path, size);
-                int diskNumber;
-                try
-                {
-                    vhd.Attach(permanent: true);
-                    diskNumber = vhd.GetDiskNumber();
-                }
-                catch
-                {
-                    // Do not leave a half-made file behind when attaching fails (e.g. not elevated).
-                    vhd.Dispose();
-                    File.Delete(path);
-                    throw;
-                }
-                Console.WriteLine($"Created and attached {path} as disk {diskNumber}; initializing GPT…");
-                await new WmiStorageOperations().InitializeDiskAsync(diskNumber, PartitionStyle.Gpt);
-                Console.WriteLine($"Disk {diskNumber} is ready. Use 'wpm list' to see it and 'wpm vhd detach \"{path}\"' when done.");
+                var diskNumber = await vhds.CreateAsync(new CreateVirtualDiskRequest { Path = path, SizeBytes = size, Style = PartitionStyle.Gpt });
+                Console.WriteLine($"Created and attached {path} as disk {diskNumber} (GPT). Use 'wpm list' to see it and 'wpm vhd detach \"{path}\"' when done.");
+                return 0;
+            }
+
+            case "attach":
+            {
+                var diskNumber = await vhds.AttachAsync(path);
+                Console.WriteLine($"Attached {path} as disk {diskNumber}.");
                 return 0;
             }
 
             case "detach":
             {
-                using var vhd = VirtualDisk.Open(path);
-                vhd.Detach();
-                Console.WriteLine($"Detached {path}.");
+                var disk = (await new WmiStorageProvider().GetDisksAsync())
+                    .FirstOrDefault(d => d.VirtualDiskPath is { } p && p.Equals(path, StringComparison.OrdinalIgnoreCase));
+                if (disk is null)
+                {
+                    Console.Error.WriteLine($"{path} is not attached.");
+                    return 2;
+                }
+
+                await vhds.DetachAsync(new DetachVirtualDiskRequest { DiskNumber = disk.Number, ExpectedDisk = DiskFingerprint.Of(disk) });
+                Console.WriteLine($"Detached {path} (disk {disk.Number}). The file is kept.");
                 return 0;
             }
 
@@ -846,25 +847,20 @@ static async Task<int> VhdAsync(string[] args)
                 return Usage($"Unknown vhd sub-command '{args[0]}'.");
         }
     }
-    catch (System.ComponentModel.Win32Exception ex)
+    catch (StorageOperationException ex)
     {
         Console.Error.WriteLine(ex.Message);
-        if (ex.NativeErrorCode is 5 or 1314)
+        if (ex.ReturnValue is 5 or 1314)
         {
             Console.Error.WriteLine("Access denied: run this from an administrator prompt.");
         }
 
-        return 3;
+        return 6;
     }
     catch (IOException ex)
     {
         Console.Error.WriteLine(ex.Message);
         return 3;
-    }
-    catch (StorageOperationException ex)
-    {
-        Console.Error.WriteLine(ex.Message);
-        return 6;
     }
 }
 
