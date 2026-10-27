@@ -1177,6 +1177,12 @@ static async Task<int> ListAsync(string[] args)
             {
                 var label = string.IsNullOrEmpty(volume.Label) ? string.Empty : $" \"{volume.Label}\"";
                 line += $"  {volume.FileSystem}{label}  used {ByteSize.Format(volume.UsedBytes)} / free {ByteSize.Format(volume.FreeBytes)}";
+                if (volume.BitLocker is { IsEncrypted: true } bitLocker)
+                {
+                    line += bitLocker.Locked ? "  [BitLocker: locked]"
+                        : bitLocker.IsConverting ? $"  [BitLocker: {bitLocker.State.ToString().ToLowerInvariant()} {bitLocker.PercentEncrypted} %]"
+                        : bitLocker.ProtectionOn ? "  [BitLocker: on]" : "  [BitLocker: encrypted, protection off]";
+                }
             }
 
             Console.WriteLine(line);
