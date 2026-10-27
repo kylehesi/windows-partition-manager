@@ -118,6 +118,8 @@ public sealed class VolumePropertiesViewModelTests
             return Task.FromResult(Layout().Partition);
         }
 
+        public Task<CheckResult> CheckVolumeAsync(CheckVolumeRequest request, IProgress<string>? progress = null, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+
         public Task<Disk> SetDiskStateAsync(SetDiskStateRequest request, CancellationToken cancellationToken = default) => throw new NotSupportedException();
 
         public Task InitializeDiskAsync(int diskNumber, PartitionStyle style, CancellationToken cancellationToken = default) => throw new NotSupportedException();

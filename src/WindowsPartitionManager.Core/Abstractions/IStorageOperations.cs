@@ -38,6 +38,9 @@ public interface IStorageOperations
     /// <summary>Renames the partition's volume (Set-Volume -NewFileSystemLabel).</summary>
     Task<Partition> SetLabelAsync(SetLabelRequest request, CancellationToken cancellationToken = default);
 
+    /// <summary>Checks a volume's file system and, depending on the mode, repairs it (Repair-Volume).</summary>
+    Task<CheckResult> CheckVolumeAsync(CheckVolumeRequest request, IProgress<string>? progress = null, CancellationToken cancellationToken = default);
+
     /// <summary>Takes a disk offline or online, or switches its read-only attribute (Set-Disk).</summary>
     Task<Disk> SetDiskStateAsync(SetDiskStateRequest request, CancellationToken cancellationToken = default);
 }

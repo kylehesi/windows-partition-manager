@@ -73,6 +73,13 @@ public sealed class WmiStorageOperations : IStorageOperations
         return Task.Run(() => Guarded("SetLabel", details, () => SetLabel(request, cancellationToken)), cancellationToken);
     }
 
+    public Task<CheckResult> CheckVolumeAsync(CheckVolumeRequest request, IProgress<string>? progress = null, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var details = string.Create(CultureInfo.InvariantCulture, $"disk={request.DiskNumber} partition={request.PartitionNumber} mode={request.Mode}");
+        return Task.Run(() => Guarded("CheckVolume", details, () => CheckVolume(request, progress, cancellationToken)), cancellationToken);
+    }
+
     public Task<Disk> SetDiskStateAsync(SetDiskStateRequest request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
@@ -434,6 +441,36 @@ public sealed class WmiStorageOperations : IStorageOperations
         }
 
         return ReadBack(request.DiskNumber, request.PartitionNumber, "SetLabel", cancellationToken);
+    }
+
+    private static CheckResult CheckVolume(CheckVolumeRequest request, IProgress<string>? progress, CancellationToken cancellationToken)
+    {
+        var (_, fresh) = Fresh(request.DiskNumber, cancellationToken);
+        var target = fresh?.Partitions.FirstOrDefault(p => p.Number == request.PartitionNumber);
+        RefuseOnErrors("CheckVolume", [LayoutGuard.Check(fresh, request.ExpectedDisk, target, request.ExpectedPartition)]);
+        if (target is null)
+        {
+            throw new StorageOperationException("CheckVolume", 0, CoreText.Get("Ops_RefusedPrefix") + CoreText.Format("Ops_PartitionNotFound", request.PartitionNumber, request.DiskNumber, LayoutGuard.RefreshHint));
+        }
+
+        RefuseOnErrors("CheckVolume", CheckPlanner.Validate(fresh!, target, request));
+
+        var scope = Wmi.Connect();
+        string[] accessPaths;
+        using (var partition = GetPartition(scope, request.DiskNumber, request.PartitionNumber))
+        {
+            accessPaths = Wmi.GetRaw(partition, "AccessPaths") as string[] ?? [];
+        }
+
+        progress?.Report(CoreText.Get("Ops_Checking"));
+        using var volume = WaitForVolume(scope, request.DiskNumber, request.PartitionNumber, accessPaths, cancellationToken);
+        using var result = Wmi.Invoke(volume, "Repair", p =>
+        {
+            p["Scan"] = request.Mode == CheckMode.Scan;
+            p["SpotFix"] = request.Mode == CheckMode.SpotFix;
+            p["OfflineScanAndFix"] = request.Mode == CheckMode.OfflineScanAndFix;
+        });
+        return CheckResult.FromCode(Wmi.Get<uint>(result, "Output"));
     }
 
     private static Disk SetDiskState(SetDiskStateRequest request, CancellationToken cancellationToken)
