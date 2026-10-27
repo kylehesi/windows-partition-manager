@@ -248,4 +248,17 @@
   <data name="Check_Outcome_Retry" xml:space="preserve"><value>Windows could not finish the scan this time (the drive was busy). Try again in a moment.</value></data>
   <data name="Check_Outcome_Failed" xml:space="preserve"><value>The check failed. See the operation history for the details.</value></data>
   <data name="Ops_Checking" xml:space="preserve"><value>Checking the file system… This can take a while on a large drive.</value></data>
+  <data name="Optimize_NotSupported" xml:space="preserve"><value>Windows cannot optimize {0} volumes.</value></data>
+  <data name="Optimize_DefragOnSsd" xml:space="preserve"><value>This is an SSD: defragmenting it adds wear and does not make it faster. TRIM is what it needs; defragment only before shrinking the volume.</value></data>
+  <data name="Optimize_DefragTakesLong" xml:space="preserve"><value>Defragmenting can take a long time on a large, full drive. The drive stays usable meanwhile.</value></data>
+  <data name="Optimize_TrimOnHdd" xml:space="preserve"><value>This is a hard disk: TRIM is for SSDs, and Windows will most likely report that the hardware does not support it.</value></data>
+  <data name="Ops_Optimizing" xml:space="preserve"><value>Optimizing… This can take a while; the drive stays usable.</value></data>
+  <data name="StorageCode_43022" xml:space="preserve"><value>The hardware behind the volume does not support this optimization.</value></data>
+  <data name="StorageCode_43023" xml:space="preserve"><value>The optimization could not finish because the disk is full.</value></data>
+  <data name="StorageCode_43024" xml:space="preserve"><value>Another optimization is already running on this volume.</value></data>
+  <data name="StorageCode_43025" xml:space="preserve"><value>This volume cannot be optimized.</value></data>
+  <data name="StorageCode_43026" xml:space="preserve"><value>The volume is corrupted. Check the file system first.</value></data>
+  <data name="StorageCode_43027" xml:space="preserve"><value>The optimization was cancelled.</value></data>
+  <data name="StorageCode_43028" xml:space="preserve"><value>A file on the volume could not be opened.</value></data>
+  <data name="StorageCode_43032" xml:space="preserve"><value>The optimization stopped because the file system's master file table is too fragmented.</value></data>
 </root>

@@ -23,3 +23,4 @@ date in one pass before the release. Everything below still needs to be written 
 - Check/repair file system: Scan, SpotFix, OfflineScanAndFix (`CheckPlanner`, `CheckVolumeRequest`, `CheckResult` mapping Repair-Volume status codes); Windows volume: scan only, fix via chkdsk at restart.
 - CLI: `wpm check <disk> <partition> [--spotfix | --fix]`.
 - UI: "Check file system…" row action (`CheckVolumeWindow`): scan without confirmation, fixes with one, the next step is preselected; on the Windows drive a hint explains chkdsk at restart. Screenshot aid `--dialog check`.
+- Optimize: TRIM and defragment (`OptimizePlanner`, `OptimizeVolumeRequest`); recommended mode by media type; defrag on SSD and TRIM on HDD are explained.

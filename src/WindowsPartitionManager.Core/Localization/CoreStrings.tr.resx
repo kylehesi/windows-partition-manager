@@ -248,4 +248,17 @@
   <data name="Check_Outcome_Retry" xml:space="preserve"><value>Windows taramayı bu sefer bitiremedi (sürücü meşguldü). Biraz sonra yeniden deneyin.</value></data>
   <data name="Check_Outcome_Failed" xml:space="preserve"><value>Denetim başarısız oldu. Ayrıntılar için işlem geçmişine bakın.</value></data>
   <data name="Ops_Checking" xml:space="preserve"><value>Dosya sistemi denetleniyor… Büyük bir sürücüde bu biraz sürebilir.</value></data>
+  <data name="Optimize_NotSupported" xml:space="preserve"><value>Windows {0} birimlerini iyileştiremez.</value></data>
+  <data name="Optimize_DefragOnSsd" xml:space="preserve"><value>Bu bir SSD: birleştirme aşınmayı artırır ve hızlandırmaz. İhtiyacı olan TRIM'dir; birleştirmeyi yalnızca birimi küçültmeden önce yapın.</value></data>
+  <data name="Optimize_DefragTakesLong" xml:space="preserve"><value>Büyük ve dolu bir sürücüde birleştirme uzun sürebilir. Bu sırada sürücü kullanılabilir kalır.</value></data>
+  <data name="Optimize_TrimOnHdd" xml:space="preserve"><value>Bu bir sabit disk: TRIM SSD'ler içindir ve Windows büyük olasılıkla donanımın bunu desteklemediğini bildirecektir.</value></data>
+  <data name="Ops_Optimizing" xml:space="preserve"><value>İyileştiriliyor… Bu biraz sürebilir; sürücü kullanılabilir kalır.</value></data>
+  <data name="StorageCode_43022" xml:space="preserve"><value>Birimin arkasındaki donanım bu iyileştirmeyi desteklemiyor.</value></data>
+  <data name="StorageCode_43023" xml:space="preserve"><value>Disk dolu olduğu için iyileştirme tamamlanamadı.</value></data>
+  <data name="StorageCode_43024" xml:space="preserve"><value>Bu birimde zaten başka bir iyileştirme çalışıyor.</value></data>
+  <data name="StorageCode_43025" xml:space="preserve"><value>Bu birim iyileştirilemez.</value></data>
+  <data name="StorageCode_43026" xml:space="preserve"><value>Birim bozuk. Önce dosya sistemini denetleyin.</value></data>
+  <data name="StorageCode_43027" xml:space="preserve"><value>İyileştirme iptal edildi.</value></data>
+  <data name="StorageCode_43028" xml:space="preserve"><value>Birimdeki bir dosya açılamadı.</value></data>
+  <data name="StorageCode_43032" xml:space="preserve"><value>Dosya sisteminin ana dosya tablosu çok parçalı olduğu için iyileştirme durdu.</value></data>
 </root>
