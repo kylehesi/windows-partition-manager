@@ -228,4 +228,13 @@
   <data name="Vhd_FileMissing" xml:space="preserve"><value>{0} was not found.</value></data>
   <data name="Vhd_DiskTimeout" xml:space="preserve"><value>The virtual disk was attached but did not appear as a disk within 30 seconds.</value></data>
   <data name="Label_OnlyBasicData" xml:space="preserve"><value>Only data partitions can be renamed here; this one is '{0}'.</value></data>
+  <data name="Health_WindowsUnhealthy" xml:space="preserve"><value>Windows reports this drive as unhealthy. Back up its data now and plan to replace it.</value></data>
+  <data name="Health_WindowsWarning" xml:space="preserve"><value>Windows reports a warning for this drive. Back up important data and keep an eye on it.</value></data>
+  <data name="Health_UncorrectedErrors" xml:space="preserve"><value>The drive reports {0} read or write errors it could not correct. Data may already be damaged; back up now.</value></data>
+  <data name="Health_WornOut" xml:space="preserve"><value>{0} % of the rated write endurance is used. The drive is near the end of its expected life; back up and plan to replace it.</value></data>
+  <data name="Health_Worn" xml:space="preserve"><value>{0} % of the rated write endurance is used. Still fine, but worth watching.</value></data>
+  <data name="Health_Hot" xml:space="preserve"><value>The drive is at {0} °C, at or above {1} °C. Check its cooling; heat shortens its life and can slow it down.</value></data>
+  <data name="Health_AllGood" xml:space="preserve"><value>Nothing the drive reports points to a problem.</value></data>
+  <data name="Health_GoodWithoutCounters" xml:space="preserve"><value>Windows reports the drive as healthy. It shares no detailed counters (common for USB drives and virtual disks).</value></data>
+  <data name="Health_NoData" xml:space="preserve"><value>The drive reports too little to judge its health.</value></data>
 </root>

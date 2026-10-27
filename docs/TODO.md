@@ -17,3 +17,4 @@ date in one pass before the release. Everything below still needs to be written 
 - Virtual disks: create/attach/detach (`IVirtualDiskOperations`, `VirtualDiskPlanner`, `Disk.VirtualDiskPath`).
 - CLI: `wpm vhd attach <file>`; `vhd new` now attaches with drive letters; `vhd detach` finds the disk by its file.
 - UI: toolbar "Virtual disk" menu (create/attach) with `CreateVirtualDiskWindow`; "Detach virtual disk…" in the Disk menu; screenshot aid `--dialog vhd`.
+- Disk health: SMART/reliability counters (`DiskHealth`, `DiskHealthAssessment`, `IDiskHealthProvider`); verdict Good/Attention/Bad/Unknown, cautious wording.

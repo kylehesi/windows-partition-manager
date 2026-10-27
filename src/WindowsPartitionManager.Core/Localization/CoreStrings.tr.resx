@@ -228,4 +228,13 @@
   <data name="Vhd_FileMissing" xml:space="preserve"><value>{0} bulunamadı.</value></data>
   <data name="Vhd_DiskTimeout" xml:space="preserve"><value>Sanal disk bağlandı ancak 30 saniye içinde disk olarak görünmedi.</value></data>
   <data name="Label_OnlyBasicData" xml:space="preserve"><value>Burada yalnızca veri bölümleri yeniden adlandırılabilir; bu bölüm '{0}'.</value></data>
+  <data name="Health_WindowsUnhealthy" xml:space="preserve"><value>Windows bu sürücüyü sağlıksız olarak bildiriyor. Verilerini hemen yedekleyin ve değiştirmeyi planlayın.</value></data>
+  <data name="Health_WindowsWarning" xml:space="preserve"><value>Windows bu sürücü için bir uyarı bildiriyor. Önemli verileri yedekleyin ve sürücüyü takip edin.</value></data>
+  <data name="Health_UncorrectedErrors" xml:space="preserve"><value>Sürücü düzeltemediği {0} okuma veya yazma hatası bildiriyor. Veriler zarar görmüş olabilir; hemen yedekleyin.</value></data>
+  <data name="Health_WornOut" xml:space="preserve"><value>Öngörülen yazma ömrünün %{0} kadarı kullanılmış. Sürücü beklenen ömrünün sonuna yakın; yedekleyin ve değiştirmeyi planlayın.</value></data>
+  <data name="Health_Worn" xml:space="preserve"><value>Öngörülen yazma ömrünün %{0} kadarı kullanılmış. Hâlâ sorun yok, ama takip etmeye değer.</value></data>
+  <data name="Health_Hot" xml:space="preserve"><value>Sürücü {0} °C sıcaklıkta, yani {1} °C veya üzerinde. Soğutmasını kontrol edin; ısı ömrünü kısaltır ve sürücüyü yavaşlatabilir.</value></data>
+  <data name="Health_AllGood" xml:space="preserve"><value>Sürücünün bildirdiği hiçbir şey bir soruna işaret etmiyor.</value></data>
+  <data name="Health_GoodWithoutCounters" xml:space="preserve"><value>Windows sürücüyü sağlıklı olarak bildiriyor. Ayrıntılı sayaç paylaşmıyor (USB sürücülerde ve sanal disklerde yaygındır).</value></data>
+  <data name="Health_NoData" xml:space="preserve"><value>Sürücü, sağlığını değerlendirmeye yetecek bilgi bildirmiyor.</value></data>
 </root>
