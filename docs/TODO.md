@@ -25,3 +25,4 @@ date in one pass before the release. Everything below still needs to be written 
 - UI: "Check file system…" row action (`CheckVolumeWindow`): scan without confirmation, fixes with one, the next step is preselected; on the Windows drive a hint explains chkdsk at restart. Screenshot aid `--dialog check`.
 - Optimize: TRIM and defragment (`OptimizePlanner`, `OptimizeVolumeRequest`); recommended mode by media type; defrag on SSD and TRIM on HDD are explained.
 - CLI: `wpm optimize <disk> <partition> [--trim | --defrag]` (default: what suits the media type).
+- UI: "Optimize…" row action (`OptimizeVolumeWindow`): the media type is read first so the right mode is preselected and marked recommended; runs without confirmation. Screenshot aid `--dialog optimize`.

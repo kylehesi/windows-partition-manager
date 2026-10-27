@@ -92,6 +92,12 @@ public partial class App : Application
             }
         };
 
+        viewModel.OptimizeRequested += (_, form) =>
+        {
+            var dialog = new OptimizeVolumeWindow { DataContext = form, Owner = window };
+            dialog.ShowDialog();
+        };
+
         viewModel.CheckRequested += (_, form) =>
         {
             var dialog = new CheckVolumeWindow { DataContext = form, Owner = window };
@@ -134,7 +140,7 @@ public partial class App : Application
 
     /// <summary>
     /// Developer aid: <c>--screenshot file.png [--size 1120x700] [--theme Dark] [--language Turkish]
-    /// [--dialog settings|history|health|vhd|new|resize|properties|check|format|delete]</c> renders the main window (or the named dialog,
+    /// [--dialog settings|history|health|vhd|new|resize|properties|check|optimize|format|delete]</c> renders the main window (or the named dialog,
     /// opened for the first row that allows it) once the disks are loaded, saves it as PNG and exits.
     /// Used to check layout without a human. Dialogs only open; nothing is ever applied.
     /// </summary>
@@ -183,6 +189,9 @@ public partial class App : Application
                 break;
             case "history":
                 new HistoryWindow { DataContext = new HistoryViewModel(OperationLog.Path), Owner = Current.MainWindow }.ShowDialog();
+                break;
+            case "optimize" when rows.FirstOrDefault(r => r.CanOptimize) is { } row:
+                viewModel.OptimizeCommand.Execute(row);
                 break;
             case "check" when rows.FirstOrDefault(r => r.CanCheck) is { } row:
                 viewModel.CheckCommand.Execute(row);

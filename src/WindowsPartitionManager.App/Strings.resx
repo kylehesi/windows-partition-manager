@@ -292,4 +292,14 @@
   <data name="Check_ModeOfflineScanAndFix_Text" xml:space="preserve"><value>The classic chkdsk /f: the drive is dismounted, checked from start to end and repaired. Takes longest; the only option for FAT32 and exFAT drives.</value></data>
   <data name="Check_Confirm" xml:space="preserve"><value>{0} on {1}?</value></data>
   <data name="Check_Run" xml:space="preserve"><value>Run</value></data>
+  <data name="Segment_Optimize" xml:space="preserve"><value>Optimize…</value></data>
+  <data name="Optimize_Title" xml:space="preserve"><value>Optimize · {0} on disk {1}</value></data>
+  <data name="Optimize_ModeLabel" xml:space="preserve"><value>Optimization</value></data>
+  <data name="Optimize_ModeReTrim" xml:space="preserve"><value>TRIM</value></data>
+  <data name="Optimize_ModeReTrim_Text" xml:space="preserve"><value>Tells the SSD again which blocks are free, so it can keep writing at full speed. Quick and harmless; Windows also does it on a schedule.</value></data>
+  <data name="Optimize_ModeDefrag" xml:space="preserve"><value>Defragment</value></data>
+  <data name="Optimize_ModeDefrag_Text" xml:space="preserve"><value>Moves the pieces of each file next to each other. Makes hard disks faster and helps before shrinking a volume. Can take a long time on a large drive.</value></data>
+  <data name="Optimize_Recommended" xml:space="preserve"><value>(recommended)</value></data>
+  <data name="Optimize_Run" xml:space="preserve"><value>Optimize</value></data>
+  <data name="Optimize_Done" xml:space="preserve"><value>Done: {0} finished in {1} s.</value></data>
 </root>

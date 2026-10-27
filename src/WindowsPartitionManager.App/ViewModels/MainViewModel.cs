@@ -56,6 +56,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         AttachVirtualDiskCommand = new RelayCommand(() => AttachVirtualDiskRequested?.Invoke(this, EventArgs.Empty), () => !IsBusy);
         DetachVirtualDiskCommand = new RelayCommand<Disk>(disk => _ = DetachVirtualDiskAsync(disk), _ => !IsBusy);
         DiskStateCommand = new RelayCommand<DiskStateTarget>(target => _ = SetDiskStateAsync(target), _ => !IsBusy);
+        OptimizeCommand = new RelayCommand<SegmentRow>(row => _ = OpenOptimizeAsync(row), row => row.CanOptimize);
         CheckCommand = new RelayCommand<SegmentRow>(row => CheckRequested?.Invoke(this, CreateCheck(row)), row => row.CanCheck);
         PropertiesCommand = new RelayCommand<SegmentRow>(row => PropertiesRequested?.Invoke(this, CreateProperties(row)), row => row.CanEditProperties);
         InitializeCommand = new RelayCommand<SegmentRow>(row => _ = InitializeAsync(row), row => row.CanInitialize && !IsBusy);
@@ -76,7 +77,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
             if (SetField(ref _selectedRow, value))
             {
                 OnPropertyChanged(nameof(SelectionText));
-                foreach (var command in new[] { AnalyzeCommand, ResizeCommand, NewPartitionCommand, DeleteCommand, FormatCommand, InitializeCommand, PropertiesCommand, CheckCommand })
+                foreach (var command in new[] { AnalyzeCommand, ResizeCommand, NewPartitionCommand, DeleteCommand, FormatCommand, InitializeCommand, PropertiesCommand, CheckCommand, OptimizeCommand })
                 {
                     command.RaiseCanExecuteChanged();
                 }
@@ -220,6 +221,27 @@ public sealed class MainViewModel : INotifyPropertyChanged
         }
 
         await RefreshAsync();
+    }
+
+    /// <summary>Raised when the user wants to TRIM or defragment a volume; the view opens the form.</summary>
+    public event EventHandler<OptimizeVolumeViewModel>? OptimizeRequested;
+
+    public RelayCommand<SegmentRow> OptimizeCommand { get; }
+
+    /// <summary>The media type decides which optimization is recommended, so it is read before the form opens.</summary>
+    private async Task OpenOptimizeAsync(SegmentRow row)
+    {
+        var media = MediaType.Unknown;
+        try
+        {
+            media = (await _health.GetHealthAsync(row.DiskNumber))?.MediaType ?? MediaType.Unknown;
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            // Without the media type both choices are still offered, just without a recommendation.
+        }
+
+        OptimizeRequested?.Invoke(this, new OptimizeVolumeViewModel(_operations, row.Disk, row.Partition!, media));
     }
 
     /// <summary>Raised when the user wants to check a file system; the view opens the form.</summary>
