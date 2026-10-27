@@ -1,0 +1,7 @@
+# Documentation to update
+
+Features are landing faster than the docs; README.md and docs/ARCHITECTURE.md are brought up to
+date in one pass before the release. Everything below still needs to be written up.
+
+- Drive letter: change or remove a partition's letter (`DriveLetterPlanner`, `ChangeDriveLetterRequest`).
+- Volume label: rename a volume (`LabelPlanner`, `SetLabelRequest`).
