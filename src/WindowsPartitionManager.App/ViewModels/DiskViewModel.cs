@@ -46,9 +46,9 @@ public sealed class DiskViewModel
         var actions = new List<DiskAction> { new(Localization.Get("DiskAction_Health"), owner.HealthCommand, disk) };
         actions.AddRange(DiskStatePlanner.Available(disk)
             .Select(change => new DiskAction(Localization.Get($"DiskAction_{change}"), owner.DiskStateCommand, new DiskStateTarget(disk, change))));
-        if (ConvertDiskPlanner.Target(disk) is { } style)
+        if (ConvertDiskPlanner.Target(disk) is { } convertTo)
         {
-            actions.Add(new DiskAction(Localization.Get($"DiskAction_ConvertTo{style}"), owner.ConvertCommand, new ConvertTarget(disk, style)));
+            actions.Add(new DiskAction(Localization.Get($"DiskAction_ConvertTo{convertTo}"), owner.ConvertCommand, new ConvertTarget(disk, convertTo)));
         }
 
         if (VirtualDiskPlanner.CanDetach(disk))
