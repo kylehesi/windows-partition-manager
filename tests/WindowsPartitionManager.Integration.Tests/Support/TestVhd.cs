@@ -187,6 +187,8 @@ internal sealed class TestVhd : IDisposable
     /// <summary>Read-only chkdsk; exit code 0 means no problems were found.</summary>
     public int Chkdsk(char letter)
     {
+        // chkdsk writes in the OEM code page (e.g. 437), which .NET only knows once registered.
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
         using var process = Process.Start(new ProcessStartInfo("chkdsk.exe", $"{letter}:")
         {
             UseShellExecute = false,
