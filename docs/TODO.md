@@ -24,3 +24,4 @@ date in one pass before the release. Everything below still needs to be written 
 - CLI: `wpm check <disk> <partition> [--spotfix | --fix]`.
 - UI: "Check file system…" row action (`CheckVolumeWindow`): scan without confirmation, fixes with one, the next step is preselected; on the Windows drive a hint explains chkdsk at restart. Screenshot aid `--dialog check`.
 - Optimize: TRIM and defragment (`OptimizePlanner`, `OptimizeVolumeRequest`); recommended mode by media type; defrag on SSD and TRIM on HDD are explained.
+- CLI: `wpm optimize <disk> <partition> [--trim | --defrag]` (default: what suits the media type).

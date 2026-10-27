@@ -32,6 +32,7 @@ return command switch
     "disk" => await DiskStateAsync(args.Skip(1).ToArray()),
     "health" => await HealthAsync(args.Skip(1).ToArray()),
     "check" => await CheckAsync(args.Skip(1).ToArray()),
+    "optimize" => await OptimizeAsync(args.Skip(1).ToArray()),
     "unblock" => await UnblockAsync(args.Skip(1).ToArray()),
     "vhd" => await VhdAsync(args.Skip(1).ToArray()),
     "-h" or "--help" or "help" => Usage(),
@@ -70,6 +71,9 @@ static int Usage(string? error = null)
     Console.WriteLine("wpm check <disk> <partition> [--spotfix | --fix] [--yes]");
     Console.WriteLine("                                   Check a file system (online scan by default); --spotfix fixes what a");
     Console.WriteLine("                                   scan recorded, --fix runs the full offline check and repair.");
+    Console.WriteLine("wpm optimize <disk> <partition> [--trim | --defrag]");
+    Console.WriteLine("                                   TRIM an SSD or defragment a hard disk (by default what suits the");
+    Console.WriteLine("                                   drive). The volume stays usable.");
     Console.WriteLine("wpm health [<disk>]                What each drive reports about its health (SMART): temperature,");
     Console.WriteLine("                                   SSD wear, errors, power-on hours. Counters need administrator rights.");
     Console.WriteLine("wpm disk <disk> (online | offline | readonly | writable) [--yes]");
@@ -472,6 +476,65 @@ static async Task<int> CheckAsync(string[] args)
         var result = await new WmiStorageOperations().CheckVolumeAsync(request, new Progress<string>(s => Console.WriteLine("  " + s)));
         Console.WriteLine($"Done ({mode}): {result.Message} [status {result.Code}]");
         return result.Outcome is CheckOutcome.Clean or CheckOutcome.Fixed ? 0 : 7;
+    }
+    catch (StorageOperationException ex)
+    {
+        Console.Error.WriteLine(ex.Message);
+        return 6;
+    }
+}
+
+static async Task<int> OptimizeAsync(string[] args)
+{
+    if (args.Length < 2 || !int.TryParse(args[0], out var diskNumber) || !int.TryParse(args[1], out var partitionNumber))
+    {
+        return Usage("optimize needs a disk number and a partition number, e.g. 'wpm optimize 0 1'.");
+    }
+
+    var disks = await new WmiStorageProvider().GetDisksAsync();
+    var disk = disks.FirstOrDefault(d => d.Number == diskNumber);
+    var partition = disk?.Partitions.FirstOrDefault(p => p.Number == partitionNumber);
+    if (disk is null || partition is null)
+    {
+        Console.Error.WriteLine($"Partition {partitionNumber} on disk {diskNumber} was not found.");
+        return 2;
+    }
+
+    var media = (await new WmiDiskHealthProvider().GetHealthAsync(diskNumber))?.MediaType ?? MediaType.Unknown;
+    var available = OptimizePlanner.Available(disk, partition, media);
+    OptimizeMode? mode = args.Contains("--trim") ? OptimizeMode.ReTrim : args.Contains("--defrag") ? OptimizeMode.Defrag : available.Count > 0 ? available[0] : null;
+    if (mode is null)
+    {
+        Console.Error.WriteLine($"Windows cannot optimize this volume ({partition.Volume?.FileSystem ?? "no file system"}).");
+        return 5;
+    }
+
+    var request = new OptimizeVolumeRequest
+    {
+        DiskNumber = diskNumber,
+        PartitionNumber = partitionNumber,
+        Mode = mode.Value,
+        ExpectedDisk = DiskFingerprint.Of(disk),
+        ExpectedPartition = PartitionFingerprint.Of(partition),
+    };
+    var issues = OptimizePlanner.Validate(disk, partition, request, media);
+    foreach (var issue in issues)
+    {
+        Console.WriteLine($"  {(issue.IsError ? "ERROR  " : "warning")} {issue.Message}");
+    }
+
+    if (issues.Any(i => i.IsError))
+    {
+        Console.Error.WriteLine("Nothing was changed.");
+        return 5;
+    }
+
+    try
+    {
+        var stopwatch = Stopwatch.StartNew();
+        await new WmiStorageOperations().OptimizeVolumeAsync(request, new Progress<string>(s => Console.WriteLine("  " + s)));
+        Console.WriteLine($"Done ({mode}, {media}) in {stopwatch.Elapsed.TotalSeconds:F1} s.");
+        return 0;
     }
     catch (StorageOperationException ex)
     {
