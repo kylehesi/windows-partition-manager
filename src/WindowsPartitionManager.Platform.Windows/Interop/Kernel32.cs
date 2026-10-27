@@ -21,6 +21,12 @@ internal static unsafe partial class Kernel32
     public const uint QUERY_FILE_LAYOUT_INCLUDE_STREAMS = 0x00000004;
     public const uint QUERY_FILE_LAYOUT_INCLUDE_EXTENTS = 0x00000008;
 
+    /// <summary>
+    /// Without it, records whose streams own no clusters are left out entirely: small folders whose
+    /// index fits in their MFT record, so everything inside them would lose its parent.
+    /// </summary>
+    public const uint QUERY_FILE_LAYOUT_INCLUDE_STREAMS_WITH_NO_CLUSTERS_ALLOCATED = 0x00000020; // winioctl.h
+
     public const uint FILE_LAYOUT_NAME_ENTRY_DOS = 0x00000002;
     public const uint STREAM_LAYOUT_ENTRY_IMMOVABLE = 0x00000001;
 

@@ -221,7 +221,8 @@ internal sealed unsafe class NtfsVolumeInspection : IVolumeInspection
             Flags = Kernel32.QUERY_FILE_LAYOUT_RESTART
                   | Kernel32.QUERY_FILE_LAYOUT_INCLUDE_NAMES
                   | Kernel32.QUERY_FILE_LAYOUT_INCLUDE_STREAMS
-                  | Kernel32.QUERY_FILE_LAYOUT_INCLUDE_EXTENTS,
+                  | Kernel32.QUERY_FILE_LAYOUT_INCLUDE_EXTENTS
+                  | Kernel32.QUERY_FILE_LAYOUT_INCLUDE_STREAMS_WITH_NO_CLUSTERS_ALLOCATED, // keep small folders, or paths below them break
         };
         ulong allocated = 0;
 
@@ -391,7 +392,7 @@ internal sealed unsafe class NtfsVolumeInspection : IVolumeInspection
         return allocated;
     }
 
-    private static (string Name, ulong ParentId) ReadName(ReadOnlySpan<byte> span, int fileAt, int nameOffset)
+    internal static (string Name, ulong ParentId) ReadName(ReadOnlySpan<byte> span, int fileAt, int nameOffset)
     {
         string? fallback = null;
         ulong fallbackParent = RootFileId;
