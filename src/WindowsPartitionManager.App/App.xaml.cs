@@ -69,6 +69,12 @@ public partial class App : Application
             dialog.ShowDialog();
         };
 
+        viewModel.PropertiesRequested += (_, form) =>
+        {
+            var dialog = new VolumePropertiesWindow { DataContext = form, Owner = window };
+            dialog.ShowDialog();
+        };
+
         viewModel.ResizeRequested += (_, form) =>
         {
             var dialog = new ResizePartitionWindow { DataContext = form, Owner = window };
@@ -99,7 +105,7 @@ public partial class App : Application
 
     /// <summary>
     /// Developer aid: <c>--screenshot file.png [--size 1120x700] [--theme Dark] [--language Turkish]
-    /// [--dialog settings|new|resize|format|delete]</c> renders the main window (or the named dialog,
+    /// [--dialog settings|new|resize|properties|format|delete]</c> renders the main window (or the named dialog,
     /// opened for the first row that allows it) once the disks are loaded, saves it as PNG and exits.
     /// Used to check layout without a human. Dialogs only open; nothing is ever applied.
     /// </summary>
@@ -139,6 +145,9 @@ public partial class App : Application
                 break;
             case "format" when rows.FirstOrDefault(r => r.CanFormat) is { } row:
                 viewModel.FormatCommand.Execute(row);
+                break;
+            case "properties" when rows.FirstOrDefault(r => r.CanEditProperties) is { } row:
+                viewModel.PropertiesCommand.Execute(row);
                 break;
             case "delete" when rows.FirstOrDefault(r => r.CanDelete) is { } row:
                 viewModel.DeleteCommand.Execute(row);

@@ -182,4 +182,22 @@
   <data name="Language_Turkish" xml:space="preserve"><value>Türkçe</value></data>
   <data name="Map_Location" xml:space="preserve"><value>{1} konumunda {0}</value></data>
   <data name="Map_UsedFree" xml:space="preserve"><value>{0} kullanılan, {1} boş</value></data>
+  <data name="Segment_Properties" xml:space="preserve"><value>Sürücü harfi ve etiket…</value></data>
+  <data name="Properties_Title" xml:space="preserve"><value>Sürücü harfi ve etiket · disk {1} üzerinde {0}</value></data>
+  <data name="Properties_Info" xml:space="preserve"><value>{0} · {1} · {2}. Birimdeki hiçbir veri değişmez.</value></data>
+  <data name="Properties_NoLetter" xml:space="preserve"><value>Sürücü harfi yok</value></data>
+  <data name="Properties_EmptyLabel" xml:space="preserve"><value>(etiket yok)</value></data>
+  <data name="Properties_RenameTo" xml:space="preserve"><value>adını "{0}" yap</value></data>
+  <data name="Properties_LetterTo" xml:space="preserve"><value>{0}: harfini ver</value></data>
+  <data name="Properties_RemoveLetter" xml:space="preserve"><value>sürücü harfini kaldır</value></data>
+  <data name="Properties_And" xml:space="preserve"><value> ve </value></data>
+  <data name="Properties_Summary" xml:space="preserve"><value>{0}: {1}.</value></data>
+  <data name="Properties_NoChanges" xml:space="preserve"><value>Başka bir harf seçin veya yeni bir etiket yazın.</value></data>
+  <data name="Properties_ConfirmBody" xml:space="preserve"><value>Birimdeki dosyalara dokunulmaz. Devam edilsin mi?</value></data>
+  <data name="Properties_Renaming" xml:space="preserve"><value>Birim yeniden adlandırılıyor…</value></data>
+  <data name="Properties_ChangingLetter" xml:space="preserve"><value>Sürücü harfi değiştiriliyor…</value></data>
+  <data name="Properties_Done" xml:space="preserve"><value>Tamamlandı.</value></data>
+  <data name="Properties_Failed" xml:space="preserve"><value>Başarısız oldu. Disk listesi güncel durumu gösterecek şekilde yenilendi.</value></data>
+  <data name="Properties_Apply" xml:space="preserve"><value>Uygula</value></data>
+  <data name="Properties_LetterLocked" xml:space="preserve"><value>Windows kendi sürücüsünün harfini korur; burada yalnızca etiket değiştirilebilir.</value></data>
 </root>

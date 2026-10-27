@@ -45,6 +45,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         ResizeCommand = new RelayCommand<SegmentRow>(row => ResizeRequested?.Invoke(this, CreateResize(row)), row => row.CanResize);
         DeleteCommand = new RelayCommand<SegmentRow>(row => DestructiveRequested?.Invoke(this, CreateDestructive(row, isFormat: false)), row => row.CanDelete);
         FormatCommand = new RelayCommand<SegmentRow>(row => DestructiveRequested?.Invoke(this, CreateDestructive(row, isFormat: true)), row => row.CanFormat);
+        PropertiesCommand = new RelayCommand<SegmentRow>(row => PropertiesRequested?.Invoke(this, CreateProperties(row)), row => row.CanEditProperties);
         InitializeCommand = new RelayCommand<SegmentRow>(row => _ = InitializeAsync(row), row => row.CanInitialize && !IsBusy);
         SettingsCommand = new RelayCommand(() => SettingsRequested?.Invoke(this, EventArgs.Empty));
     }
@@ -63,7 +64,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
             if (SetField(ref _selectedRow, value))
             {
                 OnPropertyChanged(nameof(SelectionText));
-                foreach (var command in new[] { AnalyzeCommand, ResizeCommand, NewPartitionCommand, DeleteCommand, FormatCommand, InitializeCommand })
+                foreach (var command in new[] { AnalyzeCommand, ResizeCommand, NewPartitionCommand, DeleteCommand, FormatCommand, InitializeCommand, PropertiesCommand })
                 {
                     command.RaiseCanExecuteChanged();
                 }
@@ -83,6 +84,18 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public RelayCommand<SegmentRow> FormatCommand { get; }
 
     public RelayCommand<SegmentRow> InitializeCommand { get; }
+
+    /// <summary>Raised when the user wants to change a drive letter or a label; the view opens the form.</summary>
+    public event EventHandler<VolumePropertiesViewModel>? PropertiesRequested;
+
+    public RelayCommand<SegmentRow> PropertiesCommand { get; }
+
+    private VolumePropertiesViewModel CreateProperties(SegmentRow row)
+    {
+        var form = new VolumePropertiesViewModel(_operations, row.Disk, row.Partition!, LettersInUse(), _confirm);
+        form.AttemptFinished += (_, _) => _ = RefreshAsync();
+        return form;
+    }
 
     private DestructiveActionViewModel CreateDestructive(SegmentRow row, bool isFormat)
     {
