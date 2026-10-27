@@ -17,6 +17,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private readonly IPowerStatusProvider _power;
     private readonly IUnblockOperations _unblock;
     private readonly IVirtualDiskOperations _virtualDisks;
+    private readonly IDiskHealthProvider _health;
     private readonly Func<string, bool> _confirm;
     private bool _isBusy;
     private string _status = Localization.Get("Main_Ready");
@@ -31,6 +32,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         IPowerStatusProvider power,
         IUnblockOperations unblock,
         IVirtualDiskOperations virtualDisks,
+        IDiskHealthProvider health,
         Func<string, bool> confirm)
     {
         _storage = storage;
@@ -40,6 +42,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         _power = power;
         _unblock = unblock;
         _virtualDisks = virtualDisks;
+        _health = health;
         _confirm = confirm;
 
         RefreshCommand = new RelayCommand(() => _ = RefreshAsync(), () => !IsBusy);
@@ -48,6 +51,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         ResizeCommand = new RelayCommand<SegmentRow>(row => ResizeRequested?.Invoke(this, CreateResize(row)), row => row.CanResize);
         DeleteCommand = new RelayCommand<SegmentRow>(row => DestructiveRequested?.Invoke(this, CreateDestructive(row, isFormat: false)), row => row.CanDelete);
         FormatCommand = new RelayCommand<SegmentRow>(row => DestructiveRequested?.Invoke(this, CreateDestructive(row, isFormat: true)), row => row.CanFormat);
+        HealthCommand = new RelayCommand<Disk>(disk => HealthRequested?.Invoke(this, new DiskHealthViewModel(_health, disk)));
         CreateVirtualDiskCommand = new RelayCommand(() => CreateVirtualDiskRequested?.Invoke(this, CreateVirtualDisk()));
         AttachVirtualDiskCommand = new RelayCommand(() => AttachVirtualDiskRequested?.Invoke(this, EventArgs.Empty), () => !IsBusy);
         DetachVirtualDiskCommand = new RelayCommand<Disk>(disk => _ = DetachVirtualDiskAsync(disk), _ => !IsBusy);
@@ -93,6 +97,11 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public RelayCommand<SegmentRow> InitializeCommand { get; }
 
     public RelayCommand<DiskStateTarget> DiskStateCommand { get; }
+
+    /// <summary>Raised when the user asks how a drive is doing; the view opens the window and loads it.</summary>
+    public event EventHandler<DiskHealthViewModel>? HealthRequested;
+
+    public RelayCommand<Disk> HealthCommand { get; }
 
     /// <summary>Raised when the user wants a new VHDX; the view opens the form.</summary>
     public event EventHandler<CreateVirtualDiskViewModel>? CreateVirtualDiskRequested;

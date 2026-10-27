@@ -1,0 +1,119 @@
+<Window x:Class="WindowsPartitionManager.App.DiskHealthWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:WindowsPartitionManager.App.Controls"
+        xmlns:vm="clr-namespace:WindowsPartitionManager.App.ViewModels"
+        xmlns:analysis="clr-namespace:WindowsPartitionManager.Core.Analysis;assembly=WindowsPartitionManager.Core"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=vm:DiskHealthViewModel}"
+        Title="{Binding Title}" Height="520" Width="560" MinHeight="420" MinWidth="460"
+        Background="{DynamicResource WindowBackground}"
+        FontFamily="{DynamicResource UiFontFamily}" FontSize="13"
+        WindowStartupLocation="CenterOwner" ResizeMode="CanResize">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="{Binding Title}" FontSize="18" FontWeight="SemiBold" />
+        <TextBlock Grid.Row="1" Text="{Binding DiskText}" Style="{StaticResource Secondary}" Margin="0,2,0,12" />
+
+        <!-- Verdict banner: green, amber, red or neutral. -->
+        <Border Grid.Row="2" CornerRadius="6" Padding="14,10" BorderThickness="1" Margin="0,0,0,12">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="{DynamicResource CardBackground}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource CardBorder}" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Verdict}" Value="{x:Static analysis:HealthVerdict.Bad}">
+                            <Setter Property="Background" Value="{DynamicResource ErrorBackground}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ErrorBorder}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <StackPanel Orientation="Horizontal">
+                <Ellipse Width="14" Height="14" VerticalAlignment="Center" Margin="0,0,10,0">
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Setter Property="Fill" Value="#8A8A8A" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Verdict}" Value="{x:Static analysis:HealthVerdict.Good}">
+                                    <Setter Property="Fill" Value="#2E9E44" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Verdict}" Value="{x:Static analysis:HealthVerdict.Attention}">
+                                    <Setter Property="Fill" Value="#F2A900" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Verdict}" Value="{x:Static analysis:HealthVerdict.Bad}">
+                                    <Setter Property="Fill" Value="#D13438" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                                    <Setter Property="Fill" Value="#8A8A8A" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
+                <TextBlock Text="{Binding VerdictText}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" />
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <Border Background="{DynamicResource CardBackground}" BorderBrush="{DynamicResource CardBorder}" BorderThickness="1" CornerRadius="6" Padding="14,8">
+                    <ItemsControl ItemsSource="{Binding Values}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:HealthValue}">
+                                <Grid Margin="0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="170" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Label}" Style="{StaticResource Secondary}" />
+                                    <TextBlock Grid.Column="1" Text="{Binding Value}" TextWrapping="Wrap" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+
+                <ItemsControl ItemsSource="{Binding Findings}" Margin="0,12,0,0">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type analysis:HealthFinding}">
+                            <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Margin="0,0,0,6">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Verdict}" Value="{x:Static analysis:HealthVerdict.Attention}">
+                                                <Setter Property="Foreground" Value="{DynamicResource Warning}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Verdict}" Value="{x:Static analysis:HealthVerdict.Bad}">
+                                                <Setter Property="Foreground" Value="{DynamicResource Danger}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <Border Background="{DynamicResource ErrorBackground}" BorderBrush="{DynamicResource ErrorBorder}" BorderThickness="1" CornerRadius="4" Padding="12,8" Margin="0,8,0,0"
+                        Visibility="{Binding HasError, Converter={x:Static controls:Converters.BoolToVisibility}}">
+                    <TextBlock Text="{Binding Error}" TextWrapping="Wrap" Foreground="{DynamicResource Danger}" />
+                </Border>
+
+                <TextBlock Text="{DynamicResource HealthWin_Disclaimer}" Style="{StaticResource Secondary}" TextWrapping="Wrap" Margin="0,12,0,0" FontSize="12" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <Button Grid.Row="4" Content="{DynamicResource Common_Close}" Click="Close_Click" IsCancel="True" HorizontalAlignment="Right" Margin="0,12,0,0" />
+    </Grid>
+</Window>

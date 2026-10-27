@@ -250,4 +250,34 @@
   <data name="Vhd_FileFilterAll" xml:space="preserve"><value>Virtual disks (*.vhdx;*.vhd)|*.vhdx;*.vhd</value></data>
   <data name="DiskAction_Detach" xml:space="preserve"><value>Detach virtual disk…</value></data>
   <data name="DiskAction_Detach_Prompt" xml:space="preserve"><value>Detach virtual disk {0} ({1})? The file is kept and can be attached again.</value></data>
+  <data name="DiskAction_Health" xml:space="preserve"><value>Health…</value></data>
+  <data name="HealthWin_Title" xml:space="preserve"><value>Health · Disk {0}</value></data>
+  <data name="HealthWin_Loading" xml:space="preserve"><value>Reading what the drive reports…</value></data>
+  <data name="HealthWin_VerdictGood" xml:space="preserve"><value>Looks healthy</value></data>
+  <data name="HealthWin_VerdictAttention" xml:space="preserve"><value>Needs attention</value></data>
+  <data name="HealthWin_VerdictBad" xml:space="preserve"><value>Back up now</value></data>
+  <data name="HealthWin_VerdictUnknown" xml:space="preserve"><value>Not enough information</value></data>
+  <data name="HealthWin_NoPhysicalDisk" xml:space="preserve"><value>Windows knows no physical drive behind this disk.</value></data>
+  <data name="HealthWin_NotReported" xml:space="preserve"><value>not reported</value></data>
+  <data name="HealthWin_Type" xml:space="preserve"><value>Type</value></data>
+  <data name="HealthWin_WindowsStatus" xml:space="preserve"><value>Windows status</value></data>
+  <data name="HealthWin_Counters" xml:space="preserve"><value>Detailed counters</value></data>
+  <data name="HealthWin_CountersMissing" xml:space="preserve"><value>Not available: the drive or its controller does not report them.</value></data>
+  <data name="HealthWin_Temperature" xml:space="preserve"><value>Temperature</value></data>
+  <data name="HealthWin_TemperatureMax" xml:space="preserve"><value>(drive limit {0} °C)</value></data>
+  <data name="HealthWin_Wear" xml:space="preserve"><value>Wear (SSD)</value></data>
+  <data name="HealthWin_PowerOn" xml:space="preserve"><value>Power-on time</value></data>
+  <data name="HealthWin_Hours" xml:space="preserve"><value>{0} hours (about {1} years)</value></data>
+  <data name="HealthWin_ReadErrors" xml:space="preserve"><value>Read errors</value></data>
+  <data name="HealthWin_WriteErrors" xml:space="preserve"><value>Write errors</value></data>
+  <data name="HealthWin_Errors" xml:space="preserve"><value>{0} in total, {1} uncorrected</value></data>
+  <data name="HealthWin_MediaHdd" xml:space="preserve"><value>Hard disk (HDD)</value></data>
+  <data name="HealthWin_MediaSsd" xml:space="preserve"><value>Solid-state drive (SSD)</value></data>
+  <data name="HealthWin_MediaScm" xml:space="preserve"><value>Storage-class memory</value></data>
+  <data name="HealthWin_MediaUnknown" xml:space="preserve"><value>Unknown</value></data>
+  <data name="HealthWin_StatusHealthy" xml:space="preserve"><value>Healthy</value></data>
+  <data name="HealthWin_StatusWarning" xml:space="preserve"><value>Warning</value></data>
+  <data name="HealthWin_StatusUnhealthy" xml:space="preserve"><value>Unhealthy</value></data>
+  <data name="HealthWin_StatusUnknown" xml:space="preserve"><value>Unknown</value></data>
+  <data name="HealthWin_Disclaimer" xml:space="preserve"><value>These values come from the drive itself. No drive can predict every failure, so keep backups of anything you cannot lose, whatever this window says.</value></data>
 </root>

@@ -250,4 +250,34 @@
   <data name="Vhd_FileFilterAll" xml:space="preserve"><value>Sanal diskler (*.vhdx;*.vhd)|*.vhdx;*.vhd</value></data>
   <data name="DiskAction_Detach" xml:space="preserve"><value>Sanal diski çıkar…</value></data>
   <data name="DiskAction_Detach_Prompt" xml:space="preserve"><value>Sanal disk {0} ({1}) çıkarılsın mı? Dosya silinmez ve yeniden bağlanabilir.</value></data>
+  <data name="DiskAction_Health" xml:space="preserve"><value>Sağlık…</value></data>
+  <data name="HealthWin_Title" xml:space="preserve"><value>Sağlık · Disk {0}</value></data>
+  <data name="HealthWin_Loading" xml:space="preserve"><value>Sürücünün bildirdikleri okunuyor…</value></data>
+  <data name="HealthWin_VerdictGood" xml:space="preserve"><value>Sağlıklı görünüyor</value></data>
+  <data name="HealthWin_VerdictAttention" xml:space="preserve"><value>Dikkat gerekiyor</value></data>
+  <data name="HealthWin_VerdictBad" xml:space="preserve"><value>Hemen yedekleyin</value></data>
+  <data name="HealthWin_VerdictUnknown" xml:space="preserve"><value>Yeterli bilgi yok</value></data>
+  <data name="HealthWin_NoPhysicalDisk" xml:space="preserve"><value>Windows bu diskin arkasında fiziksel bir sürücü bilmiyor.</value></data>
+  <data name="HealthWin_NotReported" xml:space="preserve"><value>bildirilmiyor</value></data>
+  <data name="HealthWin_Type" xml:space="preserve"><value>Tür</value></data>
+  <data name="HealthWin_WindowsStatus" xml:space="preserve"><value>Windows durumu</value></data>
+  <data name="HealthWin_Counters" xml:space="preserve"><value>Ayrıntılı sayaçlar</value></data>
+  <data name="HealthWin_CountersMissing" xml:space="preserve"><value>Yok: sürücü ya da denetleyicisi bunları bildirmiyor.</value></data>
+  <data name="HealthWin_Temperature" xml:space="preserve"><value>Sıcaklık</value></data>
+  <data name="HealthWin_TemperatureMax" xml:space="preserve"><value>(sürücü sınırı {0} °C)</value></data>
+  <data name="HealthWin_Wear" xml:space="preserve"><value>Aşınma (SSD)</value></data>
+  <data name="HealthWin_PowerOn" xml:space="preserve"><value>Çalışma süresi</value></data>
+  <data name="HealthWin_Hours" xml:space="preserve"><value>{0} saat (yaklaşık {1} yıl)</value></data>
+  <data name="HealthWin_ReadErrors" xml:space="preserve"><value>Okuma hataları</value></data>
+  <data name="HealthWin_WriteErrors" xml:space="preserve"><value>Yazma hataları</value></data>
+  <data name="HealthWin_Errors" xml:space="preserve"><value>toplam {0}, düzeltilemeyen {1}</value></data>
+  <data name="HealthWin_MediaHdd" xml:space="preserve"><value>Sabit disk (HDD)</value></data>
+  <data name="HealthWin_MediaSsd" xml:space="preserve"><value>Katı hâl sürücüsü (SSD)</value></data>
+  <data name="HealthWin_MediaScm" xml:space="preserve"><value>Depolama sınıfı bellek</value></data>
+  <data name="HealthWin_MediaUnknown" xml:space="preserve"><value>Bilinmiyor</value></data>
+  <data name="HealthWin_StatusHealthy" xml:space="preserve"><value>Sağlıklı</value></data>
+  <data name="HealthWin_StatusWarning" xml:space="preserve"><value>Uyarı</value></data>
+  <data name="HealthWin_StatusUnhealthy" xml:space="preserve"><value>Sağlıksız</value></data>
+  <data name="HealthWin_StatusUnknown" xml:space="preserve"><value>Bilinmiyor</value></data>
+  <data name="HealthWin_Disclaimer" xml:space="preserve"><value>Bu değerler sürücünün kendisinden gelir. Hiçbir sürücü her arızayı önceden haber veremez; bu pencere ne derse desin, kaybetmek istemediğiniz her şeyin yedeğini tutun.</value></data>
 </root>

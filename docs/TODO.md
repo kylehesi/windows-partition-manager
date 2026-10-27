@@ -19,3 +19,4 @@ date in one pass before the release. Everything below still needs to be written 
 - UI: toolbar "Virtual disk" menu (create/attach) with `CreateVirtualDiskWindow`; "Detach virtual disk…" in the Disk menu; screenshot aid `--dialog vhd`.
 - Disk health: SMART/reliability counters (`DiskHealth`, `DiskHealthAssessment`, `IDiskHealthProvider`); verdict Good/Attention/Bad/Unknown, cautious wording.
 - CLI: `wpm health [<disk>]`.
+- UI: "Health…" in every disk's Disk menu (Windows disk included) opens `DiskHealthWindow`; screenshot aid `--dialog health`.

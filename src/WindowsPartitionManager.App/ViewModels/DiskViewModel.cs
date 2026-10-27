@@ -39,9 +39,10 @@ public sealed class DiskViewModel
         HasFlags = flags.Count > 0;
         Subtitle = HasFlags ? string.Join(", ", flags) : string.Empty;
 
-        var actions = DiskStatePlanner.Available(disk)
-            .Select(change => new DiskAction(Localization.Get($"DiskAction_{change}"), owner.DiskStateCommand, new DiskStateTarget(disk, change)))
-            .ToList();
+        // Health is read-only, so it is offered for every disk, Windows' own included.
+        var actions = new List<DiskAction> { new(Localization.Get("DiskAction_Health"), owner.HealthCommand, disk) };
+        actions.AddRange(DiskStatePlanner.Available(disk)
+            .Select(change => new DiskAction(Localization.Get($"DiskAction_{change}"), owner.DiskStateCommand, new DiskStateTarget(disk, change))));
         if (VirtualDiskPlanner.CanDetach(disk))
         {
             actions.Add(new DiskAction(Localization.Get("DiskAction_Detach"), owner.DetachVirtualDiskCommand, disk));
