@@ -237,4 +237,15 @@
   <data name="Health_AllGood" xml:space="preserve"><value>Nothing the drive reports points to a problem.</value></data>
   <data name="Health_GoodWithoutCounters" xml:space="preserve"><value>Windows reports the drive as healthy. It shares no detailed counters (common for USB drives and virtual disks).</value></data>
   <data name="Health_NoData" xml:space="preserve"><value>The drive reports too little to judge its health.</value></data>
+  <data name="Check_SpotFixWarning" xml:space="preserve"><value>{0} is unavailable for a few seconds while the recorded problems are fixed. Save open files on it first.</value></data>
+  <data name="Check_OfflineWarning" xml:space="preserve"><value>{0} is dismounted for the whole check, which can take a long time on a large or busy drive. Close every program using it first.</value></data>
+  <data name="Check_WindowsVolumeFix" xml:space="preserve"><value>Windows cannot fix the drive it is running from while it runs. Open an administrator prompt, run 'chkdsk {0} /f', answer Y and restart; the online scan here is still available.</value></data>
+  <data name="Check_NotSupported" xml:space="preserve"><value>Windows offers no check for {0} volumes here.</value></data>
+  <data name="Check_Outcome_Clean" xml:space="preserve"><value>No problems were found.</value></data>
+  <data name="Check_Outcome_Fixed" xml:space="preserve"><value>Problems were found and fixed.</value></data>
+  <data name="Check_Outcome_NeedsSpotFix" xml:space="preserve"><value>Problems were found and recorded. Run a quick fix to repair them.</value></data>
+  <data name="Check_Outcome_NeedsOfflineFix" xml:space="preserve"><value>Problems were found that only a full check and repair can fix.</value></data>
+  <data name="Check_Outcome_Retry" xml:space="preserve"><value>Windows could not finish the scan this time (the drive was busy). Try again in a moment.</value></data>
+  <data name="Check_Outcome_Failed" xml:space="preserve"><value>The check failed. See the operation history for the details.</value></data>
+  <data name="Ops_Checking" xml:space="preserve"><value>Checking the file system… This can take a while on a large drive.</value></data>
 </root>

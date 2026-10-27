@@ -237,4 +237,15 @@
   <data name="Health_AllGood" xml:space="preserve"><value>Sürücünün bildirdiği hiçbir şey bir soruna işaret etmiyor.</value></data>
   <data name="Health_GoodWithoutCounters" xml:space="preserve"><value>Windows sürücüyü sağlıklı olarak bildiriyor. Ayrıntılı sayaç paylaşmıyor (USB sürücülerde ve sanal disklerde yaygındır).</value></data>
   <data name="Health_NoData" xml:space="preserve"><value>Sürücü, sağlığını değerlendirmeye yetecek bilgi bildirmiyor.</value></data>
+  <data name="Check_SpotFixWarning" xml:space="preserve"><value>Kaydedilen sorunlar düzeltilirken {0} birkaç saniye kullanılamaz. Önce üzerindeki açık dosyaları kaydedin.</value></data>
+  <data name="Check_OfflineWarning" xml:space="preserve"><value>Denetim boyunca {0} bağlantısı kesilir; büyük veya dolu bir sürücüde bu uzun sürebilir. Önce onu kullanan tüm programları kapatın.</value></data>
+  <data name="Check_WindowsVolumeFix" xml:space="preserve"><value>Windows, üzerinde çalıştığı sürücüyü çalışırken onaramaz. Yönetici komut isteminde 'chkdsk {0} /f' çalıştırın, E (Y) yanıtını verip yeniden başlatın; buradaki çevrimiçi tarama yine kullanılabilir.</value></data>
+  <data name="Check_NotSupported" xml:space="preserve"><value>Windows burada {0} birimleri için bir denetim sunmuyor.</value></data>
+  <data name="Check_Outcome_Clean" xml:space="preserve"><value>Hiçbir sorun bulunmadı.</value></data>
+  <data name="Check_Outcome_Fixed" xml:space="preserve"><value>Sorunlar bulundu ve düzeltildi.</value></data>
+  <data name="Check_Outcome_NeedsSpotFix" xml:space="preserve"><value>Sorunlar bulundu ve kaydedildi. Onarmak için hızlı düzeltmeyi çalıştırın.</value></data>
+  <data name="Check_Outcome_NeedsOfflineFix" xml:space="preserve"><value>Yalnızca tam denetim ve onarımın düzeltebileceği sorunlar bulundu.</value></data>
+  <data name="Check_Outcome_Retry" xml:space="preserve"><value>Windows taramayı bu sefer bitiremedi (sürücü meşguldü). Biraz sonra yeniden deneyin.</value></data>
+  <data name="Check_Outcome_Failed" xml:space="preserve"><value>Denetim başarısız oldu. Ayrıntılar için işlem geçmişine bakın.</value></data>
+  <data name="Ops_Checking" xml:space="preserve"><value>Dosya sistemi denetleniyor… Büyük bir sürücüde bu biraz sürebilir.</value></data>
 </root>
