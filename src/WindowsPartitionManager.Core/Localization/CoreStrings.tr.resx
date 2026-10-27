@@ -211,4 +211,12 @@
   <data name="Label_ForbiddenCharacters" xml:space="preserve"><value>{0} etiketleri şu karakterleri içeremez: {1}</value></data>
   <data name="Label_Unchanged" xml:space="preserve"><value>Birim zaten bu etikete sahip.</value></data>
   <data name="StorageCode_42012" xml:space="preserve"><value>Birimin zaten bir sürücü harfi var; bir birimin yalnızca bir harfi olabilir.</value></data>
+  <data name="DiskState_WindowsDisk" xml:space="preserve"><value>Windows bu diskten çalışıyor; disk çevrimiçi ve yazılabilir kalmalıdır.</value></data>
+  <data name="DiskState_AlreadyOnline" xml:space="preserve"><value>Disk zaten çevrimiçi.</value></data>
+  <data name="DiskState_AlreadyOffline" xml:space="preserve"><value>Disk zaten çevrimdışı.</value></data>
+  <data name="DiskState_AlreadyReadOnly" xml:space="preserve"><value>Disk zaten salt okunur.</value></data>
+  <data name="DiskState_AlreadyWritable" xml:space="preserve"><value>Disk zaten yazılabilir.</value></data>
+  <data name="DiskState_OfflineHidesDrives" xml:space="preserve"><value>{0} disk yeniden çevrimiçi yapılana kadar görünmez. Önce bunları kullanan dosya ve programları kapatın.</value></data>
+  <data name="DiskState_OfflineHidesDisk" xml:space="preserve"><value>Disk yeniden çevrimiçi yapılana kadar kullanılamaz.</value></data>
+  <data name="DiskState_ReadOnlyWarning" xml:space="preserve"><value>Disk yeniden yazılabilir yapılana kadar ona hiçbir şey kaydedilemez; ona yazan programlar hata verir.</value></data>
 </root>
