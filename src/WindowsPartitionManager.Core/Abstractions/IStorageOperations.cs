@@ -28,6 +28,15 @@ public interface IStorageOperations
     /// unmovable ones. Returns the partition as Windows reports it afterwards.
     /// </summary>
     Task<Partition> ResizePartitionAsync(ResizePartitionRequest request, IProgress<string>? progress = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gives the partition another drive letter, or removes its letter. The new letter is added
+    /// before the old one is removed, so a failure leaves the volume reachable.
+    /// </summary>
+    Task<Partition> ChangeDriveLetterAsync(ChangeDriveLetterRequest request, CancellationToken cancellationToken = default);
+
+    /// <summary>Renames the partition's volume (Set-Volume -NewFileSystemLabel).</summary>
+    Task<Partition> SetLabelAsync(SetLabelRequest request, CancellationToken cancellationToken = default);
 }
 
 /// <summary>Reads whether the machine is on battery, so write operations can refuse or warn.</summary>

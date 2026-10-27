@@ -59,6 +59,20 @@ public sealed class WmiStorageOperations : IStorageOperations
         return Task.Run(() => Guarded("Resize", details, () => ResizePartition(request, progress, cancellationToken)), cancellationToken);
     }
 
+    public Task<Partition> ChangeDriveLetterAsync(ChangeDriveLetterRequest request, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var details = string.Create(CultureInfo.InvariantCulture, $"disk={request.DiskNumber} partition={request.PartitionNumber} letter={request.NewDriveLetter?.ToString() ?? "none"}");
+        return Task.Run(() => Guarded("ChangeDriveLetter", details, () => ChangeDriveLetter(request, cancellationToken)), cancellationToken);
+    }
+
+    public Task<Partition> SetLabelAsync(SetLabelRequest request, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var details = string.Create(CultureInfo.InvariantCulture, $"disk={request.DiskNumber} partition={request.PartitionNumber} label=\"{request.Label}\"");
+        return Task.Run(() => Guarded("SetLabel", details, () => SetLabel(request, cancellationToken)), cancellationToken);
+    }
+
     /// <summary>Runs a write operation with the sleep inhibitor held and the outcome logged.</summary>
     private static T Guarded<T>(string operation, string details, Func<T> action)
     {
@@ -345,6 +359,74 @@ public sealed class WmiStorageOperations : IStorageOperations
 
         progress?.Report(CoreText.Get("Ops_ReadingBack"));
         return ReadBack(request.DiskNumber, request.PartitionNumber, "Resize", cancellationToken);
+    }
+
+    private static Partition ChangeDriveLetter(ChangeDriveLetterRequest request, CancellationToken cancellationToken)
+    {
+        var (disks, fresh) = Fresh(request.DiskNumber, cancellationToken);
+        var target = fresh?.Partitions.FirstOrDefault(p => p.Number == request.PartitionNumber);
+        RefuseOnErrors("ChangeDriveLetter", [LayoutGuard.Check(fresh, request.ExpectedDisk, target, request.ExpectedPartition)]);
+        if (target is null)
+        {
+            throw new StorageOperationException("ChangeDriveLetter", 0, CoreText.Get("Ops_RefusedPrefix") + CoreText.Format("Ops_PartitionNotFound", request.PartitionNumber, request.DiskNumber, LayoutGuard.RefreshHint));
+        }
+
+        RefuseOnErrors("ChangeDriveLetter", DriveLetterPlanner.Validate(fresh!, target, request, LettersInUse(disks)));
+
+        var scope = Wmi.Connect();
+        using var partition = GetPartition(scope, request.DiskNumber, request.PartitionNumber);
+        var oldPaths = (Wmi.GetRaw(partition, "AccessPaths") as string[] ?? [])
+            .Where(p => p.Length == 3 && char.IsLetter(p[0]) && p.EndsWith(@":\", StringComparison.Ordinal))
+            .ToList();
+
+        // A volume holds at most one drive letter (AddAccessPath returns 42012 otherwise), so the
+        // old letter goes first; if the new one is then refused, the old one is put back.
+        foreach (var path in oldPaths)
+        {
+            Wmi.Invoke(partition, "RemoveAccessPath", p => p["AccessPath"] = path).Dispose();
+        }
+
+        if (request.NewDriveLetter is { } letter)
+        {
+            try
+            {
+                Wmi.Invoke(partition, "AddAccessPath", p => p["AccessPath"] = $"{char.ToUpperInvariant(letter)}:").Dispose();
+            }
+            catch (StorageOperationException) when (oldPaths.Count > 0)
+            {
+                Wmi.Invoke(partition, "AddAccessPath", p => p["AccessPath"] = oldPaths[0][..2]).Dispose();
+                throw;
+            }
+        }
+
+        return ReadBack(request.DiskNumber, request.PartitionNumber, "ChangeDriveLetter", cancellationToken);
+    }
+
+    private static Partition SetLabel(SetLabelRequest request, CancellationToken cancellationToken)
+    {
+        var (_, fresh) = Fresh(request.DiskNumber, cancellationToken);
+        var target = fresh?.Partitions.FirstOrDefault(p => p.Number == request.PartitionNumber);
+        RefuseOnErrors("SetLabel", [LayoutGuard.Check(fresh, request.ExpectedDisk, target, request.ExpectedPartition)]);
+        if (target is null)
+        {
+            throw new StorageOperationException("SetLabel", 0, CoreText.Get("Ops_RefusedPrefix") + CoreText.Format("Ops_PartitionNotFound", request.PartitionNumber, request.DiskNumber, LayoutGuard.RefreshHint));
+        }
+
+        RefuseOnErrors("SetLabel", LabelPlanner.Validate(fresh!, target, request));
+
+        var scope = Wmi.Connect();
+        string[] accessPaths;
+        using (var partition = GetPartition(scope, request.DiskNumber, request.PartitionNumber))
+        {
+            accessPaths = Wmi.GetRaw(partition, "AccessPaths") as string[] ?? [];
+        }
+
+        using (var volume = WaitForVolume(scope, request.DiskNumber, request.PartitionNumber, accessPaths, cancellationToken))
+        {
+            Wmi.Invoke(volume, "SetFileSystemLabel", p => p["FileSystemLabel"] = request.Label).Dispose();
+        }
+
+        return ReadBack(request.DiskNumber, request.PartitionNumber, "SetLabel", cancellationToken);
     }
 
     private static Partition ReadBack(int diskNumber, int partitionNumber, string operation, CancellationToken cancellationToken)

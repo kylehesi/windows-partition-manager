@@ -114,6 +114,7 @@ internal static class Wmi
         42009 => CoreText.Get("StorageCode_42009"),
         42010 => CoreText.Get("StorageCode_42010"),
         42011 => CoreText.Get("StorageCode_42011"),
+        42012 => CoreText.Get("StorageCode_42012"),
         42013 => CoreText.Get("StorageCode_42013"),
         43000 => CoreText.Get("StorageCode_43000"),
         43001 => CoreText.Get("StorageCode_43001"),

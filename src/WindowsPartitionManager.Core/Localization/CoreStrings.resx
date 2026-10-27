@@ -210,4 +210,5 @@
   <data name="Letter_ProgramsMayBreak" xml:space="preserve"><value>Programs, shortcuts and settings that refer to {0}: may stop working.</value></data>
   <data name="Label_ForbiddenCharacters" xml:space="preserve"><value>{0} labels cannot contain these characters: {1}</value></data>
   <data name="Label_Unchanged" xml:space="preserve"><value>The volume already has that label.</value></data>
+  <data name="StorageCode_42012" xml:space="preserve"><value>The volume already has a drive letter; a volume can have only one.</value></data>
 </root>

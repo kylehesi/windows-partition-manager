@@ -210,4 +210,5 @@
   <data name="Letter_ProgramsMayBreak" xml:space="preserve"><value>{0}: sürücüsünü kullanan programlar, kısayollar ve ayarlar çalışmayabilir.</value></data>
   <data name="Label_ForbiddenCharacters" xml:space="preserve"><value>{0} etiketleri şu karakterleri içeremez: {1}</value></data>
   <data name="Label_Unchanged" xml:space="preserve"><value>Birim zaten bu etikete sahip.</value></data>
+  <data name="StorageCode_42012" xml:space="preserve"><value>Birimin zaten bir sürücü harfi var; bir birimin yalnızca bir harfi olabilir.</value></data>
 </root>
