@@ -20,7 +20,7 @@ var command = args.Length == 0 ? "list" : args[0].ToLowerInvariant();
 
 return command switch
 {
-    "list" => await ListAsync(),
+    "list" => await ListAsync(args.Skip(1).ToArray()),
     "analyze" => await AnalyzeAsync(args.Skip(1).ToArray()),
     "layout" => await LayoutAsync(args.Skip(1).ToArray()),
     "create" => await CreateAsync(args.Skip(1).ToArray()),
@@ -44,7 +44,8 @@ static int Usage(string? error = null)
         Console.Error.WriteLine();
     }
 
-    Console.WriteLine("wpm list                         List disks, partitions and free regions.");
+    Console.WriteLine("wpm list [--json]                List disks, partitions and free regions; --json for scripts");
+    Console.WriteLine("                                   (sizes in bytes, see schemaVersion).");
     Console.WriteLine("wpm analyze <letter> [--target <size>]");
     Console.WriteLine("                                   Explain how far an NTFS volume can shrink and which");
     Console.WriteLine("                                   files block it. Needs administrator rights.");
@@ -938,8 +939,14 @@ static async Task<int> LayoutAsync(string[] args)
     }
 }
 
-static async Task<int> ListAsync()
+static async Task<int> ListAsync(string[] args)
 {
+    var json = args.Contains("--json");
+    if (args.Any(a => a != "--json"))
+    {
+        return Usage($"Unknown option '{args.First(a => a != "--json")}'.");
+    }
+
     var stopwatch = Stopwatch.StartNew();
     IReadOnlyList<Disk> disks;
     try
@@ -953,6 +960,12 @@ static async Task<int> ListAsync()
     }
 
     stopwatch.Stop();
+
+    if (json)
+    {
+        Console.WriteLine(DiskJson.Serialize(disks));
+        return 0;
+    }
 
     foreach (var disk in disks)
     {
