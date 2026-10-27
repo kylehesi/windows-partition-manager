@@ -98,6 +98,17 @@
                 </Style>
             </ContextMenu.ItemContainerStyle>
         </ContextMenu>
+
+        <!-- The disk's own menu: every item carries its parameter (the disk and the change). -->
+        <ContextMenu x:Key="DiskActionsMenu" x:Shared="False" ItemsSource="{Binding Actions}">
+            <ContextMenu.ItemContainerStyle>
+                <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                    <Setter Property="Header" Value="{Binding Name}" />
+                    <Setter Property="Command" Value="{Binding Command}" />
+                    <Setter Property="CommandParameter" Value="{Binding Parameter}" />
+                </Style>
+            </ContextMenu.ItemContainerStyle>
+        </ContextMenu>
     </Window.Resources>
 
     <Grid>
@@ -183,6 +194,10 @@
                             <Border Background="{DynamicResource CardBackground}" BorderBrush="{DynamicResource CardBorder}" BorderThickness="1" CornerRadius="6" Padding="14,12" Margin="0,0,0,14">
                                 <StackPanel>
                                     <DockPanel Margin="0,0,0,10">
+                                        <Button DockPanel.Dock="Right" Content="{DynamicResource Main_DiskMenu}" Padding="10,2" MinHeight="24" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center"
+                                                Click="Actions_Click"
+                                                ContextMenu="{StaticResource DiskActionsMenu}"
+                                                Visibility="{Binding HasActions, Converter={x:Static controls:Converters.BoolToVisibility}}" />
                                         <Border DockPanel.Dock="Right" Background="{DynamicResource HeaderBackground}" CornerRadius="3" Padding="8,2" VerticalAlignment="Center"
                                                 Visibility="{Binding HasFlags, Converter={x:Static controls:Converters.BoolToVisibility}}">
                                             <TextBlock Text="{Binding Subtitle}" FontSize="12" Foreground="{DynamicResource TextSecondary}" />

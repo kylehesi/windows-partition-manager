@@ -12,6 +12,12 @@ namespace WindowsPartitionManager.App.ViewModels;
 /// <summary>One entry of a row's Actions menu.</summary>
 public sealed record RowAction(string Name, ICommand Command, bool IsDestructive = false);
 
+/// <summary>A disk state change the user picked from a disk's menu.</summary>
+public sealed record DiskStateTarget(Disk Disk, DiskStateChange Change);
+
+/// <summary>One entry of a disk's menu; unlike a row action it carries its own parameter.</summary>
+public sealed record DiskAction(string Name, ICommand Command, object Parameter);
+
 public sealed class DiskViewModel
 {
     public DiskViewModel(Disk disk, MainViewModel owner)
@@ -32,7 +38,16 @@ public sealed class DiskViewModel
         Header = $"{Title} ({ByteSize.Format(disk.SizeBytes)}, {style}, {disk.BusType})";
         HasFlags = flags.Count > 0;
         Subtitle = HasFlags ? string.Join(", ", flags) : string.Empty;
+
+        Actions = DiskStatePlanner.Available(disk)
+            .Select(change => new DiskAction(Localization.Get($"DiskAction_{change}"), owner.DiskStateCommand, new DiskStateTarget(disk, change)))
+            .ToList();
     }
+
+    /// <summary>What the disk's own menu offers (online/offline, read-only/writable); empty for Windows' disk.</summary>
+    public IReadOnlyList<DiskAction> Actions { get; }
+
+    public bool HasActions => Actions.Count > 0;
 
     /// <summary>Group-box header: "Disk 0 • Model (1.82 TB, GPT, NVMe)".</summary>
     public string Header { get; }

@@ -200,4 +200,14 @@
   <data name="Properties_Failed" xml:space="preserve"><value>Başarısız oldu. Disk listesi güncel durumu gösterecek şekilde yenilendi.</value></data>
   <data name="Properties_Apply" xml:space="preserve"><value>Uygula</value></data>
   <data name="Properties_LetterLocked" xml:space="preserve"><value>Windows kendi sürücüsünün harfini korur; burada yalnızca etiket değiştirilebilir.</value></data>
+  <data name="Main_DiskMenu" xml:space="preserve"><value>Disk ▾</value></data>
+  <data name="DiskAction_Online" xml:space="preserve"><value>Çevrimiçi yap</value></data>
+  <data name="DiskAction_Offline" xml:space="preserve"><value>Çevrimdışı yap…</value></data>
+  <data name="DiskAction_ReadOnly" xml:space="preserve"><value>Salt okunur yap…</value></data>
+  <data name="DiskAction_Writable" xml:space="preserve"><value>Yazılabilir yap</value></data>
+  <data name="DiskAction_Online_Prompt" xml:space="preserve"><value>Disk {0} ({1}) çevrimiçi yapılsın mı? Birimleri yeniden bağlanır.</value></data>
+  <data name="DiskAction_Offline_Prompt" xml:space="preserve"><value>Disk {0} ({1}) çevrimdışı yapılsın mı? Üzerindeki hiçbir şey silinmez.</value></data>
+  <data name="DiskAction_ReadOnly_Prompt" xml:space="preserve"><value>Disk {0} ({1}) salt okunur yapılsın mı? Üzerindeki hiçbir şey silinmez.</value></data>
+  <data name="DiskAction_Writable_Prompt" xml:space="preserve"><value>Disk {0} ({1}) yeniden yazılabilir yapılsın mı?</value></data>
+  <data name="DiskAction_Working" xml:space="preserve"><value>Disk {0} değiştiriliyor…</value></data>
 </root>

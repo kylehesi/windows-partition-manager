@@ -45,6 +45,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         ResizeCommand = new RelayCommand<SegmentRow>(row => ResizeRequested?.Invoke(this, CreateResize(row)), row => row.CanResize);
         DeleteCommand = new RelayCommand<SegmentRow>(row => DestructiveRequested?.Invoke(this, CreateDestructive(row, isFormat: false)), row => row.CanDelete);
         FormatCommand = new RelayCommand<SegmentRow>(row => DestructiveRequested?.Invoke(this, CreateDestructive(row, isFormat: true)), row => row.CanFormat);
+        DiskStateCommand = new RelayCommand<DiskStateTarget>(target => _ = SetDiskStateAsync(target), _ => !IsBusy);
         PropertiesCommand = new RelayCommand<SegmentRow>(row => PropertiesRequested?.Invoke(this, CreateProperties(row)), row => row.CanEditProperties);
         InitializeCommand = new RelayCommand<SegmentRow>(row => _ = InitializeAsync(row), row => row.CanInitialize && !IsBusy);
         SettingsCommand = new RelayCommand(() => SettingsRequested?.Invoke(this, EventArgs.Empty));
@@ -84,6 +85,49 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public RelayCommand<SegmentRow> FormatCommand { get; }
 
     public RelayCommand<SegmentRow> InitializeCommand { get; }
+
+    public RelayCommand<DiskStateTarget> DiskStateCommand { get; }
+
+    /// <summary>
+    /// Takes a disk offline or online, or switches its read-only attribute. Fully reversible,
+    /// so a confirmation that lists the consequences is enough.
+    /// </summary>
+    private async Task SetDiskStateAsync(DiskStateTarget target)
+    {
+        var disk = target.Disk;
+        var request = new SetDiskStateRequest { DiskNumber = disk.Number, Change = target.Change, ExpectedDisk = DiskFingerprint.Of(disk) };
+        var issues = DiskStatePlanner.Validate(disk, request);
+        if (issues.Any(i => i.IsError))
+        {
+            Error = string.Join(" ", issues.Where(i => i.IsError).Select(i => i.Message));
+            return;
+        }
+
+        var prompt = Localization.Format($"DiskAction_{target.Change}_Prompt", disk.Number, disk.FriendlyName);
+        var warnings = string.Join("\n\n", issues.Select(i => i.Message));
+        if (!_confirm(warnings.Length > 0 ? prompt + "\n\n" + warnings : prompt))
+        {
+            return;
+        }
+
+        IsBusy = true;
+        Error = null;
+        Status = Localization.Format("DiskAction_Working", disk.Number);
+        try
+        {
+            await _operations.SetDiskStateAsync(request);
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            Error = ex.Message;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+
+        await RefreshAsync();
+    }
 
     /// <summary>Raised when the user wants to change a drive letter or a label; the view opens the form.</summary>
     public event EventHandler<VolumePropertiesViewModel>? PropertiesRequested;
