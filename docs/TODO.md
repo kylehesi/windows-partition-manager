@@ -21,3 +21,4 @@ date in one pass before the release. Everything below still needs to be written 
 - CLI: `wpm health [<disk>]`.
 - UI: "Health…" in every disk's Disk menu (Windows disk included) opens `DiskHealthWindow`; screenshot aid `--dialog health`.
 - Check/repair file system: Scan, SpotFix, OfflineScanAndFix (`CheckPlanner`, `CheckVolumeRequest`, `CheckResult` mapping Repair-Volume status codes); Windows volume: scan only, fix via chkdsk at restart.
+- CLI: `wpm check <disk> <partition> [--spotfix | --fix]`.

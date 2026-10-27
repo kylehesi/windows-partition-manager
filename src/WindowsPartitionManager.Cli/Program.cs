@@ -31,6 +31,7 @@ return command switch
     "label" => await LabelAsync(args.Skip(1).ToArray()),
     "disk" => await DiskStateAsync(args.Skip(1).ToArray()),
     "health" => await HealthAsync(args.Skip(1).ToArray()),
+    "check" => await CheckAsync(args.Skip(1).ToArray()),
     "unblock" => await UnblockAsync(args.Skip(1).ToArray()),
     "vhd" => await VhdAsync(args.Skip(1).ToArray()),
     "-h" or "--help" or "help" => Usage(),
@@ -66,6 +67,9 @@ static int Usage(string? error = null)
     Console.WriteLine("                                   Give a partition another drive letter, or remove its letter.");
     Console.WriteLine("wpm label <disk> <partition> <text>");
     Console.WriteLine("                                   Rename a volume; an empty text (\"\") clears the label.");
+    Console.WriteLine("wpm check <disk> <partition> [--spotfix | --fix] [--yes]");
+    Console.WriteLine("                                   Check a file system (online scan by default); --spotfix fixes what a");
+    Console.WriteLine("                                   scan recorded, --fix runs the full offline check and repair.");
     Console.WriteLine("wpm health [<disk>]                What each drive reports about its health (SMART): temperature,");
     Console.WriteLine("                                   SSD wear, errors, power-on hours. Counters need administrator rights.");
     Console.WriteLine("wpm disk <disk> (online | offline | readonly | writable) [--yes]");
@@ -407,6 +411,67 @@ static async Task<int> LabelAsync(string[] args)
         var result = await new WmiStorageOperations().SetLabelAsync(request);
         Console.WriteLine($"Done: the volume is now \"{result.Volume?.Label}\".");
         return 0;
+    }
+    catch (StorageOperationException ex)
+    {
+        Console.Error.WriteLine(ex.Message);
+        return 6;
+    }
+}
+
+static async Task<int> CheckAsync(string[] args)
+{
+    if (args.Length < 2 || !int.TryParse(args[0], out var diskNumber) || !int.TryParse(args[1], out var partitionNumber))
+    {
+        return Usage("check needs a disk number and a partition number, e.g. 'wpm check 1 2'.");
+    }
+
+    var mode = args.Contains("--fix") ? CheckMode.OfflineScanAndFix : args.Contains("--spotfix") ? CheckMode.SpotFix : CheckMode.Scan;
+    var yes = args.Any(a => a is "--yes" or "-y");
+    var disks = await new WmiStorageProvider().GetDisksAsync();
+    var disk = disks.FirstOrDefault(d => d.Number == diskNumber);
+    var partition = disk?.Partitions.FirstOrDefault(p => p.Number == partitionNumber);
+    if (disk is null || partition is null)
+    {
+        Console.Error.WriteLine($"Partition {partitionNumber} on disk {diskNumber} was not found.");
+        return 2;
+    }
+
+    var request = new CheckVolumeRequest
+    {
+        DiskNumber = diskNumber,
+        PartitionNumber = partitionNumber,
+        Mode = mode,
+        ExpectedDisk = DiskFingerprint.Of(disk),
+        ExpectedPartition = PartitionFingerprint.Of(partition),
+    };
+    var issues = CheckPlanner.Validate(disk, partition, request);
+    foreach (var issue in issues)
+    {
+        Console.WriteLine($"  {(issue.IsError ? "ERROR  " : "warning")} {issue.Message}");
+    }
+
+    if (issues.Any(i => i.IsError))
+    {
+        Console.Error.WriteLine("Nothing was changed.");
+        return 5;
+    }
+
+    if (!yes && issues.Count > 0)
+    {
+        Console.Write("Continue? [y/N] ");
+        if (!string.Equals(Console.ReadLine()?.Trim(), "y", StringComparison.OrdinalIgnoreCase))
+        {
+            Console.WriteLine("Cancelled. Nothing was changed.");
+            return 0;
+        }
+    }
+
+    try
+    {
+        var result = await new WmiStorageOperations().CheckVolumeAsync(request, new Progress<string>(s => Console.WriteLine("  " + s)));
+        Console.WriteLine($"Done ({mode}): {result.Message} [status {result.Code}]");
+        return result.Outcome is CheckOutcome.Clean or CheckOutcome.Fixed ? 0 : 7;
     }
     catch (StorageOperationException ex)
     {
