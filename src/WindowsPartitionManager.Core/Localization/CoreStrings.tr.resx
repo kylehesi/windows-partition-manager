@@ -225,4 +225,6 @@
   <data name="Vhd_TooLarge" xml:space="preserve"><value>Bir VHDX en fazla {0} olabilir.</value></data>
   <data name="Vhd_MayOutgrowDrive" xml:space="preserve"><value>Dosya küçük başlar ve veri yazıldıkça {0} boyutuna kadar büyür, ancak bulunduğu sürücüde yalnızca {1} boş alan var.</value></data>
   <data name="Vhd_NotVirtual" xml:space="preserve"><value>Yalnızca bağlı sanal diskler (VHD veya VHDX dosyaları) çıkarılabilir.</value></data>
+  <data name="Vhd_FileMissing" xml:space="preserve"><value>{0} bulunamadı.</value></data>
+  <data name="Vhd_DiskTimeout" xml:space="preserve"><value>Sanal disk bağlandı ancak 30 saniye içinde disk olarak görünmedi.</value></data>
 </root>

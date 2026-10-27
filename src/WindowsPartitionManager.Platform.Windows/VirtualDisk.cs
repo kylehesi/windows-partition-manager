@@ -13,6 +13,7 @@ namespace WindowsPartitionManager.Platform.Windows;
 [SupportedOSPlatform("windows")]
 public sealed unsafe partial class VirtualDisk : IDisposable
 {
+    private const uint VIRTUAL_STORAGE_TYPE_DEVICE_UNKNOWN = 0;
     private const uint VIRTUAL_STORAGE_TYPE_DEVICE_VHDX = 3;
     private static readonly Guid MicrosoftVendor = new("EC984AEC-A0F9-47e9-901F-71415A66345B");
 
@@ -67,12 +68,12 @@ public sealed unsafe partial class VirtualDisk : IDisposable
         return new VirtualDisk(path, handle);
     }
 
-    /// <summary>Opens an existing VHDX.</summary>
+    /// <summary>Opens an existing VHD or VHDX; the format is taken from the file extension.</summary>
     public static VirtualDisk Open(string path)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
 
-        var storageType = new VIRTUAL_STORAGE_TYPE { DeviceId = VIRTUAL_STORAGE_TYPE_DEVICE_VHDX, VendorId = MicrosoftVendor };
+        var storageType = new VIRTUAL_STORAGE_TYPE { DeviceId = VIRTUAL_STORAGE_TYPE_DEVICE_UNKNOWN, VendorId = Guid.Empty };
         var error = OpenVirtualDisk(in storageType, path, VIRTUAL_DISK_ACCESS_ALL, 0, nint.Zero, out var handle);
         if (error != ERROR_SUCCESS)
         {
@@ -84,16 +85,17 @@ public sealed unsafe partial class VirtualDisk : IDisposable
     }
 
     /// <summary>
-    /// Surfaces the VHDX as a physical disk without assigning drive letters to anything on it.
+    /// Surfaces the VHDX as a physical disk. Tests attach without drive letters so nothing on a
+    /// throwaway disk shows up in Explorer; a disk the user attaches gets its letters as usual.
     /// With <paramref name="permanent"/> the disk stays attached after this process exits; otherwise
     /// it detaches when the handle is closed.
     /// </summary>
-    public void Attach(bool permanent = false)
+    public void Attach(bool permanent = false, bool assignDriveLetters = false)
     {
         // A permanent attach needs SeManageVolumePrivilege *enabled*; administrators hold it disabled by default.
         Privileges.TryEnable(Privileges.SeManageVolumePrivilege);
 
-        var flags = ATTACH_VIRTUAL_DISK_FLAG_NO_DRIVE_LETTER | (permanent ? ATTACH_VIRTUAL_DISK_FLAG_PERMANENT_LIFETIME : 0);
+        var flags = (assignDriveLetters ? 0 : ATTACH_VIRTUAL_DISK_FLAG_NO_DRIVE_LETTER) | (permanent ? ATTACH_VIRTUAL_DISK_FLAG_PERMANENT_LIFETIME : 0);
         var parameters = new ATTACH_VIRTUAL_DISK_PARAMETERS { Version = 1 };
 
         var error = AttachVirtualDisk(_handle, nint.Zero, flags, 0, in parameters, nint.Zero);

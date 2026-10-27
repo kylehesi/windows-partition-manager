@@ -80,6 +80,20 @@ public sealed class WmiStorageProvider : IStorageProvider, ISupportedSizeProvide
         }
     }
 
+    /// <summary>For an attached VHD/VHDX (bus type 14 or 15) Windows reports the file as the disk's location.</summary>
+    private static string? VirtualDiskPathOf(ManagementBaseObject mo)
+    {
+        if (Wmi.Get<ushort>(mo, "BusType") is not (14 or 15) || Wmi.Get<string>(mo, "Location") is not { } location)
+        {
+            return null;
+        }
+
+        location = location.Trim();
+        return location.EndsWith(".vhdx", StringComparison.OrdinalIgnoreCase) || location.EndsWith(".vhd", StringComparison.OrdinalIgnoreCase)
+            ? location
+            : null;
+    }
+
     private static Disk ReadDisk(ManagementBaseObject mo, Dictionary<int, List<Partition>> partitionsByDisk)
     {
         var number = (int)Wmi.Get<uint>(mo, "Number");
@@ -114,6 +128,7 @@ public sealed class WmiStorageProvider : IStorageProvider, ISupportedSizeProvide
                 _ => HealthStatus.Unknown,
             },
             LargestFreeExtentBytes = Wmi.Get<ulong>(mo, "LargestFreeExtent"),
+            VirtualDiskPath = VirtualDiskPathOf(mo),
             Partitions = partitions,
         };
     }
