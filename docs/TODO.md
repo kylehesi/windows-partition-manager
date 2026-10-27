@@ -34,3 +34,4 @@ date in one pass before the release. Everything below still needs to be written 
 - UI: "Convert to GPT…/MBR…" in the Disk menu of an empty disk.
 - README: link CHANGELOG.md; mention version 0.2.0.
 - Space analysis: `SpaceAnalyzer` builds a folder tree from the MFT listing (`SpaceEntry`, `SpaceFolder`, `SpaceReport`); 50 largest files per folder and 100 overall are kept by name.
+- CLI: `wpm space <letter> [--top N]` (largest folders two levels deep, largest files).

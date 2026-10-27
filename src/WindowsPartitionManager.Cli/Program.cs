@@ -34,6 +34,7 @@ return command switch
     "health" => await HealthAsync(args.Skip(1).ToArray()),
     "check" => await CheckAsync(args.Skip(1).ToArray()),
     "optimize" => await OptimizeAsync(args.Skip(1).ToArray()),
+    "space" => await SpaceAsync(args.Skip(1).ToArray()),
     "unblock" => await UnblockAsync(args.Skip(1).ToArray()),
     "vhd" => await VhdAsync(args.Skip(1).ToArray()),
     "-h" or "--help" or "help" => Usage(),
@@ -72,6 +73,8 @@ static int Usage(string? error = null)
     Console.WriteLine("wpm check <disk> <partition> [--spotfix | --fix] [--yes]");
     Console.WriteLine("                                   Check a file system (online scan by default); --spotfix fixes what a");
     Console.WriteLine("                                   scan recorded, --fix runs the full offline check and repair.");
+    Console.WriteLine("wpm space <letter> [--top N]       What takes the space on an NTFS volume: the largest folders");
+    Console.WriteLine("                                   (two levels) and files, read straight from the MFT.");
     Console.WriteLine("wpm optimize <disk> <partition> [--trim | --defrag]");
     Console.WriteLine("                                   TRIM an SSD or defragment a hard disk (by default what suits the");
     Console.WriteLine("                                   drive). The volume stays usable.");
@@ -484,6 +487,54 @@ static async Task<int> CheckAsync(string[] args)
     {
         Console.Error.WriteLine(ex.Message);
         return 6;
+    }
+}
+
+static async Task<int> SpaceAsync(string[] args)
+{
+    if (args.Length < 1 || args[0].TrimEnd(':') is not { Length: 1 } letterText || !char.IsLetter(letterText[0]))
+    {
+        return Usage("space needs a drive letter, e.g. 'wpm space C'.");
+    }
+
+    var top = 12;
+    var topIndex = Array.IndexOf(args, "--top");
+    if (topIndex >= 0 && (topIndex + 1 >= args.Length || !int.TryParse(args[topIndex + 1], out top) || top < 1))
+    {
+        return Usage("--top needs a positive number.");
+    }
+
+    var letter = char.ToUpperInvariant(letterText[0]);
+    try
+    {
+        var stopwatch = Stopwatch.StartNew();
+        var entries = await new NtfsSpaceReader().ReadAsync(letter);
+        var report = SpaceAnalyzer.Build(letter, entries, stopwatch.Elapsed);
+        Console.WriteLine($"{letter}: {ByteSize.Format(report.Root.SizeBytes)} in {report.Files:N0} files and {report.Folders:N0} folders, read in {report.Elapsed.TotalSeconds:F1} s.");
+        Console.WriteLine();
+        Console.WriteLine("Largest folders:");
+        foreach (var folder in report.Root.Folders.Take(top))
+        {
+            Console.WriteLine($"  {ByteSize.Format(folder.SizeBytes),10}  {folder.Path}");
+            foreach (var sub in folder.Folders.Take(3))
+            {
+                Console.WriteLine($"  {ByteSize.Format(sub.SizeBytes),10}    {sub.Path}");
+            }
+        }
+
+        Console.WriteLine();
+        Console.WriteLine("Largest files:");
+        foreach (var file in report.LargestFiles.Take(top))
+        {
+            Console.WriteLine($"  {ByteSize.Format(file.SizeBytes),10}  {file.Path}");
+        }
+
+        return 0;
+    }
+    catch (Exception ex) when (ex is UnauthorizedAccessException or NotSupportedException or System.ComponentModel.Win32Exception)
+    {
+        Console.Error.WriteLine(ex.Message);
+        return 3;
     }
 }
 
