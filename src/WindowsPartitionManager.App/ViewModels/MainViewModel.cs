@@ -18,6 +18,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private readonly IUnblockOperations _unblock;
     private readonly IVirtualDiskOperations _virtualDisks;
     private readonly IDiskHealthProvider _health;
+    private readonly IVolumeSpaceReader _space;
     private readonly Func<string, bool> _confirm;
     private bool _isBusy;
     private string _status = Localization.Get("Main_Ready");
@@ -33,6 +34,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         IUnblockOperations unblock,
         IVirtualDiskOperations virtualDisks,
         IDiskHealthProvider health,
+        IVolumeSpaceReader space,
         Func<string, bool> confirm)
     {
         _storage = storage;
@@ -43,6 +45,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         _unblock = unblock;
         _virtualDisks = virtualDisks;
         _health = health;
+        _space = space;
         _confirm = confirm;
 
         RefreshCommand = new RelayCommand(() => _ = RefreshAsync(), () => !IsBusy);
@@ -57,6 +60,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         DetachVirtualDiskCommand = new RelayCommand<Disk>(disk => _ = DetachVirtualDiskAsync(disk), _ => !IsBusy);
         ConvertCommand = new RelayCommand<ConvertTarget>(target => _ = ConvertDiskAsync(target), _ => !IsBusy);
         DiskStateCommand = new RelayCommand<DiskStateTarget>(target => _ = SetDiskStateAsync(target), _ => !IsBusy);
+        SpaceCommand = new RelayCommand<SegmentRow>(row => SpaceRequested?.Invoke(this, new SpaceAnalysisViewModel(_space, row.DriveLetter!.Value)), row => row.CanAnalyze);
         OptimizeCommand = new RelayCommand<SegmentRow>(row => _ = OpenOptimizeAsync(row), row => row.CanOptimize);
         CheckCommand = new RelayCommand<SegmentRow>(row => CheckRequested?.Invoke(this, CreateCheck(row)), row => row.CanCheck);
         PropertiesCommand = new RelayCommand<SegmentRow>(row => PropertiesRequested?.Invoke(this, CreateProperties(row)), row => row.CanEditProperties);
@@ -78,7 +82,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
             if (SetField(ref _selectedRow, value))
             {
                 OnPropertyChanged(nameof(SelectionText));
-                foreach (var command in new[] { AnalyzeCommand, ResizeCommand, NewPartitionCommand, DeleteCommand, FormatCommand, InitializeCommand, PropertiesCommand, CheckCommand, OptimizeCommand })
+                foreach (var command in new[] { AnalyzeCommand, ResizeCommand, NewPartitionCommand, DeleteCommand, FormatCommand, InitializeCommand, PropertiesCommand, CheckCommand, OptimizeCommand, SpaceCommand })
                 {
                     command.RaiseCanExecuteChanged();
                 }
@@ -263,6 +267,11 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
         await RefreshAsync();
     }
+
+    /// <summary>Raised when the user asks what takes the space on a volume; the view opens the window and loads it.</summary>
+    public event EventHandler<SpaceAnalysisViewModel>? SpaceRequested;
+
+    public RelayCommand<SegmentRow> SpaceCommand { get; }
 
     /// <summary>Raised when the user wants to TRIM or defragment a volume; the view opens the form.</summary>
     public event EventHandler<OptimizeVolumeViewModel>? OptimizeRequested;

@@ -33,7 +33,7 @@ public partial class App : Application
         bool Confirm(string message) => MessageBox.Show(window, message, ProductName, MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.Yes;
 
         var operations = new WmiStorageOperations();
-        var viewModel = new MainViewModel(storage, new NtfsVolumeInspector(), storage, operations, new PowerStatusProvider(), new UnblockOperations(), new VirtualDiskOperations(operations), new WmiDiskHealthProvider(), Confirm);
+        var viewModel = new MainViewModel(storage, new NtfsVolumeInspector(), storage, operations, new PowerStatusProvider(), new UnblockOperations(), new VirtualDiskOperations(operations), new WmiDiskHealthProvider(), new NtfsSpaceReader(), Confirm);
         window = new MainWindow { DataContext = viewModel };
 
         viewModel.AnalysisRequested += (_, analysis) =>
@@ -92,6 +92,13 @@ public partial class App : Application
             }
         };
 
+        viewModel.SpaceRequested += (_, space) =>
+        {
+            var dialog = new SpaceAnalysisWindow { DataContext = space, Owner = window };
+            _ = space.LoadAsync();
+            dialog.Show(); // not modal: it can stay open next to the main window
+        };
+
         viewModel.OptimizeRequested += (_, form) =>
         {
             var dialog = new OptimizeVolumeWindow { DataContext = form, Owner = window };
@@ -140,7 +147,7 @@ public partial class App : Application
 
     /// <summary>
     /// Developer aid: <c>--screenshot file.png [--size 1120x700] [--theme Dark] [--language Turkish]
-    /// [--dialog settings|history|health|vhd|new|resize|properties|check|optimize|format|delete]</c> renders the main window (or the named dialog,
+    /// [--dialog settings|history|health|vhd|new|resize|properties|check|optimize|space|format|delete]</c> renders the main window (or the named dialog,
     /// opened for the first row that allows it) once the disks are loaded, saves it as PNG and exits.
     /// Used to check layout without a human. Dialogs only open; nothing is ever applied.
     /// </summary>
@@ -189,6 +196,9 @@ public partial class App : Application
                 break;
             case "history":
                 new HistoryWindow { DataContext = new HistoryViewModel(OperationLog.Path), Owner = Current.MainWindow }.ShowDialog();
+                break;
+            case "space" when rows.LastOrDefault(r => r.CanAnalyze) is { } row:
+                viewModel.SpaceCommand.Execute(row);
                 break;
             case "optimize" when rows.FirstOrDefault(r => r.CanOptimize) is { } row:
                 viewModel.OptimizeCommand.Execute(row);

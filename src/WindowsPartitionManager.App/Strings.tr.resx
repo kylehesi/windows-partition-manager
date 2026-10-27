@@ -311,4 +311,16 @@
   <data name="DiskAction_ConvertToGpt" xml:space="preserve"><value>GPT'ye dönüştür…</value></data>
   <data name="DiskAction_ConvertToMbr" xml:space="preserve"><value>MBR'ye dönüştür…</value></data>
   <data name="DiskAction_Convert_Prompt" xml:space="preserve"><value>Disk {0} ({1}) için {2} bölüm tablosu yazılsın mı? Disk boş olduğundan hiçbir şey kaybolmaz.</value></data>
+  <data name="Segment_Space" xml:space="preserve"><value>Alanı ne kullanıyor…</value></data>
+  <data name="Space_Title" xml:space="preserve"><value>{0}: üzerinde alanı ne kullanıyor</value></data>
+  <data name="Space_Summary" xml:space="preserve"><value>{1} dosya ve {2} klasörde {0}; MFT'den {3} saniyede okundu.</value></data>
+  <data name="Space_Reading" xml:space="preserve"><value>Dosya tablosu okunuyor… {0} kayıt</value></data>
+  <data name="Space_Loading" xml:space="preserve"><value>Sürücünün dosya tablosu okunuyor</value></data>
+  <data name="Space_FolderDetail" xml:space="preserve"><value>{0} dosya</value></data>
+  <data name="Space_OtherFiles" xml:space="preserve"><value>{0} diğer dosya</value></data>
+  <data name="Space_LargestFiles" xml:space="preserve"><value>Sürücüdeki en büyük dosyalar</value></data>
+  <data name="Space_LargestFilesHeading" xml:space="preserve"><value>Sürücüdeki en büyük 100 dosya</value></data>
+  <data name="Space_OpenInExplorer" xml:space="preserve"><value>Gezgin'de aç</value></data>
+  <data name="Space_UpTip" xml:space="preserve"><value>Bir üst klasör (Backspace)</value></data>
+  <data name="Space_Hint" xml:space="preserve"><value>Açmak için bir klasöre, Gezgin'de göstermek için bir dosyaya çift tıklayın. Boyutlar diskte kapladıkları alandır. Burada hiçbir şey değiştirilmez.</value></data>
 </root>

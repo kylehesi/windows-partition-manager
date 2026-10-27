@@ -311,4 +311,16 @@
   <data name="DiskAction_ConvertToGpt" xml:space="preserve"><value>Convert to GPT…</value></data>
   <data name="DiskAction_ConvertToMbr" xml:space="preserve"><value>Convert to MBR…</value></data>
   <data name="DiskAction_Convert_Prompt" xml:space="preserve"><value>Give disk {0} ({1}) a {2} partition table? The disk is empty, so nothing is lost.</value></data>
+  <data name="Segment_Space" xml:space="preserve"><value>What uses the space…</value></data>
+  <data name="Space_Title" xml:space="preserve"><value>What uses the space on {0}:</value></data>
+  <data name="Space_Summary" xml:space="preserve"><value>{0} in {1} files and {2} folders, read from the MFT in {3} s.</value></data>
+  <data name="Space_Reading" xml:space="preserve"><value>Reading the file table… {0} entries</value></data>
+  <data name="Space_Loading" xml:space="preserve"><value>Reading the drive's file table</value></data>
+  <data name="Space_FolderDetail" xml:space="preserve"><value>{0} files</value></data>
+  <data name="Space_OtherFiles" xml:space="preserve"><value>{0} other files</value></data>
+  <data name="Space_LargestFiles" xml:space="preserve"><value>Largest files on the drive</value></data>
+  <data name="Space_LargestFilesHeading" xml:space="preserve"><value>The 100 largest files on the drive</value></data>
+  <data name="Space_OpenInExplorer" xml:space="preserve"><value>Open in Explorer</value></data>
+  <data name="Space_UpTip" xml:space="preserve"><value>Up one folder (Backspace)</value></data>
+  <data name="Space_Hint" xml:space="preserve"><value>Double-click a folder to open it, a file to show it in Explorer. Sizes are space on disk. Nothing is changed here.</value></data>
 </root>

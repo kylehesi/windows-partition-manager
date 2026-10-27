@@ -132,6 +132,7 @@ public sealed class SegmentRow
             EncryptionText = DescribeEncryption(volume.BitLocker);
         }
 
+        if (CanAnalyze) actions.Add(new RowAction(Localization.Get("Segment_Space"), owner.SpaceCommand));
         if (CanAnalyze) actions.Add(new RowAction(Localization.Get("Segment_AnalyzeShrink"), owner.AnalyzeCommand));
         if (CanResize) actions.Add(new RowAction(Localization.Get("Segment_Resize"), owner.ResizeCommand));
         if (CanCheck) actions.Add(new RowAction(Localization.Get("Segment_Check"), owner.CheckCommand));
