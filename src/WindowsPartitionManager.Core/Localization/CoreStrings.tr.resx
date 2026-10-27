@@ -265,4 +265,10 @@
   <data name="BitLocker_LockedWillBeLost" xml:space="preserve"><value>{0} BitLocker ile şifrelenmiş ve kilitli. İçeriği burada okunamaz ve kalıcı olarak kaybolur.</value></data>
   <data name="BitLocker_Converting" xml:space="preserve"><value>BitLocker {0} birimini hâlâ şifreliyor veya şifresini çözüyor (%{1} şifreli). BitLocker işini bitirdikten sonra boyutlandırın.</value></data>
   <data name="BitLocker_KeepRecoveryKey" xml:space="preserve"><value>{0} BitLocker ile şifreli. Boyutlandırma destekleniyor, ancak başlamadan önce kurtarma anahtarına ulaşabildiğinizden emin olun (account.microsoft.com/devices/recoverykey).</value></data>
+  <data name="Convert_WindowsDisk" xml:space="preserve"><value>Windows bu diskten çalışıyor. Dönüştürmek, bölümlerinin yerinde yeniden yazılmasını gerektirir; sistem diskleri için bunu Windows'un kendi MBR2GPT aracı yapar.</value></data>
+  <data name="Convert_AlreadyStyle" xml:space="preserve"><value>Disk zaten {0} kullanıyor.</value></data>
+  <data name="Convert_NotInitialized" xml:space="preserve"><value>Diskte henüz bölüm tablosu yok. Bunun yerine diski başlatın.</value></data>
+  <data name="Convert_HasPartitions" xml:space="preserve"><value>Diskte {0} bölüm var. Hiçbir şey kaybolmasın diye yalnızca boş bir disk dönüştürülür: önce yedekleyip bölümleri silin.</value></data>
+  <data name="Convert_MbrLimit" xml:space="preserve"><value>Bu disk 2 TB'tan büyük. MBR ile yalnızca ilk 2 TB kullanılabilir; GPT'de böyle bir sınır yoktur.</value></data>
+  <data name="Ops_Converting" xml:space="preserve"><value>Yeni bölüm tablosu yazılıyor…</value></data>
 </root>

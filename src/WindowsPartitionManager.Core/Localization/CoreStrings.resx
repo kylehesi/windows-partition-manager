@@ -265,4 +265,10 @@
   <data name="BitLocker_LockedWillBeLost" xml:space="preserve"><value>{0} is encrypted and locked by BitLocker. Its contents cannot be read here and will be lost for good.</value></data>
   <data name="BitLocker_Converting" xml:space="preserve"><value>BitLocker is still encrypting or decrypting {0} ({1} % encrypted). Resize it once BitLocker has finished.</value></data>
   <data name="BitLocker_KeepRecoveryKey" xml:space="preserve"><value>{0} is encrypted with BitLocker. Resizing is supported, but make sure you can find its recovery key (account.microsoft.com/devices/recoverykey) before you start.</value></data>
+  <data name="Convert_WindowsDisk" xml:space="preserve"><value>Windows runs from this disk. Converting it would need its partitions rewritten in place; Windows' own MBR2GPT tool does that for system disks.</value></data>
+  <data name="Convert_AlreadyStyle" xml:space="preserve"><value>The disk already uses {0}.</value></data>
+  <data name="Convert_NotInitialized" xml:space="preserve"><value>The disk has no partition table yet. Initialize it instead.</value></data>
+  <data name="Convert_HasPartitions" xml:space="preserve"><value>The disk holds {0} partition(s). Only an empty disk is converted, so nothing can be lost: back up and delete them first.</value></data>
+  <data name="Convert_MbrLimit" xml:space="preserve"><value>This disk is larger than 2 TB. With MBR only the first 2 TB can be used; GPT has no such limit.</value></data>
+  <data name="Ops_Converting" xml:space="preserve"><value>Writing the new partition table…</value></data>
 </root>
