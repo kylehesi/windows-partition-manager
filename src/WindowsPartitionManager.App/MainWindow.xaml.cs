@@ -1,6 +1,8 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Interop;
+using System.Windows.Threading;
 using WindowsPartitionManager.App.ViewModels;
 
 namespace WindowsPartitionManager.App;
@@ -10,9 +12,71 @@ public partial class MainWindow : Window
     /// <summary>The disk list that currently holds the selection; there is one list per disk.</summary>
     private ListView? _activeList;
 
+    private const int WM_DEVICECHANGE = 0x0219;
+    private const int DBT_DEVNODES_CHANGED = 0x0007;
+    private const int DBT_DEVICEARRIVAL = 0x8000;
+    private const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
+
+    /// <summary>Plugging in a drive raises a burst of notifications; read the disks once it has settled.</summary>
+    private readonly DispatcherTimer _deviceSettle = new() { Interval = TimeSpan.FromSeconds(1.5) };
+
+    /// <summary>A device changed while a dialog was open; refresh when the main window is active again.</summary>
+    private bool _refreshPending;
+
     public MainWindow()
     {
         InitializeComponent();
+        _deviceSettle.Tick += (_, _) =>
+        {
+            _deviceSettle.Stop();
+            RefreshAfterDeviceChange();
+        };
+        Activated += (_, _) =>
+        {
+            if (_refreshPending)
+            {
+                RefreshAfterDeviceChange();
+            }
+        };
+    }
+
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+
+        // Windows broadcasts device and volume arrivals and removals to every top-level window.
+        if (PresentationSource.FromVisual(this) is HwndSource source)
+        {
+            source.AddHook(DeviceChangeHook);
+        }
+    }
+
+    private IntPtr DeviceChangeHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    {
+        if (msg == WM_DEVICECHANGE && wParam.ToInt64() is DBT_DEVNODES_CHANGED or DBT_DEVICEARRIVAL or DBT_DEVICEREMOVECOMPLETE)
+        {
+            _deviceSettle.Stop();
+            _deviceSettle.Start();
+        }
+
+        return IntPtr.Zero;
+    }
+
+    /// <summary>
+    /// Re-reads the disks after a drive came or went. Not while a dialog is open: the dialog keeps
+    /// working on what it showed (the operations layer re-checks it anyway) and the list is
+    /// refreshed once the user is back in the main window.
+    /// </summary>
+    private void RefreshAfterDeviceChange()
+    {
+        if (OwnedWindows.Count > 0 || DataContext is not MainViewModel viewModel)
+        {
+            _refreshPending = true;
+            return;
+        }
+
+        _refreshPending = false;
+        _ = viewModel.RefreshAsync();
     }
 
     /// <summary>
