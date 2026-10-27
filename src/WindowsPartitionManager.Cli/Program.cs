@@ -27,6 +27,8 @@ return command switch
     "delete" => await DeleteAsync(args.Skip(1).ToArray()),
     "resize" => await ResizeAsync(args.Skip(1).ToArray()),
     "format" => await FormatAsync(args.Skip(1).ToArray()),
+    "letter" => await LetterAsync(args.Skip(1).ToArray()),
+    "label" => await LabelAsync(args.Skip(1).ToArray()),
     "unblock" => await UnblockAsync(args.Skip(1).ToArray()),
     "vhd" => await VhdAsync(args.Skip(1).ToArray()),
     "-h" or "--help" or "help" => Usage(),
@@ -57,6 +59,10 @@ static int Usage(string? error = null)
     Console.WriteLine("                                   Delete a partition and everything on it. Needs administrator rights.");
     Console.WriteLine("wpm format <disk> <partition> [--fs NTFS|exFAT|FAT32|ReFS] [--label <text>] [--full] [--yes]");
     Console.WriteLine("                                   Reformat a partition in place (keeps its letter). Everything on it is lost.");
+    Console.WriteLine("wpm letter <disk> <partition> (<X> | --remove) [--yes]");
+    Console.WriteLine("                                   Give a partition another drive letter, or remove its letter.");
+    Console.WriteLine("wpm label <disk> <partition> <text>");
+    Console.WriteLine("                                   Rename a volume; an empty text (\"\") clears the label.");
     Console.WriteLine("wpm resize <disk> <partition> (--size <size> | --shrink-by <size> | --extend-by <size>) [--yes]");
     Console.WriteLine("                                   Shrink or extend an NTFS/ReFS partition with its file system.");
     Console.WriteLine("                                   Windows moves movable files itself. Needs administrator rights.");
@@ -259,6 +265,138 @@ static async Task<int> DeleteAsync(string[] args)
             ExpectedPartition = PartitionFingerprint.Of(partition),
         });
         Console.WriteLine("Deleted.");
+        return 0;
+    }
+    catch (StorageOperationException ex)
+    {
+        Console.Error.WriteLine(ex.Message);
+        return 6;
+    }
+}
+
+static async Task<int> LetterAsync(string[] args)
+{
+    if (args.Length < 3 || !int.TryParse(args[0], out var diskNumber) || !int.TryParse(args[1], out var partitionNumber))
+    {
+        return Usage("letter needs a disk number, a partition number and a letter or --remove, e.g. 'wpm letter 1 2 F'.");
+    }
+
+    char? newLetter = null;
+    var remove = false;
+    var yes = false;
+    foreach (var arg in args.Skip(2))
+    {
+        switch (arg)
+        {
+            case "--remove": remove = true; break;
+            case "--yes" or "-y": yes = true; break;
+            case { Length: 1 or 2 } when char.IsLetter(arg[0]) && (arg.Length == 1 || arg[1] == ':'):
+                newLetter = char.ToUpperInvariant(arg[0]);
+                break;
+            default: return Usage($"Unknown option '{arg}'.");
+        }
+    }
+
+    if (remove == newLetter.HasValue)
+    {
+        return Usage("Give either a new letter or --remove.");
+    }
+
+    var disks = await new WmiStorageProvider().GetDisksAsync();
+    var disk = disks.FirstOrDefault(d => d.Number == diskNumber);
+    var partition = disk?.Partitions.FirstOrDefault(p => p.Number == partitionNumber);
+    if (disk is null || partition is null)
+    {
+        Console.Error.WriteLine($"Partition {partitionNumber} on disk {diskNumber} was not found.");
+        return 2;
+    }
+
+    var request = new ChangeDriveLetterRequest
+    {
+        DiskNumber = diskNumber,
+        PartitionNumber = partitionNumber,
+        NewDriveLetter = newLetter,
+        ExpectedDisk = DiskFingerprint.Of(disk),
+        ExpectedPartition = PartitionFingerprint.Of(partition),
+    };
+    var current = partition.DriveLetter is { } l ? $"{l}:" : "no letter";
+    Console.WriteLine($"Plan: partition {partitionNumber} on disk {diskNumber} ({disk.FriendlyName}): {current} -> {(newLetter is { } n ? $"{n}:" : "no letter")}");
+
+    var issues = DriveLetterPlanner.Validate(disk, partition, request, PartitionPlanner.LettersInUse(disks));
+    foreach (var issue in issues)
+    {
+        Console.WriteLine($"  {(issue.IsError ? "ERROR  " : "warning")} {issue.Message}");
+    }
+
+    if (issues.Any(i => i.IsError))
+    {
+        Console.Error.WriteLine("Nothing was changed.");
+        return 5;
+    }
+
+    if (!yes)
+    {
+        Console.Write("Continue? [y/N] ");
+        if (!string.Equals(Console.ReadLine()?.Trim(), "y", StringComparison.OrdinalIgnoreCase))
+        {
+            Console.WriteLine("Cancelled. Nothing was changed.");
+            return 0;
+        }
+    }
+
+    try
+    {
+        var result = await new WmiStorageOperations().ChangeDriveLetterAsync(request);
+        Console.WriteLine(result.DriveLetter is { } r ? $"Done: the partition is now {r}:." : "Done: the partition has no drive letter now.");
+        return 0;
+    }
+    catch (StorageOperationException ex)
+    {
+        Console.Error.WriteLine(ex.Message);
+        return 6;
+    }
+}
+
+static async Task<int> LabelAsync(string[] args)
+{
+    if (args.Length != 3 || !int.TryParse(args[0], out var diskNumber) || !int.TryParse(args[1], out var partitionNumber))
+    {
+        return Usage("label needs a disk number, a partition number and the new label, e.g. 'wpm label 1 2 Backup'.");
+    }
+
+    var disks = await new WmiStorageProvider().GetDisksAsync();
+    var disk = disks.FirstOrDefault(d => d.Number == diskNumber);
+    var partition = disk?.Partitions.FirstOrDefault(p => p.Number == partitionNumber);
+    if (disk is null || partition is null)
+    {
+        Console.Error.WriteLine($"Partition {partitionNumber} on disk {diskNumber} was not found.");
+        return 2;
+    }
+
+    var request = new SetLabelRequest
+    {
+        DiskNumber = diskNumber,
+        PartitionNumber = partitionNumber,
+        Label = args[2],
+        ExpectedDisk = DiskFingerprint.Of(disk),
+        ExpectedPartition = PartitionFingerprint.Of(partition),
+    };
+    var issues = LabelPlanner.Validate(disk, partition, request);
+    foreach (var issue in issues)
+    {
+        Console.WriteLine($"  {(issue.IsError ? "ERROR  " : "warning")} {issue.Message}");
+    }
+
+    if (issues.Any(i => i.IsError))
+    {
+        Console.Error.WriteLine("Nothing was changed.");
+        return 5;
+    }
+
+    try
+    {
+        var result = await new WmiStorageOperations().SetLabelAsync(request);
+        Console.WriteLine($"Done: the volume is now \"{result.Volume?.Label}\".");
         return 0;
     }
     catch (StorageOperationException ex)
