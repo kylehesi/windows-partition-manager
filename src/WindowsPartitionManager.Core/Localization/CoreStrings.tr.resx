@@ -202,4 +202,12 @@
   <data name="StorageCode_43003" xml:space="preserve"><value>Küme sayısı 32 biti aşıyor (birim bu dosya sistemi için çok büyük).</value></data>
   <data name="StorageCode_43006" xml:space="preserve"><value>Sürücü salt okunur.</value></data>
   <data name="StorageCode_Other" xml:space="preserve"><value>Storage Management API dönüş kodlarına bakın</value></data>
+  <data name="Letter_WindowsPartition" xml:space="preserve"><value>Windows bu bölümün sürücü harfini korumasına ihtiyaç duyar.</value></data>
+  <data name="Letter_NoFileSystem" xml:space="preserve"><value>Bölümde Windows'un bağlayabileceği bir dosya sistemi yok.</value></data>
+  <data name="Letter_AlreadyHas" xml:space="preserve"><value>Bölüm zaten {0}: harfine sahip.</value></data>
+  <data name="Letter_NothingToRemove" xml:space="preserve"><value>Bölümün kaldırılacak bir sürücü harfi yok.</value></data>
+  <data name="Letter_RemoveHides" xml:space="preserve"><value>Harf olmadan {0}: Dosya Gezgini'nde görünmez. Dosyaları yerinde kalır; onlara ulaşmak için yeniden bir harf atayın.</value></data>
+  <data name="Letter_ProgramsMayBreak" xml:space="preserve"><value>{0}: sürücüsünü kullanan programlar, kısayollar ve ayarlar çalışmayabilir.</value></data>
+  <data name="Label_ForbiddenCharacters" xml:space="preserve"><value>{0} etiketleri şu karakterleri içeremez: {1}</value></data>
+  <data name="Label_Unchanged" xml:space="preserve"><value>Birim zaten bu etikete sahip.</value></data>
 </root>

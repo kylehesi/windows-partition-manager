@@ -202,4 +202,12 @@
   <data name="StorageCode_43003" xml:space="preserve"><value>The number of clusters exceeds 32 bits (volume too large for this file system).</value></data>
   <data name="StorageCode_43006" xml:space="preserve"><value>The drive is read-only.</value></data>
   <data name="StorageCode_Other" xml:space="preserve"><value>see Storage Management API return codes</value></data>
+  <data name="Letter_WindowsPartition" xml:space="preserve"><value>Windows needs this partition to keep its drive letter.</value></data>
+  <data name="Letter_NoFileSystem" xml:space="preserve"><value>The partition has no file system Windows can mount.</value></data>
+  <data name="Letter_AlreadyHas" xml:space="preserve"><value>The partition already has the letter {0}:.</value></data>
+  <data name="Letter_NothingToRemove" xml:space="preserve"><value>The partition has no drive letter to remove.</value></data>
+  <data name="Letter_RemoveHides" xml:space="preserve"><value>Without a letter, {0}: no longer appears in File Explorer. Its files stay; give it a letter again to reach them.</value></data>
+  <data name="Letter_ProgramsMayBreak" xml:space="preserve"><value>Programs, shortcuts and settings that refer to {0}: may stop working.</value></data>
+  <data name="Label_ForbiddenCharacters" xml:space="preserve"><value>{0} labels cannot contain these characters: {1}</value></data>
+  <data name="Label_Unchanged" xml:space="preserve"><value>The volume already has that label.</value></data>
 </root>
