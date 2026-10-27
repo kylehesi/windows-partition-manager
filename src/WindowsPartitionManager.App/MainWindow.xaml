@@ -169,6 +169,18 @@
                         </StackPanel>
                     </Button>
                     <Rectangle Width="1" Fill="{DynamicResource CardBorder}" Margin="4,6" />
+                    <Button Style="{StaticResource ToolbarButton}" Click="Actions_Click" ToolTip="{DynamicResource Main_VirtualDiskTip}">
+                        <Button.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="{DynamicResource Vhd_MenuCreate}" Command="{Binding CreateVirtualDiskCommand}" />
+                                <MenuItem Header="{DynamicResource Vhd_MenuAttach}" Command="{Binding AttachVirtualDiskCommand}" />
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource ToolbarGlyph}" Text="&#xEDA2;" Foreground="#6B69D6" />
+                            <TextBlock Style="{StaticResource ToolbarLabel}" Text="{DynamicResource Main_VirtualDisk}" />
+                        </StackPanel>
+                    </Button>
                     <Button Style="{StaticResource ToolbarButton}" Command="{Binding SettingsCommand}" ToolTip="{DynamicResource Main_SettingsTip}">
                         <StackPanel>
                             <TextBlock Style="{StaticResource ToolbarGlyph}" Text="&#xE713;" Foreground="#5C5C5C" />

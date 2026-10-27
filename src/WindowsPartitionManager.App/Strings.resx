@@ -229,4 +229,25 @@
   <data name="History_Op_Hibernation" xml:space="preserve"><value>Hibernation</value></data>
   <data name="History_Op_PageFile" xml:space="preserve"><value>Page file</value></data>
   <data name="History_Op_ShadowCopies" xml:space="preserve"><value>Restore points</value></data>
+  <data name="Main_VirtualDisk" xml:space="preserve"><value>Virtual disk</value></data>
+  <data name="Main_VirtualDiskTip" xml:space="preserve"><value>Create or attach a VHDX file that works like a real disk</value></data>
+  <data name="Vhd_MenuCreate" xml:space="preserve"><value>Create virtual disk…</value></data>
+  <data name="Vhd_MenuAttach" xml:space="preserve"><value>Attach virtual disk…</value></data>
+  <data name="Vhd_CreateTitle" xml:space="preserve"><value>New virtual disk</value></data>
+  <data name="Vhd_CreateInfo" xml:space="preserve"><value>A VHDX file that Windows treats as a separate disk: a safe place to try every operation, or extra space kept in one file. It starts small and grows as data is written.</value></data>
+  <data name="Vhd_File" xml:space="preserve"><value>File</value></data>
+  <data name="Vhd_Browse" xml:space="preserve"><value>Browse…</value></data>
+  <data name="Vhd_PartitionTable" xml:space="preserve"><value>Partition table</value></data>
+  <data name="Vhd_StyleNone" xml:space="preserve"><value>None (initialize later)</value></data>
+  <data name="Vhd_Summary" xml:space="preserve"><value>Create a {0} virtual disk at {1} with a {2} partition table and attach it.</value></data>
+  <data name="Vhd_ConfirmBody" xml:space="preserve"><value>Only a new file is created; no existing disk is touched. The disk stays attached until you detach it or Windows restarts. Continue?</value></data>
+  <data name="Vhd_Create" xml:space="preserve"><value>Create</value></data>
+  <data name="Vhd_Creating" xml:space="preserve"><value>Creating the file and attaching it…</value></data>
+  <data name="Vhd_Created" xml:space="preserve"><value>Done: the virtual disk is attached as disk {0}. Create partitions on it like on any disk.</value></data>
+  <data name="Vhd_Attaching" xml:space="preserve"><value>Attaching the virtual disk…</value></data>
+  <data name="Vhd_AttachPrompt" xml:space="preserve"><value>Attach {0} as a disk? Its drives get letters and stay until you detach it or Windows restarts.</value></data>
+  <data name="Vhd_FileFilterVhdx" xml:space="preserve"><value>Virtual disk (*.vhdx)|*.vhdx</value></data>
+  <data name="Vhd_FileFilterAll" xml:space="preserve"><value>Virtual disks (*.vhdx;*.vhd)|*.vhdx;*.vhd</value></data>
+  <data name="DiskAction_Detach" xml:space="preserve"><value>Detach virtual disk…</value></data>
+  <data name="DiskAction_Detach_Prompt" xml:space="preserve"><value>Detach virtual disk {0} ({1})? The file is kept and can be attached again.</value></data>
 </root>

@@ -39,9 +39,15 @@ public sealed class DiskViewModel
         HasFlags = flags.Count > 0;
         Subtitle = HasFlags ? string.Join(", ", flags) : string.Empty;
 
-        Actions = DiskStatePlanner.Available(disk)
+        var actions = DiskStatePlanner.Available(disk)
             .Select(change => new DiskAction(Localization.Get($"DiskAction_{change}"), owner.DiskStateCommand, new DiskStateTarget(disk, change)))
             .ToList();
+        if (VirtualDiskPlanner.CanDetach(disk))
+        {
+            actions.Add(new DiskAction(Localization.Get("DiskAction_Detach"), owner.DetachVirtualDiskCommand, disk));
+        }
+
+        Actions = actions;
     }
 
     /// <summary>What the disk's own menu offers (online/offline, read-only/writable); empty for Windows' disk.</summary>

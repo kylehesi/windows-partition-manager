@@ -16,6 +16,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private readonly IStorageOperations _operations;
     private readonly IPowerStatusProvider _power;
     private readonly IUnblockOperations _unblock;
+    private readonly IVirtualDiskOperations _virtualDisks;
     private readonly Func<string, bool> _confirm;
     private bool _isBusy;
     private string _status = Localization.Get("Main_Ready");
@@ -29,6 +30,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         IStorageOperations operations,
         IPowerStatusProvider power,
         IUnblockOperations unblock,
+        IVirtualDiskOperations virtualDisks,
         Func<string, bool> confirm)
     {
         _storage = storage;
@@ -37,6 +39,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         _operations = operations;
         _power = power;
         _unblock = unblock;
+        _virtualDisks = virtualDisks;
         _confirm = confirm;
 
         RefreshCommand = new RelayCommand(() => _ = RefreshAsync(), () => !IsBusy);
@@ -45,6 +48,9 @@ public sealed class MainViewModel : INotifyPropertyChanged
         ResizeCommand = new RelayCommand<SegmentRow>(row => ResizeRequested?.Invoke(this, CreateResize(row)), row => row.CanResize);
         DeleteCommand = new RelayCommand<SegmentRow>(row => DestructiveRequested?.Invoke(this, CreateDestructive(row, isFormat: false)), row => row.CanDelete);
         FormatCommand = new RelayCommand<SegmentRow>(row => DestructiveRequested?.Invoke(this, CreateDestructive(row, isFormat: true)), row => row.CanFormat);
+        CreateVirtualDiskCommand = new RelayCommand(() => CreateVirtualDiskRequested?.Invoke(this, CreateVirtualDisk()));
+        AttachVirtualDiskCommand = new RelayCommand(() => AttachVirtualDiskRequested?.Invoke(this, EventArgs.Empty), () => !IsBusy);
+        DetachVirtualDiskCommand = new RelayCommand<Disk>(disk => _ = DetachVirtualDiskAsync(disk), _ => !IsBusy);
         DiskStateCommand = new RelayCommand<DiskStateTarget>(target => _ = SetDiskStateAsync(target), _ => !IsBusy);
         PropertiesCommand = new RelayCommand<SegmentRow>(row => PropertiesRequested?.Invoke(this, CreateProperties(row)), row => row.CanEditProperties);
         InitializeCommand = new RelayCommand<SegmentRow>(row => _ = InitializeAsync(row), row => row.CanInitialize && !IsBusy);
@@ -87,6 +93,83 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public RelayCommand<SegmentRow> InitializeCommand { get; }
 
     public RelayCommand<DiskStateTarget> DiskStateCommand { get; }
+
+    /// <summary>Raised when the user wants a new VHDX; the view opens the form.</summary>
+    public event EventHandler<CreateVirtualDiskViewModel>? CreateVirtualDiskRequested;
+
+    /// <summary>Raised when the user wants to attach a VHD/VHDX; the view asks for the file and calls <see cref="AttachVirtualDiskAsync"/>.</summary>
+    public event EventHandler? AttachVirtualDiskRequested;
+
+    public RelayCommand CreateVirtualDiskCommand { get; }
+
+    public RelayCommand AttachVirtualDiskCommand { get; }
+
+    public RelayCommand<Disk> DetachVirtualDiskCommand { get; }
+
+    private CreateVirtualDiskViewModel CreateVirtualDisk()
+    {
+        var form = new CreateVirtualDiskViewModel(_virtualDisks, _confirm);
+        form.AttemptFinished += (_, _) => _ = RefreshAsync();
+        return form;
+    }
+
+    public async Task AttachVirtualDiskAsync(string path)
+    {
+        IsBusy = true;
+        Error = null;
+        Status = Localization.Get("Vhd_Attaching");
+        try
+        {
+            await _virtualDisks.AttachAsync(path);
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            Error = ex.Message;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+
+        await RefreshAsync();
+    }
+
+    /// <summary>Detaches a virtual disk after a confirmation; the file stays where it is.</summary>
+    private async Task DetachVirtualDiskAsync(Disk disk)
+    {
+        var request = new DetachVirtualDiskRequest { DiskNumber = disk.Number, ExpectedDisk = DiskFingerprint.Of(disk) };
+        var issues = VirtualDiskPlanner.ValidateDetach(disk, request);
+        if (issues.Any(i => i.IsError))
+        {
+            Error = string.Join(" ", issues.Where(i => i.IsError).Select(i => i.Message));
+            return;
+        }
+
+        var prompt = Localization.Format("DiskAction_Detach_Prompt", disk.Number, disk.VirtualDiskPath);
+        var warnings = string.Join("\n\n", issues.Select(i => i.Message));
+        if (!_confirm(warnings.Length > 0 ? prompt + "\n\n" + warnings : prompt))
+        {
+            return;
+        }
+
+        IsBusy = true;
+        Error = null;
+        Status = Localization.Format("DiskAction_Working", disk.Number);
+        try
+        {
+            await _virtualDisks.DetachAsync(request);
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            Error = ex.Message;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+
+        await RefreshAsync();
+    }
 
     /// <summary>
     /// Takes a disk offline or online, or switches its read-only attribute. Fully reversible,

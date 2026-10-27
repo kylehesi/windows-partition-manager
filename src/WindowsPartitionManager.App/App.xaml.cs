@@ -32,7 +32,8 @@ public partial class App : Application
 
         bool Confirm(string message) => MessageBox.Show(window, message, ProductName, MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.Yes;
 
-        var viewModel = new MainViewModel(storage, new NtfsVolumeInspector(), storage, new WmiStorageOperations(), new PowerStatusProvider(), new UnblockOperations(), Confirm);
+        var operations = new WmiStorageOperations();
+        var viewModel = new MainViewModel(storage, new NtfsVolumeInspector(), storage, operations, new PowerStatusProvider(), new UnblockOperations(), new VirtualDiskOperations(operations), Confirm);
         window = new MainWindow { DataContext = viewModel };
 
         viewModel.AnalysisRequested += (_, analysis) =>
@@ -67,6 +68,21 @@ public partial class App : Application
         {
             var dialog = new DestructiveActionWindow { DataContext = form, Owner = window };
             dialog.ShowDialog();
+        };
+
+        viewModel.CreateVirtualDiskRequested += (_, form) =>
+        {
+            var dialog = new CreateVirtualDiskWindow { DataContext = form, Owner = window };
+            dialog.ShowDialog();
+        };
+
+        viewModel.AttachVirtualDiskRequested += (_, _) =>
+        {
+            var picker = new Microsoft.Win32.OpenFileDialog { Filter = Localization.Get("Vhd_FileFilterAll"), CheckFileExists = true };
+            if (picker.ShowDialog(window) == true && Confirm(Localization.Format("Vhd_AttachPrompt", picker.FileName)))
+            {
+                _ = viewModel.AttachVirtualDiskAsync(picker.FileName);
+            }
         };
 
         viewModel.PropertiesRequested += (_, form) =>
@@ -105,7 +121,7 @@ public partial class App : Application
 
     /// <summary>
     /// Developer aid: <c>--screenshot file.png [--size 1120x700] [--theme Dark] [--language Turkish]
-    /// [--dialog settings|history|new|resize|properties|format|delete]</c> renders the main window (or the named dialog,
+    /// [--dialog settings|history|vhd|new|resize|properties|format|delete]</c> renders the main window (or the named dialog,
     /// opened for the first row that allows it) once the disks are loaded, saves it as PNG and exits.
     /// Used to check layout without a human. Dialogs only open; nothing is ever applied.
     /// </summary>
@@ -134,6 +150,9 @@ public partial class App : Application
         var rows = viewModel.Disks.SelectMany(d => d.Rows).ToList();
         switch (dialog.ToLowerInvariant())
         {
+            case "vhd":
+                viewModel.CreateVirtualDiskCommand.Execute(null);
+                break;
             case "settings":
                 viewModel.SettingsCommand.Execute(null);
                 break;
