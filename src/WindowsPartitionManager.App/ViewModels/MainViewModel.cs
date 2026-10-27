@@ -55,6 +55,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         CreateVirtualDiskCommand = new RelayCommand(() => CreateVirtualDiskRequested?.Invoke(this, CreateVirtualDisk()));
         AttachVirtualDiskCommand = new RelayCommand(() => AttachVirtualDiskRequested?.Invoke(this, EventArgs.Empty), () => !IsBusy);
         DetachVirtualDiskCommand = new RelayCommand<Disk>(disk => _ = DetachVirtualDiskAsync(disk), _ => !IsBusy);
+        ConvertCommand = new RelayCommand<ConvertTarget>(target => _ = ConvertDiskAsync(target), _ => !IsBusy);
         DiskStateCommand = new RelayCommand<DiskStateTarget>(target => _ = SetDiskStateAsync(target), _ => !IsBusy);
         OptimizeCommand = new RelayCommand<SegmentRow>(row => _ = OpenOptimizeAsync(row), row => row.CanOptimize);
         CheckCommand = new RelayCommand<SegmentRow>(row => CheckRequested?.Invoke(this, CreateCheck(row)), row => row.CanCheck);
@@ -99,6 +100,46 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public RelayCommand<SegmentRow> InitializeCommand { get; }
 
     public RelayCommand<DiskStateTarget> DiskStateCommand { get; }
+
+    public RelayCommand<ConvertTarget> ConvertCommand { get; }
+
+    /// <summary>Gives an empty disk the other partition table after a confirmation; nothing can be lost.</summary>
+    private async Task ConvertDiskAsync(ConvertTarget target)
+    {
+        var disk = target.Disk;
+        var request = new ConvertDiskRequest { DiskNumber = disk.Number, Style = target.Style, ExpectedDisk = DiskFingerprint.Of(disk) };
+        var issues = ConvertDiskPlanner.Validate(disk, request).Concat(SafetyChecks.Power(_power.GetPowerStatus(), touchesSystemVolume: false)).ToList();
+        if (issues.Any(i => i.IsError))
+        {
+            Error = string.Join(" ", issues.Where(i => i.IsError).Select(i => i.Message));
+            return;
+        }
+
+        var prompt = Localization.Format("DiskAction_Convert_Prompt", disk.Number, disk.FriendlyName, target.Style.ToString().ToUpperInvariant());
+        var warnings = string.Join("\n\n", issues.Select(i => i.Message));
+        if (!_confirm(warnings.Length > 0 ? prompt + "\n\n" + warnings : prompt))
+        {
+            return;
+        }
+
+        IsBusy = true;
+        Error = null;
+        Status = Localization.Format("DiskAction_Working", disk.Number);
+        try
+        {
+            await _operations.ConvertDiskAsync(request);
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            Error = ex.Message;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+
+        await RefreshAsync();
+    }
 
     /// <summary>Raised when the user asks how a drive is doing; the view opens the window and loads it.</summary>
     public event EventHandler<DiskHealthViewModel>? HealthRequested;

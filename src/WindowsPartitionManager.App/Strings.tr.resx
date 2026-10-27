@@ -308,4 +308,7 @@
   <data name="BitLocker_StateEncrypting" xml:space="preserve"><value>BitLocker: şifreleniyor (%{0} tamamlandı)</value></data>
   <data name="BitLocker_StateDecrypting" xml:space="preserve"><value>BitLocker: şifre çözülüyor (%{0} hâlâ şifreli)</value></data>
   <data name="BitLocker_StatePaused" xml:space="preserve"><value>BitLocker: şifreleme duraklatıldı (%{0} şifreli)</value></data>
+  <data name="DiskAction_ConvertToGpt" xml:space="preserve"><value>GPT'ye dönüştür…</value></data>
+  <data name="DiskAction_ConvertToMbr" xml:space="preserve"><value>MBR'ye dönüştür…</value></data>
+  <data name="DiskAction_Convert_Prompt" xml:space="preserve"><value>Disk {0} ({1}) için {2} bölüm tablosu yazılsın mı? Disk boş olduğundan hiçbir şey kaybolmaz.</value></data>
 </root>

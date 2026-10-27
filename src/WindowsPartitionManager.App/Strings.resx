@@ -308,4 +308,7 @@
   <data name="BitLocker_StateEncrypting" xml:space="preserve"><value>BitLocker: encrypting ({0} % done)</value></data>
   <data name="BitLocker_StateDecrypting" xml:space="preserve"><value>BitLocker: decrypting ({0} % still encrypted)</value></data>
   <data name="BitLocker_StatePaused" xml:space="preserve"><value>BitLocker: encryption paused ({0} % encrypted)</value></data>
+  <data name="DiskAction_ConvertToGpt" xml:space="preserve"><value>Convert to GPT…</value></data>
+  <data name="DiskAction_ConvertToMbr" xml:space="preserve"><value>Convert to MBR…</value></data>
+  <data name="DiskAction_Convert_Prompt" xml:space="preserve"><value>Give disk {0} ({1}) a {2} partition table? The disk is empty, so nothing is lost.</value></data>
 </root>

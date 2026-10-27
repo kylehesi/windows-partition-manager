@@ -15,6 +15,9 @@ public sealed record RowAction(string Name, ICommand Command, bool IsDestructive
 /// <summary>A disk state change the user picked from a disk's menu.</summary>
 public sealed record DiskStateTarget(Disk Disk, DiskStateChange Change);
 
+/// <summary>A partition table the user picked for an empty disk.</summary>
+public sealed record ConvertTarget(Disk Disk, PartitionStyle Style);
+
 /// <summary>One entry of a disk's menu; unlike a row action it carries its own parameter.</summary>
 public sealed record DiskAction(string Name, ICommand Command, object Parameter);
 
@@ -43,6 +46,11 @@ public sealed class DiskViewModel
         var actions = new List<DiskAction> { new(Localization.Get("DiskAction_Health"), owner.HealthCommand, disk) };
         actions.AddRange(DiskStatePlanner.Available(disk)
             .Select(change => new DiskAction(Localization.Get($"DiskAction_{change}"), owner.DiskStateCommand, new DiskStateTarget(disk, change))));
+        if (ConvertDiskPlanner.Target(disk) is { } style)
+        {
+            actions.Add(new DiskAction(Localization.Get($"DiskAction_ConvertTo{style}"), owner.ConvertCommand, new ConvertTarget(disk, style)));
+        }
+
         if (VirtualDiskPlanner.CanDetach(disk))
         {
             actions.Add(new DiskAction(Localization.Get("DiskAction_Detach"), owner.DetachVirtualDiskCommand, disk));
