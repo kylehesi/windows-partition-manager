@@ -55,6 +55,14 @@ public class BitLockerRulesTests
     }
 
     [Fact]
+    public void EncryptedWithProtectionOff_NeedsNoRecoveryKeyReminder()
+    {
+        // Device encryption waiting for activation: encrypted, but Windows holds the key itself.
+        var (disk, partition) = Layout(new BitLockerStatus(EncryptionState.Encrypted, ProtectionOn: false, Locked: false));
+        Assert.DoesNotContain(ResizePlanner.Validate(disk, partition, Shrink()), i => i.Message.Contains("BitLocker", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void WhileBitLockerConverts_ResizeWaits()
     {
         var (disk, partition) = Layout(new BitLockerStatus(EncryptionState.Encrypting, true, false, 42));

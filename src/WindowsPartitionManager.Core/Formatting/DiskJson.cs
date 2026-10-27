@@ -51,7 +51,7 @@ public static class DiskJson
             p.IsSystem,
             p.IsBoot,
             p.IsHidden,
-            p.Volume is { } v ? new VolumeEntry(v.FileSystem, v.Label, v.SizeBytes, v.FreeBytes, v.UsedBytes, v.Health, v.IsDirty) : null)).ToList(),
+            p.Volume is { } v ? new VolumeEntry(v.FileSystem, v.Label, v.SizeBytes, v.FreeBytes, v.UsedBytes, v.Health, v.IsDirty, v.BitLocker is { } b ? new BitLockerEntry(b.State, b.ProtectionOn, b.Locked, b.PercentEncrypted) : null) : null)).ToList(),
         FreeSpaceCalculator.Compute(disk).Select(r => new FreeEntry(r.OffsetBytes, r.SizeBytes)).ToList());
 
     private sealed record DiskListing(int SchemaVersion, IReadOnlyList<DiskEntry> Disks);
@@ -85,7 +85,10 @@ public static class DiskJson
         bool IsHidden,
         VolumeEntry? Volume);
 
-    private sealed record VolumeEntry(string FileSystem, string? Label, ulong SizeBytes, ulong FreeBytes, ulong UsedBytes, VolumeHealth Health, bool IsDirty);
+    private sealed record VolumeEntry(string FileSystem, string? Label, ulong SizeBytes, ulong FreeBytes, ulong UsedBytes, VolumeHealth Health, bool IsDirty, BitLockerEntry? BitLocker);
+
+    /// <summary>Added in schema 1 without a version bump: a new, optional field.</summary>
+    private sealed record BitLockerEntry(EncryptionState State, bool ProtectionOn, bool Locked, int? PercentEncrypted);
 
     private sealed record FreeEntry(ulong OffsetBytes, ulong SizeBytes);
 }

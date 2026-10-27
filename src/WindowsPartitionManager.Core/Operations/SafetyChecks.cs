@@ -83,7 +83,9 @@ public static class SafetyChecks
             return [new ValidationIssue(IssueSeverity.Error, CoreText.Format("BitLocker_Converting", letter, percent))];
         }
 
-        if (use == EncryptionUse.Resize && bitLocker.IsEncrypted)
+        // With protection off (suspended, or device encryption waiting for activation) Windows
+        // unlocks the volume by itself, so there is no key the user could be asked for.
+        if (use == EncryptionUse.Resize && bitLocker.IsEncrypted && bitLocker.ProtectionOn)
         {
             return [new ValidationIssue(IssueSeverity.Warning, CoreText.Format("BitLocker_KeepRecoveryKey", letter))];
         }
