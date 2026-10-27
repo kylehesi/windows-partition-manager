@@ -302,4 +302,10 @@
   <data name="Optimize_Recommended" xml:space="preserve"><value>(recommended)</value></data>
   <data name="Optimize_Run" xml:space="preserve"><value>Optimize</value></data>
   <data name="Optimize_Done" xml:space="preserve"><value>Done: {0} finished in {1} s.</value></data>
+  <data name="BitLocker_StateOn" xml:space="preserve"><value>BitLocker: encrypted, protection on</value></data>
+  <data name="BitLocker_StateProtectionOff" xml:space="preserve"><value>BitLocker: encrypted, protection off (Windows unlocks it by itself)</value></data>
+  <data name="BitLocker_StateLocked" xml:space="preserve"><value>BitLocker: locked; unlock it to use it</value></data>
+  <data name="BitLocker_StateEncrypting" xml:space="preserve"><value>BitLocker: encrypting ({0} % done)</value></data>
+  <data name="BitLocker_StateDecrypting" xml:space="preserve"><value>BitLocker: decrypting ({0} % still encrypted)</value></data>
+  <data name="BitLocker_StatePaused" xml:space="preserve"><value>BitLocker: encryption paused ({0} % encrypted)</value></data>
 </root>

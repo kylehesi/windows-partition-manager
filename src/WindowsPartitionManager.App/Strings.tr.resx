@@ -302,4 +302,10 @@
   <data name="Optimize_Recommended" xml:space="preserve"><value>(önerilen)</value></data>
   <data name="Optimize_Run" xml:space="preserve"><value>İyileştir</value></data>
   <data name="Optimize_Done" xml:space="preserve"><value>Tamamlandı: {0} {1} saniyede bitti.</value></data>
+  <data name="BitLocker_StateOn" xml:space="preserve"><value>BitLocker: şifreli, koruma açık</value></data>
+  <data name="BitLocker_StateProtectionOff" xml:space="preserve"><value>BitLocker: şifreli, koruma kapalı (Windows kilidi kendisi açar)</value></data>
+  <data name="BitLocker_StateLocked" xml:space="preserve"><value>BitLocker: kilitli; kullanmak için kilidini açın</value></data>
+  <data name="BitLocker_StateEncrypting" xml:space="preserve"><value>BitLocker: şifreleniyor (%{0} tamamlandı)</value></data>
+  <data name="BitLocker_StateDecrypting" xml:space="preserve"><value>BitLocker: şifre çözülüyor (%{0} hâlâ şifreli)</value></data>
+  <data name="BitLocker_StatePaused" xml:space="preserve"><value>BitLocker: şifreleme duraklatıldı (%{0} şifreli)</value></data>
 </root>

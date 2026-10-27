@@ -121,6 +121,7 @@ public sealed class SegmentRow
             Free = ByteSize.Format(volume.FreeBytes);
             CanAnalyze = partition.DriveLetter is not null &&
                          volume.FileSystem.Equals("NTFS", StringComparison.OrdinalIgnoreCase);
+            EncryptionText = DescribeEncryption(volume.BitLocker);
         }
 
         if (CanAnalyze) actions.Add(new RowAction(Localization.Get("Segment_AnalyzeShrink"), owner.AnalyzeCommand));
@@ -183,6 +184,21 @@ public sealed class SegmentRow
     public bool CanCreate { get; }
 
     public string Name { get; }
+
+    /// <summary>BitLocker in plain words for the lock icon's tooltip; empty when the volume is not encrypted.</summary>
+    public string EncryptionText { get; } = string.Empty;
+
+    public bool IsEncrypted => EncryptionText.Length > 0;
+
+    /// <summary>Shared with the disk map tooltip.</summary>
+    public static string DescribeEncryption(BitLockerStatus? bitLocker) => bitLocker switch
+    {
+        { Locked: true } => Localization.Get("BitLocker_StateLocked"),
+        { IsConverting: true } b => Localization.Format($"BitLocker_State{b.State}", b.PercentEncrypted?.ToString(System.Globalization.CultureInfo.CurrentCulture) ?? "?"),
+        { IsEncrypted: true, ProtectionOn: true } => Localization.Get("BitLocker_StateOn"),
+        { IsEncrypted: true } => Localization.Get("BitLocker_StateProtectionOff"),
+        _ => string.Empty,
+    };
 
     public string Type { get; }
 

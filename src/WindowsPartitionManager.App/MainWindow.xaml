@@ -262,6 +262,10 @@
                                                                 <StackPanel Orientation="Horizontal">
                                                                     <Border Width="12" Height="12" CornerRadius="2" Background="{Binding Swatch}" Margin="0,0,8,0" VerticalAlignment="Center" />
                                                                     <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                                                                    <!-- BitLocker: a small lock, explained in its tooltip. -->
+                                                                    <TextBlock Text="&#xE72E;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="12" Margin="6,0,0,0" VerticalAlignment="Center"
+                                                                               Foreground="{DynamicResource TextSecondary}" ToolTip="{Binding EncryptionText}"
+                                                                               Visibility="{Binding IsEncrypted, Converter={x:Static controls:Converters.BoolToVisibility}}" />
                                                                 </StackPanel>
                                                             </DataTemplate>
                                                         </GridViewColumn.CellTemplate>

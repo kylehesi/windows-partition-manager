@@ -133,7 +133,8 @@ public sealed class DiskMapControl : FrameworkElement
                     ? $"{(p.DriveLetter is { } l ? $"{l}: " : string.Empty)}{CoreText.PartitionType(p.TypeDescription)}" +
                       (p.Volume is { } v ? $" ({v.FileSystem}{(v.Label is { Length: > 0 } label ? $" \"{label}\"" : string.Empty)})" : string.Empty) +
                       "\n" + Localization.Format("Map_Location", ByteSize.Format(segment.SizeBytes), ByteSize.Format(segment.OffsetBytes)) +
-                      (p.Volume is { } vol ? "\n" + Localization.Format("Map_UsedFree", ByteSize.Format(vol.UsedBytes), ByteSize.Format(vol.FreeBytes)) : string.Empty)
+                      (p.Volume is { } vol ? "\n" + Localization.Format("Map_UsedFree", ByteSize.Format(vol.UsedBytes), ByteSize.Format(vol.FreeBytes)) : string.Empty) +
+                      (ViewModels.SegmentRow.DescribeEncryption(p.Volume?.BitLocker) is { Length: > 0 } encryption ? "\n" + encryption : string.Empty)
                     : $"{Localization.Get("Common_Unallocated")}\n" + Localization.Format("Map_Location", ByteSize.Format(segment.SizeBytes), ByteSize.Format(segment.OffsetBytes));
 
                 if (!Equals(ToolTip, text))

@@ -28,3 +28,4 @@ date in one pass before the release. Everything below still needs to be written 
 - UI: "Optimize…" row action (`OptimizeVolumeWindow`): the media type is read first so the right mode is preselected and marked recommended; runs without confirmation. Screenshot aid `--dialog optimize`.
 - BitLocker: `Volume.BitLocker` (`BitLockerStatus`, `EncryptionState`), `SafetyChecks.Encryption` with `EncryptionUse`; locked volumes refused for resize/check/optimize/rename, warned before format/delete; resize waits while converting; recovery-key reminder before resizing an encrypted volume.
 - CLI: `wpm list` shows `[BitLocker: on | encrypted, protection off | locked | encrypting N %]`.
+- UI: lock icon next to encrypted partitions with a tooltip (on / protection off / locked / converting); same text in the disk map tooltip. BitLocker is only read when elevated.
