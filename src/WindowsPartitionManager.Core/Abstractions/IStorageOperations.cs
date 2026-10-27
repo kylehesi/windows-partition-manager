@@ -44,6 +44,9 @@ public interface IStorageOperations
     /// <summary>Runs TRIM or defragmentation on a volume (Optimize-Volume). The volume stays usable.</summary>
     Task OptimizeVolumeAsync(OptimizeVolumeRequest request, IProgress<string>? progress = null, CancellationToken cancellationToken = default);
 
+    /// <summary>Gives an empty disk the other partition table (MBR to GPT or back). Returns the disk afterwards.</summary>
+    Task<Disk> ConvertDiskAsync(ConvertDiskRequest request, CancellationToken cancellationToken = default);
+
     /// <summary>Takes a disk offline or online, or switches its read-only attribute (Set-Disk).</summary>
     Task<Disk> SetDiskStateAsync(SetDiskStateRequest request, CancellationToken cancellationToken = default);
 }

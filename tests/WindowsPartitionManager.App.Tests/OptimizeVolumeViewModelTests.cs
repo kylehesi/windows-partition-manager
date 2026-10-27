@@ -94,6 +94,8 @@ public sealed class OptimizeVolumeViewModelTests
 
         public Task<Partition> SetLabelAsync(SetLabelRequest request, CancellationToken cancellationToken = default) => throw new NotSupportedException();
 
+        public Task<Disk> ConvertDiskAsync(ConvertDiskRequest request, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+
         public Task<Disk> SetDiskStateAsync(SetDiskStateRequest request, CancellationToken cancellationToken = default) => throw new NotSupportedException();
     }
 }

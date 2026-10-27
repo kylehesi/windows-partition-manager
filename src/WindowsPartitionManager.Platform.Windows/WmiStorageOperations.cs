@@ -87,6 +87,13 @@ public sealed class WmiStorageOperations : IStorageOperations
         return Task.Run(() => Guarded("OptimizeVolume", details, () => OptimizeVolume(request, progress, cancellationToken)), cancellationToken);
     }
 
+    public Task<Disk> ConvertDiskAsync(ConvertDiskRequest request, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var details = string.Create(CultureInfo.InvariantCulture, $"disk={request.DiskNumber} style={request.Style}");
+        return Task.Run(() => Guarded("ConvertDisk", details, () => ConvertDisk(request, cancellationToken)), cancellationToken);
+    }
+
     public Task<Disk> SetDiskStateAsync(SetDiskStateRequest request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
@@ -510,6 +517,39 @@ public sealed class WmiStorageOperations : IStorageOperations
             p["SlabConsolidate"] = false;
             p["TierOptimize"] = false;
         }).Dispose();
+    }
+
+    /// <summary>
+    /// Clear-Disk, then Initialize-Disk with the other style. Clear removes the partition table,
+    /// which on an empty disk holds at most the Microsoft Reserved partition; the planner has
+    /// already refused any disk with data on it, and that check is repeated on a fresh read here.
+    /// </summary>
+    private static Disk ConvertDisk(ConvertDiskRequest request, CancellationToken cancellationToken)
+    {
+        var (_, fresh) = Fresh(request.DiskNumber, cancellationToken);
+        RefuseOnErrors("ConvertDisk", [LayoutGuard.Check(fresh, request.ExpectedDisk)]);
+        RefuseOnErrors("ConvertDisk", ConvertDiskPlanner.Validate(fresh!, request));
+        RefuseOnErrors("ConvertDisk", SafetyChecks.Power(Power.GetPowerStatus(), touchesSystemVolume: false));
+
+        var scope = Wmi.Connect();
+        using (var disk = GetDisk(scope, request.DiskNumber))
+        {
+            Wmi.Invoke(disk, "Clear", p =>
+            {
+                p["RemoveData"] = true;
+                p["RemoveOEM"] = true;
+                p["ZeroOutEntireDisk"] = false;
+            }).Dispose();
+        }
+
+        // Clear leaves the disk RAW; read it again before writing the new table.
+        using (var disk = GetDisk(scope, request.DiskNumber))
+        {
+            Wmi.Invoke(disk, "Initialize", p => p["PartitionStyle"] = (ushort)(request.Style == PartitionStyle.Gpt ? 2 : 1)).Dispose();
+        }
+
+        return WmiStorageProvider.GetDisks(cancellationToken).FirstOrDefault(d => d.Number == request.DiskNumber)
+               ?? throw new StorageOperationException("ConvertDisk", 0, $"Disk {request.DiskNumber} could not be read.");
     }
 
     private static Disk SetDiskState(SetDiskStateRequest request, CancellationToken cancellationToken)
