@@ -54,6 +54,9 @@ public sealed record Disk
     /// <summary>Size of the largest unallocated region as Windows itself computes it; a cross-check for our own layout math.</summary>
     public ulong LargestFreeExtentBytes { get; init; }
 
+    /// <summary>The VHD or VHDX file behind the disk when it is an attached virtual disk, otherwise null.</summary>
+    public string? VirtualDiskPath { get; init; }
+
     /// <summary>Partitions ordered by their offset on the disk.</summary>
     public required IReadOnlyList<Partition> Partitions { get; init; }
 }

@@ -14,3 +14,4 @@ date in one pass before the release. Everything below still needs to be written 
 - Auto refresh: the disk list re-reads itself 1.5 s after a drive is plugged in or removed (WM_DEVICECHANGE); deferred while a dialog is open.
 - UI: Settings > "Show history" opens the operation history table (`HistoryWindow`, `OperationHistory` parser); screenshot aid `--dialog history`.
 - CLI: `wpm list --json` (schemaVersion 1, sizes in bytes, camelCase; `DiskJson`).
+- Virtual disks: create/attach/detach (`IVirtualDiskOperations`, `VirtualDiskPlanner`, `Disk.VirtualDiskPath`).

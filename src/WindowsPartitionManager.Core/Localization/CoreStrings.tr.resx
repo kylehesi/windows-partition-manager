@@ -219,4 +219,10 @@
   <data name="DiskState_OfflineHidesDrives" xml:space="preserve"><value>{0} disk yeniden çevrimiçi yapılana kadar görünmez. Önce bunları kullanan dosya ve programları kapatın.</value></data>
   <data name="DiskState_OfflineHidesDisk" xml:space="preserve"><value>Disk yeniden çevrimiçi yapılana kadar kullanılamaz.</value></data>
   <data name="DiskState_ReadOnlyWarning" xml:space="preserve"><value>Disk yeniden yazılabilir yapılana kadar ona hiçbir şey kaydedilemez; ona yazan programlar hata verir.</value></data>
+  <data name="Vhd_PathNeeded" xml:space="preserve"><value>Yeni dosya için .vhdx ile biten tam bir yol seçin.</value></data>
+  <data name="Vhd_FileExists" xml:space="preserve"><value>{0} zaten var. Başka bir ad seçin ya da var olan dosyayı bağlayın.</value></data>
+  <data name="Vhd_TooSmall" xml:space="preserve"><value>Sanal disk en az {0} olmalıdır.</value></data>
+  <data name="Vhd_TooLarge" xml:space="preserve"><value>Bir VHDX en fazla {0} olabilir.</value></data>
+  <data name="Vhd_MayOutgrowDrive" xml:space="preserve"><value>Dosya küçük başlar ve veri yazıldıkça {0} boyutuna kadar büyür, ancak bulunduğu sürücüde yalnızca {1} boş alan var.</value></data>
+  <data name="Vhd_NotVirtual" xml:space="preserve"><value>Yalnızca bağlı sanal diskler (VHD veya VHDX dosyaları) çıkarılabilir.</value></data>
 </root>
