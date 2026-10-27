@@ -28,11 +28,12 @@ public sealed class WmiStorageProvider : IStorageProvider, ISupportedSizeProvide
         var scope = Wmi.Connect();
 
         var volumesByPath = new Dictionary<string, Volume>(StringComparer.OrdinalIgnoreCase);
+        var bitLocker = BitLockerReader.Read();
         foreach (var volume in Wmi.Query(scope, "SELECT * FROM MSFT_Volume").Select(ReadVolume))
         {
             if (volume is not null)
             {
-                volumesByPath[volume.Path] = volume;
+                volumesByPath[volume.Path] = bitLocker.TryGetValue(volume.Path, out var status) ? volume with { BitLocker = status } : volume;
             }
         }
 
