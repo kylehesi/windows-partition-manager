@@ -4,6 +4,19 @@ All notable changes to Windows Partition Manager. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- **What uses the space**: a row action on NTFS volumes reads the master file table and shows
+  folders and files largest first, with a share bar, drill-down, Open in Explorer and the
+  100 largest files of the drive. About 3 seconds for 700,000 files. CLI: `wpm space`.
+
+### Fixed
+
+- The shrink analysis lost small folders (those whose index fits in their MFT record), so some
+  reported paths showed `<record number>` instead of their folders.
+
 ## [0.2.0] - 2026-10-27
 
 Every change below still goes through the Windows Storage Management API, is checked against a
@@ -71,5 +84,6 @@ format, delete, shrink and extend partitions; initialize disks; USB flash drives
 SSDs; layout fingerprints and re-validation before every write; MSI installer and portable
 build.
 
+[Unreleased]: https://github.com/kylehesi/windows-partition-manager/compare/v0.2.0...HEAD
 [0.2.0]: https://github.com/kylehesi/windows-partition-manager/compare/0029b27...v0.2.0
 [0.1.0]: https://github.com/kylehesi/windows-partition-manager/commit/0029b27
