@@ -30,6 +30,7 @@ return command switch
     "letter" => await LetterAsync(args.Skip(1).ToArray()),
     "label" => await LabelAsync(args.Skip(1).ToArray()),
     "disk" => await DiskStateAsync(args.Skip(1).ToArray()),
+    "convert" => await ConvertAsync(args.Skip(1).ToArray()),
     "health" => await HealthAsync(args.Skip(1).ToArray()),
     "check" => await CheckAsync(args.Skip(1).ToArray()),
     "optimize" => await OptimizeAsync(args.Skip(1).ToArray()),
@@ -76,6 +77,8 @@ static int Usage(string? error = null)
     Console.WriteLine("                                   drive). The volume stays usable.");
     Console.WriteLine("wpm health [<disk>]                What each drive reports about its health (SMART): temperature,");
     Console.WriteLine("                                   SSD wear, errors, power-on hours. Counters need administrator rights.");
+    Console.WriteLine("wpm convert <disk> (gpt | mbr) [--yes]");
+    Console.WriteLine("                                   Give an empty disk the other partition table.");
     Console.WriteLine("wpm disk <disk> (online | offline | readonly | writable) [--yes]");
     Console.WriteLine("                                   Take a disk offline or bring it back, or switch its read-only");
     Console.WriteLine("                                   attribute. Never on the disk Windows runs from.");
@@ -590,6 +593,66 @@ static async Task<int> HealthAsync(string[] args)
     }
 
     return 0;
+}
+
+static async Task<int> ConvertAsync(string[] args)
+{
+    PartitionStyle? style = args.ElementAtOrDefault(1)?.ToLowerInvariant() switch
+    {
+        "gpt" => PartitionStyle.Gpt,
+        "mbr" => PartitionStyle.Mbr,
+        _ => null,
+    };
+    if (!int.TryParse(args.ElementAtOrDefault(0), out var diskNumber) || style is null)
+    {
+        return Usage("convert needs a disk number and gpt or mbr, e.g. 'wpm convert 2 gpt'.");
+    }
+
+    var yes = args.Skip(2).Any(a => a is "--yes" or "-y");
+    var disk = (await new WmiStorageProvider().GetDisksAsync()).FirstOrDefault(d => d.Number == diskNumber);
+    if (disk is null)
+    {
+        Console.Error.WriteLine($"Disk {diskNumber} was not found.");
+        return 2;
+    }
+
+    var request = new ConvertDiskRequest { DiskNumber = diskNumber, Style = style.Value, ExpectedDisk = DiskFingerprint.Of(disk) };
+    Console.WriteLine($"Plan: disk {diskNumber} ({disk.FriendlyName}) {disk.Style} -> {style.Value}");
+    var issues = ConvertDiskPlanner.Validate(disk, request)
+        .Concat(SafetyChecks.Power(new PowerStatusProvider().GetPowerStatus(), touchesSystemVolume: false))
+        .ToList();
+    foreach (var issue in issues)
+    {
+        Console.WriteLine($"  {(issue.IsError ? "ERROR  " : "warning")} {issue.Message}");
+    }
+
+    if (issues.Any(i => i.IsError))
+    {
+        Console.Error.WriteLine("Nothing was changed.");
+        return 5;
+    }
+
+    if (!yes)
+    {
+        Console.Write("Continue? [y/N] ");
+        if (!string.Equals(Console.ReadLine()?.Trim(), "y", StringComparison.OrdinalIgnoreCase))
+        {
+            Console.WriteLine("Cancelled. Nothing was changed.");
+            return 0;
+        }
+    }
+
+    try
+    {
+        var result = await new WmiStorageOperations().ConvertDiskAsync(request);
+        Console.WriteLine($"Done: disk {result.Number} is now {result.Style}.");
+        return 0;
+    }
+    catch (StorageOperationException ex)
+    {
+        Console.Error.WriteLine(ex.Message);
+        return 6;
+    }
 }
 
 static async Task<int> DiskStateAsync(string[] args)

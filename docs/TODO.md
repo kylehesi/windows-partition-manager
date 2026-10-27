@@ -30,3 +30,4 @@ date in one pass before the release. Everything below still needs to be written 
 - CLI: `wpm list` shows `[BitLocker: on | encrypted, protection off | locked | encrypting N %]`.
 - UI: lock icon next to encrypted partitions with a tooltip (on / protection off / locked / converting); same text in the disk map tooltip. BitLocker is only read when elevated.
 - Convert empty disk MBR <-> GPT (`ConvertDiskPlanner`, `ConvertDiskRequest`); only disks without data partitions (the Microsoft Reserved partition does not count); Windows disk refused (MBR2GPT hint).
+- CLI: `wpm convert <disk> (gpt | mbr)`.
