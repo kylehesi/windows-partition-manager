@@ -56,6 +56,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         AttachVirtualDiskCommand = new RelayCommand(() => AttachVirtualDiskRequested?.Invoke(this, EventArgs.Empty), () => !IsBusy);
         DetachVirtualDiskCommand = new RelayCommand<Disk>(disk => _ = DetachVirtualDiskAsync(disk), _ => !IsBusy);
         DiskStateCommand = new RelayCommand<DiskStateTarget>(target => _ = SetDiskStateAsync(target), _ => !IsBusy);
+        CheckCommand = new RelayCommand<SegmentRow>(row => CheckRequested?.Invoke(this, CreateCheck(row)), row => row.CanCheck);
         PropertiesCommand = new RelayCommand<SegmentRow>(row => PropertiesRequested?.Invoke(this, CreateProperties(row)), row => row.CanEditProperties);
         InitializeCommand = new RelayCommand<SegmentRow>(row => _ = InitializeAsync(row), row => row.CanInitialize && !IsBusy);
         SettingsCommand = new RelayCommand(() => SettingsRequested?.Invoke(this, EventArgs.Empty));
@@ -75,7 +76,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
             if (SetField(ref _selectedRow, value))
             {
                 OnPropertyChanged(nameof(SelectionText));
-                foreach (var command in new[] { AnalyzeCommand, ResizeCommand, NewPartitionCommand, DeleteCommand, FormatCommand, InitializeCommand, PropertiesCommand })
+                foreach (var command in new[] { AnalyzeCommand, ResizeCommand, NewPartitionCommand, DeleteCommand, FormatCommand, InitializeCommand, PropertiesCommand, CheckCommand })
                 {
                     command.RaiseCanExecuteChanged();
                 }
@@ -219,6 +220,18 @@ public sealed class MainViewModel : INotifyPropertyChanged
         }
 
         await RefreshAsync();
+    }
+
+    /// <summary>Raised when the user wants to check a file system; the view opens the form.</summary>
+    public event EventHandler<CheckVolumeViewModel>? CheckRequested;
+
+    public RelayCommand<SegmentRow> CheckCommand { get; }
+
+    private CheckVolumeViewModel CreateCheck(SegmentRow row)
+    {
+        var form = new CheckVolumeViewModel(_operations, row.Disk, row.Partition!, _confirm);
+        form.AttemptFinished += (_, _) => _ = RefreshAsync();
+        return form;
     }
 
     /// <summary>Raised when the user wants to change a drive letter or a label; the view opens the form.</summary>

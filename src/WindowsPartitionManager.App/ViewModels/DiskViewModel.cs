@@ -110,6 +110,7 @@ public sealed class SegmentRow
         CanDelete = !PartitionPlanner.ValidateDelete(disk, partition).Any(i => i.IsError);
         CanFormat = FormatPlanner.CanFormat(disk, partition);
         CanEditProperties = DriveLetterPlanner.CanChange(disk, partition) || LabelPlanner.CanRename(disk, partition);
+        CanCheck = CheckPlanner.Available(disk, partition).Count > 0;
 
         if (partition.Volume is { } volume)
         {
@@ -123,6 +124,7 @@ public sealed class SegmentRow
 
         if (CanAnalyze) actions.Add(new RowAction(Localization.Get("Segment_AnalyzeShrink"), owner.AnalyzeCommand));
         if (CanResize) actions.Add(new RowAction(Localization.Get("Segment_Resize"), owner.ResizeCommand));
+        if (CanCheck) actions.Add(new RowAction(Localization.Get("Segment_Check"), owner.CheckCommand));
         if (CanEditProperties) actions.Add(new RowAction(Localization.Get("Segment_Properties"), owner.PropertiesCommand));
         if (CanFormat) actions.Add(new RowAction(Localization.Get("Segment_Format"), owner.FormatCommand, IsDestructive: true));
         if (CanDelete) actions.Add(new RowAction(Localization.Get("Segment_Delete"), owner.DeleteCommand, IsDestructive: true));
@@ -159,6 +161,9 @@ public sealed class SegmentRow
 
     /// <summary>True for basic data partitions that are not the Windows volume.</summary>
     public bool CanFormat { get; }
+
+    /// <summary>True when Windows offers a file system check for the volume.</summary>
+    public bool CanCheck { get; }
 
     /// <summary>True when the drive letter or the volume label can be changed.</summary>
     public bool CanEditProperties { get; }

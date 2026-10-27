@@ -280,4 +280,16 @@
   <data name="HealthWin_StatusUnhealthy" xml:space="preserve"><value>Unhealthy</value></data>
   <data name="HealthWin_StatusUnknown" xml:space="preserve"><value>Unknown</value></data>
   <data name="HealthWin_Disclaimer" xml:space="preserve"><value>These values come from the drive itself. No drive can predict every failure, so keep backups of anything you cannot lose, whatever this window says.</value></data>
+  <data name="Segment_Check" xml:space="preserve"><value>Check file system…</value></data>
+  <data name="Check_Title" xml:space="preserve"><value>Check file system · {0} on disk {1}</value></data>
+  <data name="Check_WindowsVolumeNote" xml:space="preserve"><value>the drive Windows runs from</value></data>
+  <data name="Check_ModeLabel" xml:space="preserve"><value>Check</value></data>
+  <data name="Check_ModeScan" xml:space="preserve"><value>Scan (no changes)</value></data>
+  <data name="Check_ModeScan_Text" xml:space="preserve"><value>Reads the whole file system while the drive stays usable and records any problem it finds. Nothing is changed; safe on any drive, including the one Windows runs from.</value></data>
+  <data name="Check_ModeSpotFix" xml:space="preserve"><value>Quick fix</value></data>
+  <data name="Check_ModeSpotFix_Text" xml:space="preserve"><value>Fixes the problems a scan recorded. The drive is unavailable for a few seconds.</value></data>
+  <data name="Check_ModeOfflineScanAndFix" xml:space="preserve"><value>Full check and repair</value></data>
+  <data name="Check_ModeOfflineScanAndFix_Text" xml:space="preserve"><value>The classic chkdsk /f: the drive is dismounted, checked from start to end and repaired. Takes longest; the only option for FAT32 and exFAT drives.</value></data>
+  <data name="Check_Confirm" xml:space="preserve"><value>{0} on {1}?</value></data>
+  <data name="Check_Run" xml:space="preserve"><value>Run</value></data>
 </root>

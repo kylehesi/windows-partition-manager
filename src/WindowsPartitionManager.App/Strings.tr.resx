@@ -280,4 +280,16 @@
   <data name="HealthWin_StatusUnhealthy" xml:space="preserve"><value>Sağlıksız</value></data>
   <data name="HealthWin_StatusUnknown" xml:space="preserve"><value>Bilinmiyor</value></data>
   <data name="HealthWin_Disclaimer" xml:space="preserve"><value>Bu değerler sürücünün kendisinden gelir. Hiçbir sürücü her arızayı önceden haber veremez; bu pencere ne derse desin, kaybetmek istemediğiniz her şeyin yedeğini tutun.</value></data>
+  <data name="Segment_Check" xml:space="preserve"><value>Dosya sistemini denetle…</value></data>
+  <data name="Check_Title" xml:space="preserve"><value>Dosya sistemini denetle · disk {1} üzerinde {0}</value></data>
+  <data name="Check_WindowsVolumeNote" xml:space="preserve"><value>Windows'un çalıştığı sürücü</value></data>
+  <data name="Check_ModeLabel" xml:space="preserve"><value>Denetim</value></data>
+  <data name="Check_ModeScan" xml:space="preserve"><value>Tara (değişiklik yapmaz)</value></data>
+  <data name="Check_ModeScan_Text" xml:space="preserve"><value>Sürücü kullanılabilir kalırken tüm dosya sistemini okur ve bulduğu sorunları kaydeder. Hiçbir şey değiştirilmez; Windows'un çalıştığı sürücü dahil her sürücüde güvenlidir.</value></data>
+  <data name="Check_ModeSpotFix" xml:space="preserve"><value>Hızlı düzeltme</value></data>
+  <data name="Check_ModeSpotFix_Text" xml:space="preserve"><value>Taramanın kaydettiği sorunları düzeltir. Sürücü birkaç saniye kullanılamaz.</value></data>
+  <data name="Check_ModeOfflineScanAndFix" xml:space="preserve"><value>Tam denetim ve onarım</value></data>
+  <data name="Check_ModeOfflineScanAndFix_Text" xml:space="preserve"><value>Klasik chkdsk /f: sürücünün bağlantısı kesilir, baştan sona denetlenir ve onarılır. En uzun süren seçenektir; FAT32 ve exFAT sürücüler için tek seçenektir.</value></data>
+  <data name="Check_Confirm" xml:space="preserve"><value>{1} üzerinde {0} yapılsın mı?</value></data>
+  <data name="Check_Run" xml:space="preserve"><value>Çalıştır</value></data>
 </root>
