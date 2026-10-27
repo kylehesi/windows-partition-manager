@@ -29,6 +29,7 @@ return command switch
     "format" => await FormatAsync(args.Skip(1).ToArray()),
     "letter" => await LetterAsync(args.Skip(1).ToArray()),
     "label" => await LabelAsync(args.Skip(1).ToArray()),
+    "disk" => await DiskStateAsync(args.Skip(1).ToArray()),
     "unblock" => await UnblockAsync(args.Skip(1).ToArray()),
     "vhd" => await VhdAsync(args.Skip(1).ToArray()),
     "-h" or "--help" or "help" => Usage(),
@@ -63,6 +64,9 @@ static int Usage(string? error = null)
     Console.WriteLine("                                   Give a partition another drive letter, or remove its letter.");
     Console.WriteLine("wpm label <disk> <partition> <text>");
     Console.WriteLine("                                   Rename a volume; an empty text (\"\") clears the label.");
+    Console.WriteLine("wpm disk <disk> (online | offline | readonly | writable) [--yes]");
+    Console.WriteLine("                                   Take a disk offline or bring it back, or switch its read-only");
+    Console.WriteLine("                                   attribute. Never on the disk Windows runs from.");
     Console.WriteLine("wpm resize <disk> <partition> (--size <size> | --shrink-by <size> | --extend-by <size>) [--yes]");
     Console.WriteLine("                                   Shrink or extend an NTFS/ReFS partition with its file system.");
     Console.WriteLine("                                   Windows moves movable files itself. Needs administrator rights.");
@@ -397,6 +401,66 @@ static async Task<int> LabelAsync(string[] args)
     {
         var result = await new WmiStorageOperations().SetLabelAsync(request);
         Console.WriteLine($"Done: the volume is now \"{result.Volume?.Label}\".");
+        return 0;
+    }
+    catch (StorageOperationException ex)
+    {
+        Console.Error.WriteLine(ex.Message);
+        return 6;
+    }
+}
+
+static async Task<int> DiskStateAsync(string[] args)
+{
+    DiskStateChange? change = args.Length >= 2 ? args[1].ToLowerInvariant() switch
+    {
+        "online" => DiskStateChange.Online,
+        "offline" => DiskStateChange.Offline,
+        "readonly" or "read-only" => DiskStateChange.ReadOnly,
+        "writable" => DiskStateChange.Writable,
+        _ => null,
+    } : null;
+    if (!int.TryParse(args.ElementAtOrDefault(0), out var diskNumber) || change is null)
+    {
+        return Usage("disk needs a disk number and online, offline, readonly or writable, e.g. 'wpm disk 2 offline'.");
+    }
+
+    var yes = args.Skip(2).Any(a => a is "--yes" or "-y");
+    var disk = (await new WmiStorageProvider().GetDisksAsync()).FirstOrDefault(d => d.Number == diskNumber);
+    if (disk is null)
+    {
+        Console.Error.WriteLine($"Disk {diskNumber} was not found.");
+        return 2;
+    }
+
+    var request = new SetDiskStateRequest { DiskNumber = diskNumber, Change = change.Value, ExpectedDisk = DiskFingerprint.Of(disk) };
+    Console.WriteLine($"Plan: disk {diskNumber} ({disk.FriendlyName}) -> {change.Value.ToString().ToLowerInvariant()}");
+    var issues = DiskStatePlanner.Validate(disk, request);
+    foreach (var issue in issues)
+    {
+        Console.WriteLine($"  {(issue.IsError ? "ERROR  " : "warning")} {issue.Message}");
+    }
+
+    if (issues.Any(i => i.IsError))
+    {
+        Console.Error.WriteLine("Nothing was changed.");
+        return 5;
+    }
+
+    if (!yes && issues.Count > 0)
+    {
+        Console.Write("Continue? [y/N] ");
+        if (!string.Equals(Console.ReadLine()?.Trim(), "y", StringComparison.OrdinalIgnoreCase))
+        {
+            Console.WriteLine("Cancelled. Nothing was changed.");
+            return 0;
+        }
+    }
+
+    try
+    {
+        var result = await new WmiStorageOperations().SetDiskStateAsync(request);
+        Console.WriteLine($"Done: disk {result.Number} is {(result.IsOffline ? "offline" : "online")} and {(result.IsReadOnly ? "read-only" : "writable")}.");
         return 0;
     }
     catch (StorageOperationException ex)

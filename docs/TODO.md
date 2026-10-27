@@ -9,3 +9,4 @@ date in one pass before the release. Everything below still needs to be written 
 - UI: "Drive letter and label…" row action and dialog (`VolumePropertiesWindow`); the Windows drive keeps its letter.
 - Screenshot aid: `--dialog properties`.
 - Disk state: online/offline and read-only/writable (`DiskStatePlanner`, `SetDiskStateRequest`); Windows' own disk is refused.
+- CLI: `wpm disk <disk> (online | offline | readonly | writable)`.
