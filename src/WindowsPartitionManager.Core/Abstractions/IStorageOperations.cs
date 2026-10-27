@@ -37,6 +37,9 @@ public interface IStorageOperations
 
     /// <summary>Renames the partition's volume (Set-Volume -NewFileSystemLabel).</summary>
     Task<Partition> SetLabelAsync(SetLabelRequest request, CancellationToken cancellationToken = default);
+
+    /// <summary>Takes a disk offline or online, or switches its read-only attribute (Set-Disk).</summary>
+    Task<Disk> SetDiskStateAsync(SetDiskStateRequest request, CancellationToken cancellationToken = default);
 }
 
 /// <summary>Reads whether the machine is on battery, so write operations can refuse or warn.</summary>

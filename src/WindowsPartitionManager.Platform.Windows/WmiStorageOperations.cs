@@ -73,6 +73,13 @@ public sealed class WmiStorageOperations : IStorageOperations
         return Task.Run(() => Guarded("SetLabel", details, () => SetLabel(request, cancellationToken)), cancellationToken);
     }
 
+    public Task<Disk> SetDiskStateAsync(SetDiskStateRequest request, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var details = string.Create(CultureInfo.InvariantCulture, $"disk={request.DiskNumber} change={request.Change}");
+        return Task.Run(() => Guarded("SetDiskState", details, () => SetDiskState(request, cancellationToken)), cancellationToken);
+    }
+
     /// <summary>Runs a write operation with the sleep inhibitor held and the outcome logged.</summary>
     private static T Guarded<T>(string operation, string details, Func<T> action)
     {
@@ -427,6 +434,33 @@ public sealed class WmiStorageOperations : IStorageOperations
         }
 
         return ReadBack(request.DiskNumber, request.PartitionNumber, "SetLabel", cancellationToken);
+    }
+
+    private static Disk SetDiskState(SetDiskStateRequest request, CancellationToken cancellationToken)
+    {
+        var (_, fresh) = Fresh(request.DiskNumber, cancellationToken);
+        RefuseOnErrors("SetDiskState", [LayoutGuard.Check(fresh, request.ExpectedDisk)]);
+        RefuseOnErrors("SetDiskState", DiskStatePlanner.Validate(fresh!, request));
+
+        var scope = Wmi.Connect();
+        using (var disk = GetDisk(scope, request.DiskNumber))
+        {
+            switch (request.Change)
+            {
+                case DiskStateChange.Online:
+                    Wmi.Invoke(disk, "Online").Dispose();
+                    break;
+                case DiskStateChange.Offline:
+                    Wmi.Invoke(disk, "Offline").Dispose();
+                    break;
+                case DiskStateChange.ReadOnly or DiskStateChange.Writable:
+                    Wmi.Invoke(disk, "SetAttributes", p => p["IsReadOnly"] = request.Change == DiskStateChange.ReadOnly).Dispose();
+                    break;
+            }
+        }
+
+        return WmiStorageProvider.GetDisks(cancellationToken).FirstOrDefault(d => d.Number == request.DiskNumber)
+               ?? throw new StorageOperationException("SetDiskState", 0, $"Disk {request.DiskNumber} could not be read.");
     }
 
     private static Partition ReadBack(int diskNumber, int partitionNumber, string operation, CancellationToken cancellationToken)
