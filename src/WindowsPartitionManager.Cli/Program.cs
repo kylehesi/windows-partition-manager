@@ -30,6 +30,7 @@ return command switch
     "letter" => await LetterAsync(args.Skip(1).ToArray()),
     "label" => await LabelAsync(args.Skip(1).ToArray()),
     "disk" => await DiskStateAsync(args.Skip(1).ToArray()),
+    "health" => await HealthAsync(args.Skip(1).ToArray()),
     "unblock" => await UnblockAsync(args.Skip(1).ToArray()),
     "vhd" => await VhdAsync(args.Skip(1).ToArray()),
     "-h" or "--help" or "help" => Usage(),
@@ -65,6 +66,8 @@ static int Usage(string? error = null)
     Console.WriteLine("                                   Give a partition another drive letter, or remove its letter.");
     Console.WriteLine("wpm label <disk> <partition> <text>");
     Console.WriteLine("                                   Rename a volume; an empty text (\"\") clears the label.");
+    Console.WriteLine("wpm health [<disk>]                What each drive reports about its health (SMART): temperature,");
+    Console.WriteLine("                                   SSD wear, errors, power-on hours. Counters need administrator rights.");
     Console.WriteLine("wpm disk <disk> (online | offline | readonly | writable) [--yes]");
     Console.WriteLine("                                   Take a disk offline or bring it back, or switch its read-only");
     Console.WriteLine("                                   attribute. Never on the disk Windows runs from.");
@@ -410,6 +413,55 @@ static async Task<int> LabelAsync(string[] args)
         Console.Error.WriteLine(ex.Message);
         return 6;
     }
+}
+
+static async Task<int> HealthAsync(string[] args)
+{
+    int? only = null;
+    if (args.Length > 0)
+    {
+        if (!int.TryParse(args[0], out var n))
+        {
+            return Usage("health takes an optional disk number, e.g. 'wpm health 0'.");
+        }
+
+        only = n;
+    }
+
+    var disks = await new WmiStorageProvider().GetDisksAsync();
+    var provider = new WmiDiskHealthProvider();
+    foreach (var disk in disks.Where(d => only is null || d.Number == only))
+    {
+        var health = await provider.GetHealthAsync(disk.Number);
+        Console.WriteLine();
+        Console.WriteLine($"Disk {disk.Number}: {disk.FriendlyName} ({ByteSize.Format(disk.SizeBytes)}, {disk.BusType})");
+        if (health is null)
+        {
+            Console.WriteLine("  No physical disk information.");
+            continue;
+        }
+
+        static string Show<T>(T? value, string unit = "") where T : struct => value is { } v ? $"{v}{unit}" : "not reported";
+        Console.WriteLine($"  Type {health.MediaType}, Windows health {health.Health}");
+        if (health.CountersAvailable)
+        {
+            Console.WriteLine($"  Temperature {Show(health.TemperatureCelsius, " °C")} (max {Show(health.TemperatureMaxCelsius, " °C")}), wear {Show(health.WearPercent, " %")}, power-on {Show(health.PowerOnHours, " h")}");
+            Console.WriteLine($"  Read errors {Show(health.ReadErrorsTotal)} ({Show(health.ReadErrorsUncorrected)} uncorrected), write errors {Show(health.WriteErrorsTotal)} ({Show(health.WriteErrorsUncorrected)} uncorrected)");
+        }
+        else
+        {
+            Console.WriteLine("  Reliability counters: not available (run as administrator, or the drive does not report them).");
+        }
+
+        var (verdict, findings) = DiskHealthAssessment.Assess(health);
+        Console.WriteLine($"  Verdict: {verdict}");
+        foreach (var finding in findings)
+        {
+            Console.WriteLine($"    {finding.Message}");
+        }
+    }
+
+    return 0;
 }
 
 static async Task<int> DiskStateAsync(string[] args)
