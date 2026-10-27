@@ -41,6 +41,9 @@ public interface IStorageOperations
     /// <summary>Checks a volume's file system and, depending on the mode, repairs it (Repair-Volume).</summary>
     Task<CheckResult> CheckVolumeAsync(CheckVolumeRequest request, IProgress<string>? progress = null, CancellationToken cancellationToken = default);
 
+    /// <summary>Runs TRIM or defragmentation on a volume (Optimize-Volume). The volume stays usable.</summary>
+    Task OptimizeVolumeAsync(OptimizeVolumeRequest request, IProgress<string>? progress = null, CancellationToken cancellationToken = default);
+
     /// <summary>Takes a disk offline or online, or switches its read-only attribute (Set-Disk).</summary>
     Task<Disk> SetDiskStateAsync(SetDiskStateRequest request, CancellationToken cancellationToken = default);
 }

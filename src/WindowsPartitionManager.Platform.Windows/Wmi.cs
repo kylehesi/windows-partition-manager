@@ -121,6 +121,7 @@ internal static class Wmi
         43002 => CoreText.Get("StorageCode_43002"),
         43003 => CoreText.Get("StorageCode_43003"),
         43006 => CoreText.Get("StorageCode_43006"),
+        43022 or 43023 or 43024 or 43025 or 43026 or 43027 or 43028 or 43032 => CoreText.Get(string.Create(CultureInfo.InvariantCulture, $"StorageCode_{code}")),
         _ => CoreText.Get("StorageCode_Other"),
     };
 

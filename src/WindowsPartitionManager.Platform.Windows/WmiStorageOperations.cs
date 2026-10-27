@@ -80,6 +80,13 @@ public sealed class WmiStorageOperations : IStorageOperations
         return Task.Run(() => Guarded("CheckVolume", details, () => CheckVolume(request, progress, cancellationToken)), cancellationToken);
     }
 
+    public Task OptimizeVolumeAsync(OptimizeVolumeRequest request, IProgress<string>? progress = null, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var details = string.Create(CultureInfo.InvariantCulture, $"disk={request.DiskNumber} partition={request.PartitionNumber} mode={request.Mode}");
+        return Task.Run(() => Guarded("OptimizeVolume", details, () => OptimizeVolume(request, progress, cancellationToken)), cancellationToken);
+    }
+
     public Task<Disk> SetDiskStateAsync(SetDiskStateRequest request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
@@ -471,6 +478,38 @@ public sealed class WmiStorageOperations : IStorageOperations
             p["OfflineScanAndFix"] = request.Mode == CheckMode.OfflineScanAndFix;
         });
         return CheckResult.FromCode(Wmi.Get<uint>(result, "Output"));
+    }
+
+    private static void OptimizeVolume(OptimizeVolumeRequest request, IProgress<string>? progress, CancellationToken cancellationToken)
+    {
+        var (_, fresh) = Fresh(request.DiskNumber, cancellationToken);
+        var target = fresh?.Partitions.FirstOrDefault(p => p.Number == request.PartitionNumber);
+        RefuseOnErrors("OptimizeVolume", [LayoutGuard.Check(fresh, request.ExpectedDisk, target, request.ExpectedPartition)]);
+        if (target is null)
+        {
+            throw new StorageOperationException("OptimizeVolume", 0, CoreText.Get("Ops_RefusedPrefix") + CoreText.Format("Ops_PartitionNotFound", request.PartitionNumber, request.DiskNumber, LayoutGuard.RefreshHint));
+        }
+
+        // The media type only changes warnings and the recommended order, never what is allowed.
+        RefuseOnErrors("OptimizeVolume", OptimizePlanner.Validate(fresh!, target, request));
+
+        var scope = Wmi.Connect();
+        string[] accessPaths;
+        using (var partition = GetPartition(scope, request.DiskNumber, request.PartitionNumber))
+        {
+            accessPaths = Wmi.GetRaw(partition, "AccessPaths") as string[] ?? [];
+        }
+
+        progress?.Report(CoreText.Get("Ops_Optimizing"));
+        using var volume = WaitForVolume(scope, request.DiskNumber, request.PartitionNumber, accessPaths, cancellationToken);
+        Wmi.Invoke(volume, "Optimize", p =>
+        {
+            p["ReTrim"] = request.Mode == OptimizeMode.ReTrim;
+            p["Defrag"] = request.Mode == OptimizeMode.Defrag;
+            p["Analyze"] = false;
+            p["SlabConsolidate"] = false;
+            p["TierOptimize"] = false;
+        }).Dispose();
     }
 
     private static Disk SetDiskState(SetDiskStateRequest request, CancellationToken cancellationToken)
