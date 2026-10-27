@@ -142,6 +142,17 @@ public class VolumePropertiesTests
     }
 
     [Fact]
+    public void RecoveryPartition_IsNotOfferedForRenaming()
+    {
+        var recovery = Data(letter: null) with { Kind = PartitionKind.Recovery, TypeDescription = "Recovery" };
+        var disk = Disk(recovery);
+
+        Assert.False(LabelPlanner.CanRename(disk, recovery));
+        Assert.False(DriveLetterPlanner.CanChange(disk, recovery));
+        Assert.Contains(LabelPlanner.Validate(disk, recovery, Label("Mine")), i => i.IsError);
+    }
+
+    [Fact]
     public void WindowsVolume_CanBeRenamed()
     {
         var partition = Data(letter: 'C', boot: true);

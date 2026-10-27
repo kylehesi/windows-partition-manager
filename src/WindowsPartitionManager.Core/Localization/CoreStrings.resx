@@ -227,4 +227,5 @@
   <data name="Vhd_NotVirtual" xml:space="preserve"><value>Only attached virtual disks (VHD or VHDX files) can be detached.</value></data>
   <data name="Vhd_FileMissing" xml:space="preserve"><value>{0} was not found.</value></data>
   <data name="Vhd_DiskTimeout" xml:space="preserve"><value>The virtual disk was attached but did not appear as a disk within 30 seconds.</value></data>
+  <data name="Label_OnlyBasicData" xml:space="preserve"><value>Only data partitions can be renamed here; this one is '{0}'.</value></data>
 </root>

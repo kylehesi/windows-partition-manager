@@ -30,7 +30,7 @@ public static class LabelPlanner
     {
         ArgumentNullException.ThrowIfNull(disk);
         ArgumentNullException.ThrowIfNull(partition);
-        return partition.Volume is { FileSystem.Length: > 0 } && !disk.IsReadOnly && !disk.IsOffline;
+        return partition.Kind == PartitionKind.Basic && partition.Volume is { FileSystem.Length: > 0 } && !disk.IsReadOnly && !disk.IsOffline;
     }
 
     /// <summary>Longest label the file system accepts.</summary>
@@ -63,6 +63,13 @@ public static class LabelPlanner
         if (disk.IsOffline)
         {
             Error(CoreText.Get("Common_DiskOffline"));
+        }
+
+        // Recovery, EFI and other partitions Windows keeps for itself are left alone.
+        if (partition.Kind != PartitionKind.Basic)
+        {
+            Error(CoreText.Format("Label_OnlyBasicData", CoreText.PartitionType(partition.TypeDescription)));
+            return issues;
         }
 
         if (partition.Volume is not { FileSystem.Length: > 0 } volume)

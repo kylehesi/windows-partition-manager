@@ -227,4 +227,5 @@
   <data name="Vhd_NotVirtual" xml:space="preserve"><value>Yalnızca bağlı sanal diskler (VHD veya VHDX dosyaları) çıkarılabilir.</value></data>
   <data name="Vhd_FileMissing" xml:space="preserve"><value>{0} bulunamadı.</value></data>
   <data name="Vhd_DiskTimeout" xml:space="preserve"><value>Sanal disk bağlandı ancak 30 saniye içinde disk olarak görünmedi.</value></data>
+  <data name="Label_OnlyBasicData" xml:space="preserve"><value>Burada yalnızca veri bölümleri yeniden adlandırılabilir; bu bölüm '{0}'.</value></data>
 </root>
