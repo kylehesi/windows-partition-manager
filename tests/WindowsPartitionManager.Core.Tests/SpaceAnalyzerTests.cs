@@ -60,6 +60,25 @@ public class SpaceAnalyzerTests
     }
 
     [Fact]
+    public void AParentWithoutTheDirectoryFlag_IsStillAFolder()
+    {
+        SpaceEntry[] entries =
+        [
+            Dir(Root, Root, ".", own: 0),
+            Dir(10, Root, "Users", own: 0),
+            new(11, 10, "AppData", IsDirectory: false, AllocatedBytes: 0), // flag missing, as seen on real volumes
+            File(20, 11, "cache.bin", 3_000),
+        ];
+
+        var report = SpaceAnalyzer.Build('C', entries);
+
+        var appData = Assert.Single(Assert.Single(report.Root.Folders).Folders);
+        Assert.Equal(@"Users\AppData", appData.Path);
+        Assert.Equal(3_000UL, appData.SizeBytes);
+        Assert.Empty(report.Root.LargestFiles);
+    }
+
+    [Fact]
     public void Orphans_AndLoops_EndUpAtTheRoot_WithoutHanging()
     {
         SpaceEntry[] entries =

@@ -73,7 +73,18 @@ public static class SpaceAnalyzer
     {
         ArgumentNullException.ThrowIfNull(entries);
 
-        var directories = entries.Where(e => e.IsDirectory).ToDictionary(e => e.Id);
+        // NTFS does not always carry the directory attribute in the record the listing reads it
+        // from (seen on $Recycle.Bin and folders under AppData), so anything another record names
+        // as its parent is a folder too.
+        var parentIds = entries.Where(e => e.Id != e.ParentId).Select(e => e.ParentId).ToHashSet();
+        var directories = new Dictionary<ulong, SpaceEntry>();
+        foreach (var entry in entries)
+        {
+            if (entry.IsDirectory || parentIds.Contains(entry.Id))
+            {
+                directories.TryAdd(entry.Id, entry);
+            }
+        }
         var children = new Dictionary<ulong, List<SpaceEntry>>();
         foreach (var entry in entries)
         {
@@ -135,7 +146,7 @@ public static class SpaceAnalyzer
             var local = new PriorityQueue<SpaceFile, ulong>();
             foreach (var child in list)
             {
-                if (child.IsDirectory)
+                if (directories.ContainsKey(child.Id))
                 {
                     if (!visited.Add(child.Id))
                     {
@@ -161,7 +172,7 @@ public static class SpaceAnalyzer
             var kept = Drain(local);
             folder.FileList.AddRange(kept);
             var keptBytes = kept.Aggregate(0UL, (sum, f) => sum + f.SizeBytes);
-            var directFiles = list.Where(c => !c.IsDirectory).ToList();
+            var directFiles = list.Where(c => !directories.ContainsKey(c.Id)).ToList();
             folder.OtherFilesCount = directFiles.Count - kept.Count;
             folder.OtherFilesBytes = directFiles.Aggregate(0UL, (sum, f) => sum + f.AllocatedBytes) - keptBytes;
         }
