@@ -11,11 +11,16 @@ All notable changes to Windows Partition Manager. The format follows
 - **What uses the space**: a row action on NTFS volumes reads the master file table and shows
   folders and files largest first, with a share bar, drill-down, Open in Explorer and the
   100 largest files of the drive. About 3 seconds for 700,000 files. CLI: `wpm space`.
+- **Pending operations queue**: plan several creates, deletes, resizes and formats with
+  "Add to queue", see the resulting layout before anything is written, then apply them with one
+  confirmation. Before every step the disk is read again and compared with the plan; the first
+  difference or failure stops the run and leaves the rest queued.
 
 ### Fixed
 
 - The shrink analysis lost small folders (those whose index fits in their MFT record), so some
   reported paths showed `<record number>` instead of their folders.
+- The format progress line and a few read-back errors were still in English in Turkish mode.
 
 ## [0.2.0] - 2026-10-27
 
