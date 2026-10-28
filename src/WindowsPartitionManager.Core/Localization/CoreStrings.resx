@@ -271,4 +271,13 @@
   <data name="Convert_HasPartitions" xml:space="preserve"><value>The disk holds {0} partition(s). Only an empty disk is converted, so nothing can be lost: back up and delete them first.</value></data>
   <data name="Convert_MbrLimit" xml:space="preserve"><value>This disk is larger than 2 TB. With MBR only the first 2 TB can be used; GPT has no such limit.</value></data>
   <data name="Ops_Converting" xml:space="preserve"><value>Writing the new partition table…</value></data>
+  <data name="Queue_PartitionAt" xml:space="preserve"><value>partition {0}</value></data>
+  <data name="Queue_PartitionAtOffset" xml:space="preserve"><value>the partition at {0}</value></data>
+  <data name="Queue_Create" xml:space="preserve"><value>Create a {0} {1} partition{2} on disk {3} at {4}{5}</value></data>
+  <data name="Queue_Delete" xml:space="preserve"><value>Delete {0} on disk {1}</value></data>
+  <data name="Queue_Shrink" xml:space="preserve"><value>Shrink {0} on disk {1} to {2}</value></data>
+  <data name="Queue_Extend" xml:space="preserve"><value>Extend {0} on disk {1} to {2}</value></data>
+  <data name="Queue_Format" xml:space="preserve"><value>Format {0} on disk {1} as {2}{3}</value></data>
+  <data name="Queue_TargetGone" xml:space="preserve"><value>The partition this step refers to will no longer be there at this point of the plan.</value></data>
+  <data name="Queue_LayoutDiffers" xml:space="preserve"><value>Step {0} stopped: the disk no longer looks the way the plan expected ({1}). Nothing more was changed; refresh and plan again.</value></data>
 </root>

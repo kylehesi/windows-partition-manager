@@ -271,4 +271,13 @@
   <data name="Convert_HasPartitions" xml:space="preserve"><value>Diskte {0} bölüm var. Hiçbir şey kaybolmasın diye yalnızca boş bir disk dönüştürülür: önce yedekleyip bölümleri silin.</value></data>
   <data name="Convert_MbrLimit" xml:space="preserve"><value>Bu disk 2 TB'tan büyük. MBR ile yalnızca ilk 2 TB kullanılabilir; GPT'de böyle bir sınır yoktur.</value></data>
   <data name="Ops_Converting" xml:space="preserve"><value>Yeni bölüm tablosu yazılıyor…</value></data>
+  <data name="Queue_PartitionAt" xml:space="preserve"><value>bölüm {0}</value></data>
+  <data name="Queue_PartitionAtOffset" xml:space="preserve"><value>{0} konumundaki bölüm</value></data>
+  <data name="Queue_Create" xml:space="preserve"><value>Disk {3} üzerinde {4} konumunda {0} boyutunda bir {1} bölümü{2} oluştur{5}</value></data>
+  <data name="Queue_Delete" xml:space="preserve"><value>Disk {1} üzerindeki {0} bölümünü sil</value></data>
+  <data name="Queue_Shrink" xml:space="preserve"><value>Disk {1} üzerindeki {0} bölümünü {2} boyutuna küçült</value></data>
+  <data name="Queue_Extend" xml:space="preserve"><value>Disk {1} üzerindeki {0} bölümünü {2} boyutuna genişlet</value></data>
+  <data name="Queue_Format" xml:space="preserve"><value>Disk {1} üzerindeki {0} bölümünü {2}{3} olarak biçimlendir</value></data>
+  <data name="Queue_TargetGone" xml:space="preserve"><value>Bu adımın işaret ettiği bölüm, planın bu noktasında artık bulunmayacak.</value></data>
+  <data name="Queue_LayoutDiffers" xml:space="preserve"><value>{0}. adım durduruldu: disk planın beklediği gibi görünmüyor ({1}). Başka hiçbir şey değiştirilmedi; yenileyip yeniden planlayın.</value></data>
 </root>

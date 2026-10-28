@@ -36,3 +36,4 @@ date in one pass before the release. Everything below still needs to be written 
 - Space analysis: `SpaceAnalyzer` builds a folder tree from the MFT listing (`SpaceEntry`, `SpaceFolder`, `SpaceReport`); 50 largest files per folder and 100 overall are kept by name.
 - CLI: `wpm space <letter> [--top N]` (largest folders two levels deep, largest files).
 - UI: "What uses the space…" row action (`SpaceAnalysisWindow`, non-modal): folders and files largest first with a share bar, double-click/Enter to open, Backspace/Up, Open in Explorer, largest files of the drive; screenshot aid `--dialog space`.
+- Pending operations: `PlannedOperation` (create/delete/resize/format addressed by offset), `LayoutSimulator`, `OperationPlan` (validation against the projected layout, dependent steps dropped on removal, `Rebase` after a refresh).
