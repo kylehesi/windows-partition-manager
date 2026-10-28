@@ -1,0 +1,36 @@
+name: Translation
+description: Offer or request a new UI language, or report a wrong translation.
+title: "[Translation] "
+labels: ["translation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The app is English by default and fully translated to Turkish. Adding a language means two
+        resource files and a few lines of code; [docs/ADDING_A_LANGUAGE.md](https://github.com/kylehesi/windows-partition-manager/blob/main/docs/ADDING_A_LANGUAGE.md)
+        walks through it.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What is it about?
+      options:
+        - I would like to translate the app into a new language
+        - I would like a new language, but cannot translate it myself
+        - A translation is wrong, unclear or cut off
+    validations:
+      required: true
+
+  - type: input
+    id: language
+    attributes:
+      label: Language
+      placeholder: "German (de)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: For a wrong translation, where it appears, the current text and a better one. A screenshot helps.

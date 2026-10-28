@@ -1,0 +1,40 @@
+name: Feature request
+description: Suggest something new, or a better way to do something that exists.
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ideas are welcome. One rule shapes what is possible: Windows Partition Manager **never writes
+        raw sectors**; every change goes through the Windows Storage Management API. Moving, merging
+        or cloning partitions would need raw writes, so they are out of scope.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: The situation and the problem, before any solution. "I want to give my games their own drive, but…"
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would help?
+      description: How you imagine it in the app or in `wpm`.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What do you do today instead?
+      description: Disk Management, diskpart, PowerShell, another tool…
+
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Contributing
+      options:
+        - label: I would like to work on this myself.

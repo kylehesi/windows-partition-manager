@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/kylehesi/windows-partition-manager#readme
+    about: Installation, every feature and the command line, including why Windows refuses to shrink a volume.
+  - name: How it works
+    url: https://github.com/kylehesi/windows-partition-manager/blob/main/docs/ARCHITECTURE.md
+    about: The internals and the safety model, for contributors and the curious.

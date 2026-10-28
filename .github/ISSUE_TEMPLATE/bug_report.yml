@@ -1,0 +1,86 @@
+name: Bug report
+description: Something does not work, shows the wrong thing, or an operation failed.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. If an operation went wrong, **stop changing that
+        disk** until the cause is clear, and please do not post serial numbers or personal file names.
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Settings shows it at the bottom; the setup file name has it too.
+      placeholder: "0.3.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where does it happen?
+      options:
+        - Desktop app (Modern layout)
+        - Desktop app (Classic layout)
+        - Command line (wpm)
+        - Installer or uninstaller
+    validations:
+      required: true
+
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      description: Run `winver` and copy the line, e.g. "Windows 11 24H2 (build 26100)".
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened, and what did you expect?
+      description: Error messages are most useful copied as text; screenshots are welcome too.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Select partition D: on disk 1
+        2. Choose Resize… and enter 200 GB
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: disk
+    attributes:
+      label: Disk layout
+      description: |
+        The output of `wpm list` (no administrator rights needed), or a description of the disk:
+        internal or USB, GPT or MBR, the partitions and their file systems. BitLocker on or off.
+      render: text
+
+  - type: textarea
+    id: log
+    attributes:
+      label: Operation log
+      description: |
+        For a failed change: the last lines of `%LOCALAPPDATA%\WindowsPartitionManager\operations.log`
+        (Settings > Show history shows the same entries).
+      render: text
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched the existing issues and this has not been reported yet.
+          required: true
+        - label: I removed serial numbers and personal file or folder names from what I pasted.
+          required: true
