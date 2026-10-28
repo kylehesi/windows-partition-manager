@@ -26,10 +26,12 @@ until a human answers it. The same applies to `wpm analyze`, which needs an elev
 
 To check the layout without asking the user for a screenshot, run the dev build with
 `--screenshot <file.png> [--size 1020x700]`: it loads the disks, renders the main window to PNG
-and exits. 1020 px is the window's minimum width; the table must fit there. Add `--theme Dark|Night`
-and `--language Turkish` to check other themes and translations without touching the user's saved
-settings, and `--dialog settings|new|resize|format|delete` to capture a dialog instead (opened
-only, never applied).
+and exits. 1020 px is the minimum width of both layouts; everything must fit there. Add
+`--theme Dark|Night`, `--language Turkish` and `--layout Classic` to check other themes,
+translations and the classic window without touching the user's saved settings, and `--dialog
+<name>` to capture a dialog instead (opened only, never applied; the names are listed in
+docs/ARCHITECTURE.md, `select` shows the details panel). The README screenshots in docs/images/
+are made this way; retake them when the main window changes.
 
 Integration tests (`tests/WindowsPartitionManager.Integration.Tests`) need an elevated test host; they skip
 otherwise. Run them through `Start-Process cmd -Verb RunAs` with output redirected to a file in
@@ -77,7 +79,8 @@ zip, SHA256SUMS, Defender scan) and copies the installer to the repository root 
 `WindowsPartitionManager-Setup.msi` (the user wants it there, tracked in git). WiX 5.0.2 is a
 global dotnet tool (`%USERPROFILE%\.dotnet\tools`), with `WixToolset.UI.wixext/5.0.2` and
 `WixToolset.Util.wixext/5.0.2`. The icon is drawn by `assets/make-icon.ps1` (a disk snapped in
-two like a cookie, with crumbs); regenerate it there rather than editing `app.ico`. Keep the anti-false-positive choices documented in
+two like a cookie, with crumbs) and the README banner by `assets/make-banner.ps1`, both from the
+shared drawing in `assets/logo.ps1`; regenerate them there rather than editing the images. Keep the anti-false-positive choices documented in
 docs/ARCHITECTURE.md (no compression, no self-extracting native DLLs, full version info). The MSI
 `UpgradeCode` in installer/Package.wxs must never change; bump `<Version>` in
 Directory.Build.props for each release.
