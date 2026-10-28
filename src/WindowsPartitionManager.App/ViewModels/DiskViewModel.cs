@@ -10,7 +10,11 @@ using WindowsPartitionManager.Core.Operations;
 namespace WindowsPartitionManager.App.ViewModels;
 
 /// <summary>One entry of a row's Actions menu.</summary>
-public sealed record RowAction(string Name, ICommand Command, bool IsDestructive = false);
+/// <param name="Glyph">Segoe Fluent Icons character shown before the name.</param>
+public sealed record RowAction(string Name, ICommand Command, bool IsDestructive = false, string Glyph = "")
+{
+    public bool HasGlyph => Glyph.Length > 0;
+}
 
 /// <summary>A disk state change the user picked from a disk's menu.</summary>
 public sealed record DiskStateTarget(Disk Disk, DiskStateChange Change);
@@ -64,6 +68,12 @@ public sealed class DiskViewModel
 
     public bool HasActions => Actions.Count > 0;
 
+    /// <summary>Space used by the volumes on the disk, as a share of the whole disk.</summary>
+    public double UsedFraction => Disk.SizeBytes == 0 ? 0 : Math.Min(1, Disk.Partitions.Sum(p => (double)(p.Volume?.UsedBytes ?? 0)) / Disk.SizeBytes);
+
+    /// <summary>"1.82 TB · NVMe", the short line under the disk's name in a list.</summary>
+    public string ShortInfo => $"{ByteSize.Format(Disk.SizeBytes)} \u00b7 {Disk.BusType}";
+
     /// <summary>Group-box header: "Disk 0 • Model (1.82 TB, GPT, NVMe)".</summary>
     public string Header { get; }
 
@@ -102,8 +112,8 @@ public sealed class SegmentRow
             CanCreate = disk.Style is PartitionStyle.Gpt or PartitionStyle.Mbr && !disk.IsReadOnly && !disk.IsOffline;
             CanInitialize = disk.Style is PartitionStyle.Raw or PartitionStyle.Unknown && !disk.IsReadOnly && !disk.IsOffline && !owner.IsPlanning;
 
-            if (CanInitialize) actions.Add(new RowAction(Localization.Get("Segment_InitializeGpt"), owner.InitializeCommand));
-            if (CanCreate) actions.Add(new RowAction(Localization.Get("Segment_NewPartition"), owner.NewPartitionCommand));
+            if (CanInitialize) actions.Add(new RowAction(Localization.Get("Segment_InitializeGpt"), owner.InitializeCommand, Glyph: "\uE8F4"));
+            if (CanCreate) actions.Add(new RowAction(Localization.Get("Segment_NewPartition"), owner.NewPartitionCommand, Glyph: "\uE710"));
             Actions = actions;
             return;
         }
@@ -134,19 +144,21 @@ public sealed class SegmentRow
             Label = volume.Label ?? string.Empty;
             Used = ByteSize.Format(volume.UsedBytes);
             Free = ByteSize.Format(volume.FreeBytes);
+            UsedFraction = volume.UsedFraction;
+            UsageText = Localization.Format("Segment_Usage", Used, ByteSize.Format(volume.SizeBytes));
             CanAnalyze = immediate && partition.DriveLetter is not null &&
                          volume.FileSystem.Equals("NTFS", StringComparison.OrdinalIgnoreCase);
             EncryptionText = DescribeEncryption(volume.BitLocker);
         }
 
-        if (CanAnalyze) actions.Add(new RowAction(Localization.Get("Segment_Space"), owner.SpaceCommand));
-        if (CanAnalyze) actions.Add(new RowAction(Localization.Get("Segment_AnalyzeShrink"), owner.AnalyzeCommand));
-        if (CanResize) actions.Add(new RowAction(Localization.Get("Segment_Resize"), owner.ResizeCommand));
-        if (CanCheck) actions.Add(new RowAction(Localization.Get("Segment_Check"), owner.CheckCommand));
-        if (CanOptimize) actions.Add(new RowAction(Localization.Get("Segment_Optimize"), owner.OptimizeCommand));
-        if (CanEditProperties) actions.Add(new RowAction(Localization.Get("Segment_Properties"), owner.PropertiesCommand));
-        if (CanFormat) actions.Add(new RowAction(Localization.Get("Segment_Format"), owner.FormatCommand, IsDestructive: true));
-        if (CanDelete) actions.Add(new RowAction(Localization.Get("Segment_Delete"), owner.DeleteCommand, IsDestructive: true));
+        if (CanAnalyze) actions.Add(new RowAction(Localization.Get("Segment_Space"), owner.SpaceCommand, Glyph: "\uEB05"));
+        if (CanAnalyze) actions.Add(new RowAction(Localization.Get("Segment_AnalyzeShrink"), owner.AnalyzeCommand, Glyph: "\uE9D9"));
+        if (CanResize) actions.Add(new RowAction(Localization.Get("Segment_Resize"), owner.ResizeCommand, Glyph: "\uE740"));
+        if (CanCheck) actions.Add(new RowAction(Localization.Get("Segment_Check"), owner.CheckCommand, Glyph: "\uE9F5"));
+        if (CanOptimize) actions.Add(new RowAction(Localization.Get("Segment_Optimize"), owner.OptimizeCommand, Glyph: "\uE945"));
+        if (CanEditProperties) actions.Add(new RowAction(Localization.Get("Segment_Properties"), owner.PropertiesCommand, Glyph: "\uE8EC"));
+        if (CanFormat) actions.Add(new RowAction(Localization.Get("Segment_Format"), owner.FormatCommand, IsDestructive: true, Glyph: "\uE74E"));
+        if (CanDelete) actions.Add(new RowAction(Localization.Get("Segment_Delete"), owner.DeleteCommand, IsDestructive: true, Glyph: "\uE74D"));
         Actions = actions;
     }
 
@@ -230,6 +242,14 @@ public sealed class SegmentRow
     public string Size { get; }
 
     public string Used { get; } = string.Empty;
+
+    /// <summary>Share of the volume in use, 0..1; 0 without a volume.</summary>
+    public double UsedFraction { get; }
+
+    /// <summary>"447 GB of 1.67 TB used", or empty without a volume.</summary>
+    public string UsageText { get; } = string.Empty;
+
+    public bool HasUsage => UsageText.Length > 0;
 
     public string Free { get; } = string.Empty;
 }

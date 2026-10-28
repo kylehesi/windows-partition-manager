@@ -340,4 +340,5 @@
   <data name="Queue_Running" xml:space="preserve"><value>Adım {0}/{1}: {2}</value></data>
   <data name="Queue_Done" xml:space="preserve"><value>Planlanan {0} değişikliğin tümü uygulandı.</value></data>
   <data name="Queue_Stopped" xml:space="preserve"><value>{1} değişiklikten {0} tanesinden sonra durdu. Kalanlar hâlâ kuyrukta.</value></data>
+  <data name="Segment_Usage" xml:space="preserve"><value>{1} alanın {0} kadarı kullanılıyor</value></data>
 </root>

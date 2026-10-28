@@ -459,6 +459,21 @@ public sealed class MainViewModel : INotifyPropertyChanged
         }
     }
 
+    private DiskViewModel? _selectedDisk;
+
+    /// <summary>The disk a one-disk-at-a-time layout shows; kept across refreshes by its number.</summary>
+    public DiskViewModel? SelectedDisk
+    {
+        get => _selectedDisk;
+        set
+        {
+            if (SetField(ref _selectedDisk, value) && SelectedRow is { } row && row.DiskNumber != value?.Disk.Number)
+            {
+                SelectedRow = null;
+            }
+        }
+    }
+
     /// <summary>True while changes wait in the queue; the lists then show the layout after them.</summary>
     public bool IsPlanning => !_plan.IsEmpty;
 
@@ -477,12 +492,16 @@ public sealed class MainViewModel : INotifyPropertyChanged
     /// <summary>Rebuilds the disk lists from the plan's projection (or the real disks when nothing is planned).</summary>
     private void ShowDisks()
     {
+        var selected = SelectedDisk?.Disk.Number;
         SelectedRow = null;
         Disks.Clear();
         foreach (var disk in _plan.Projected)
         {
             Disks.Add(new DiskViewModel(disk, this));
         }
+
+        // Keep the same disk selected across refreshes; fall back to the first one.
+        SelectedDisk = Disks.FirstOrDefault(d => d.Disk.Number == selected) ?? Disks.FirstOrDefault();
 
         PlannedSteps.Clear();
         foreach (var step in _plan.Steps)
