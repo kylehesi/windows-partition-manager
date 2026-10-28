@@ -8,7 +8,8 @@ public sealed record QueuedStep(PlannedOperation Operation, string Description, 
 
 /// <summary>
 /// Changes planned on paper. Every step is checked by the same planner rules as an immediate
-/// change, but against the layout the earlier steps leave behind. Nothing here touches a disk.
+/// change, but against the layout the earlier steps leave behind. Nothing here touches a disk;
+/// <see cref="PlanRunner"/> applies the steps one by one.
 /// </summary>
 public sealed class OperationPlan
 {

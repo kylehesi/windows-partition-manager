@@ -37,3 +37,4 @@ date in one pass before the release. Everything below still needs to be written 
 - CLI: `wpm space <letter> [--top N]` (largest folders two levels deep, largest files).
 - UI: "What uses the space…" row action (`SpaceAnalysisWindow`, non-modal): folders and files largest first with a share bar, double-click/Enter to open, Backspace/Up, Open in Explorer, largest files of the drive; screenshot aid `--dialog space`.
 - Pending operations: `PlannedOperation` (create/delete/resize/format addressed by offset), `LayoutSimulator`, `OperationPlan` (validation against the projected layout, dependent steps dropped on removal, `Rebase` after a refresh).
+- `PlanRunner`: re-reads the disk before every step, compares it with the projection (same starts, sizes within 1 MiB), resolves the partition by offset, builds the request with the real number and fresh fingerprints, stops at the first mismatch or failure.
