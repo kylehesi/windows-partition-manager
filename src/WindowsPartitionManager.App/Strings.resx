@@ -323,4 +323,21 @@
   <data name="Space_OpenInExplorer" xml:space="preserve"><value>Open in Explorer</value></data>
   <data name="Space_UpTip" xml:space="preserve"><value>Up one folder (Backspace)</value></data>
   <data name="Space_Hint" xml:space="preserve"><value>Double-click a folder to open it, a file to show it in Explorer. Sizes are space on disk. Nothing is changed here.</value></data>
+  <data name="Queue_AddButton" xml:space="preserve"><value>Add to queue</value></data>
+  <data name="Queue_AddTip" xml:space="preserve"><value>Plan this change together with others; nothing is written until you apply the queue</value></data>
+  <data name="Queue_Added" xml:space="preserve"><value>Added to the queue. Nothing has been written yet.</value></data>
+  <data name="Queue_Summary" xml:space="preserve"><value>{0} change(s) planned. The disks below show the result; nothing has been written yet.</value></data>
+  <data name="Queue_ApplyButton" xml:space="preserve"><value>Apply {0} change(s)</value></data>
+  <data name="Queue_DiscardButton" xml:space="preserve"><value>Discard plan</value></data>
+  <data name="Queue_RemoveTip" xml:space="preserve"><value>Remove this step (and the steps that need it)</value></data>
+  <data name="Queue_Title" xml:space="preserve"><value>Planned changes</value></data>
+  <data name="Queue_PlannedType" xml:space="preserve"><value>{0} (planned)</value></data>
+  <data name="Queue_Refused" xml:space="preserve"><value>This change does not fit the plan: {0}</value></data>
+  <data name="Queue_RemovedDependents" xml:space="preserve"><value>These steps depended on it and were removed too: {0}</value></data>
+  <data name="Queue_DroppedAfterRefresh" xml:space="preserve"><value>The disks changed; these planned steps no longer fit and were removed: {0}</value></data>
+  <data name="Queue_ConfirmTitle" xml:space="preserve"><value>Apply these {0} change(s), in this order?</value></data>
+  <data name="Queue_ConfirmBody" xml:space="preserve"><value>Before each step the disk is read again; if it does not look the way the plan expects, or a step fails, the rest is not run. Do not power off or unplug the disk meanwhile. Continue?</value></data>
+  <data name="Queue_Running" xml:space="preserve"><value>Step {0} of {1}: {2}</value></data>
+  <data name="Queue_Done" xml:space="preserve"><value>All {0} planned changes were applied.</value></data>
+  <data name="Queue_Stopped" xml:space="preserve"><value>Stopped after {0} of {1} changes. The rest is still in the queue.</value></data>
 </root>

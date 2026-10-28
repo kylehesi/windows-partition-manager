@@ -35,6 +35,7 @@ public sealed class ResizePartitionViewModel : INotifyPropertyChanged
     private bool _newQuickFormat = true;
     private string _status = string.Empty;
     private string? _error;
+    private bool _canApplyNow = true;
 
     private static string AutomaticLetter => Localization.Get("NewPartition_Automatic");
 
@@ -60,7 +61,8 @@ public sealed class ResizePartitionViewModel : INotifyPropertyChanged
         Letters = [AutomaticLetter, .. Enumerable.Range('D', 'Z' - 'D' + 1).Select(c => (char)c).Where(c => !lettersInUse.Contains(c)).Select(c => $"{c}:")];
         _selectedLetter = Letters.Count > 1 ? Letters[1] : AutomaticLetter;
 
-        ResizeCommand = new RelayCommand(() => _ = ResizeAsync(), () => CanResize);
+        ResizeCommand = new RelayCommand(() => _ = ResizeAsync(), () => CanResize && CanApplyNow);
+        QueueCommand = new RelayCommand(() => Queue(PlannedSteps()), () => CanQueue && !_limitsLoading);
         ShrinkToMinimumCommand = new RelayCommand(() => NewSizeText = ToMegabytesRoundedUp(LowerBound));
         ExtendToMaximumCommand = new RelayCommand(() => NewSizeText = ToMegabytes(UpperBound), () => UpperBound > partition.SizeBytes);
         Revalidate();
@@ -269,9 +271,68 @@ public sealed class ResizePartitionViewModel : INotifyPropertyChanged
 
     public bool CanResize => !IsBusy && !IsDone && !_limitsLoading && !HasBlockingIssue;
 
+    /// <summary>
+    /// False while other changes wait in the queue: the form then shows the planned layout, so
+    /// the change can only be added to the plan, not applied on its own.
+    /// </summary>
+    public bool CanApplyNow
+    {
+        get => _canApplyNow;
+        set
+        {
+            _canApplyNow = value;
+            OnPropertyChanged(nameof(CanApplyNow));
+            OnPropertyChanged(nameof(CanResize));
+        }
+    }
+
+    /// <summary>Raised with the planned steps when the user adds this change to the queue instead of applying it.</summary>
+    public event EventHandler<IReadOnlyList<PlannedOperation>>? Queued;
+
+    public RelayCommand QueueCommand { get; }
+
+    public bool CanQueue => !IsBusy && !IsDone && !HasBlockingIssue;
+
+    private void Queue(IReadOnlyList<PlannedOperation> steps)
+    {
+        Queued?.Invoke(this, steps);
+        Status = Localization.Get("Queue_Added");
+        IsDone = true;
+    }
+
+    /// <summary>The resize, and with "create in the freed space" the new partition after it.</summary>
+    private List<PlannedOperation> PlannedSteps()
+    {
+        if (CreateAfterShrink && BuildCombinedRequest(out _) is { } combined && ShrinkAndCreatePlanner.CreateRequest(combined, _disk, _partition) is { } create)
+        {
+            return
+            [
+                new PlannedResize(_disk.Number, _partition.OffsetBytes, combined.NewSizeBytes),
+                new PlannedCreate(_disk.Number, create.OffsetBytes, create.SizeBytes, create.FileSystem, create.Label, create.DriveLetter, create.QuickFormat),
+            ];
+        }
+
+        return BuildRequest(out _) is { } request ? [new PlannedResize(_disk.Number, _partition.OffsetBytes, request.NewSizeBytes)] : [];
+    }
+
+    /// <summary>
+    /// Windows' own limits are only known for the partition as it is on disk now; a partition the
+    /// plan creates or changes is checked against its data and the free space instead.
+    /// </summary>
+    public bool SkipWindowsLimits { get; set; }
+
     /// <summary>Fetches Windows' own min/max; slow (seconds), so the form opens first and fills in later.</summary>
     public async Task LoadLimitsAsync()
     {
+        if (SkipWindowsLimits)
+        {
+            _limits = null;
+            _limitsLoading = false;
+            OnPropertyChanged(nameof(LimitsText));
+            Revalidate();
+            return;
+        }
+
         try
         {
             _limits = await _limitsProvider.GetSupportedSizeAsync(_disk.Number, _partition.Number);
@@ -406,6 +467,7 @@ public sealed class ResizePartitionViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(HasBlockingIssue));
         OnPropertyChanged(nameof(CanResize));
         ResizeCommand.RaiseCanExecuteChanged();
+        QueueCommand.RaiseCanExecuteChanged();
     }
 
     private async Task ResizeAsync()

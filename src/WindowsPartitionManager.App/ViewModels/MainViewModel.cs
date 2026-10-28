@@ -24,6 +24,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private string _status = Localization.Get("Main_Ready");
     private string? _error;
     private SegmentRow? _selectedRow;
+    private OperationPlan _plan = new([]);
 
     public MainViewModel(
         IStorageProvider storage,
@@ -66,6 +67,9 @@ public sealed class MainViewModel : INotifyPropertyChanged
         PropertiesCommand = new RelayCommand<SegmentRow>(row => PropertiesRequested?.Invoke(this, CreateProperties(row)), row => row.CanEditProperties);
         InitializeCommand = new RelayCommand<SegmentRow>(row => _ = InitializeAsync(row), row => row.CanInitialize && !IsBusy);
         SettingsCommand = new RelayCommand(() => SettingsRequested?.Invoke(this, EventArgs.Empty));
+        ApplyPlanCommand = new RelayCommand(() => _ = ApplyPlanAsync(), () => !IsBusy && !_plan.IsEmpty);
+        DiscardPlanCommand = new RelayCommand(DiscardPlan, () => !IsBusy && !_plan.IsEmpty);
+        RemoveStepCommand = new RelayCommand<QueuedStep>(RemoveStep, _ => !IsBusy);
     }
 
     /// <summary>Raised when the user opens Settings; the view shows the window.</summary>
@@ -320,8 +324,9 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
     private DestructiveActionViewModel CreateDestructive(SegmentRow row, bool isFormat)
     {
-        var form = new DestructiveActionViewModel(_operations, _power, row.Disk, row.Partition!, isFormat);
+        var form = new DestructiveActionViewModel(_operations, _power, row.Disk, row.Partition!, isFormat) { CanApplyNow = !IsPlanning };
         form.AttemptFinished += (_, _) => _ = RefreshAsync();
+        form.Queued += (_, steps) => AddToPlan(steps);
         return form;
     }
 
@@ -384,6 +389,8 @@ public sealed class MainViewModel : INotifyPropertyChanged
             if (SetField(ref _isBusy, value))
             {
                 RefreshCommand.RaiseCanExecuteChanged();
+                ApplyPlanCommand?.RaiseCanExecuteChanged();
+                DiscardPlanCommand?.RaiseCanExecuteChanged();
             }
         }
     }
@@ -424,14 +431,19 @@ public sealed class MainViewModel : INotifyPropertyChanged
         {
             var disks = await _storage.GetDisksAsync();
 
-            SelectedRow = null;
-            Disks.Clear();
-            foreach (var disk in disks)
+            // The plan follows the disks: a step that no longer fits what Windows reports is dropped.
+            var dropped = _plan.IsEmpty ? [] : _plan.Rebase(disks);
+            if (_plan.IsEmpty)
             {
-                Disks.Add(new DiskViewModel(disk, this));
+                _plan = new OperationPlan(disks, OtherLetters(disks));
             }
 
+            ShowDisks();
             Status = Localization.Format("Main_Refreshed", disks.Count, stopwatch.ElapsedMilliseconds);
+            if (dropped.Count > 0)
+            {
+                Error = Localization.Format("Queue_DroppedAfterRefresh", string.Join("; ", dropped.Select(s => s.Description)));
+            }
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
@@ -447,21 +459,171 @@ public sealed class MainViewModel : INotifyPropertyChanged
         }
     }
 
+    /// <summary>True while changes wait in the queue; the lists then show the layout after them.</summary>
+    public bool IsPlanning => !_plan.IsEmpty;
+
+    public ObservableCollection<QueuedStep> PlannedSteps { get; } = [];
+
+    public string PlanSummary => Localization.Format("Queue_Summary", _plan.Steps.Count);
+
+    public string ApplyPlanText => Localization.Format("Queue_ApplyButton", _plan.Steps.Count);
+
+    public RelayCommand ApplyPlanCommand { get; }
+
+    public RelayCommand DiscardPlanCommand { get; }
+
+    public RelayCommand<QueuedStep> RemoveStepCommand { get; }
+
+    /// <summary>Rebuilds the disk lists from the plan's projection (or the real disks when nothing is planned).</summary>
+    private void ShowDisks()
+    {
+        SelectedRow = null;
+        Disks.Clear();
+        foreach (var disk in _plan.Projected)
+        {
+            Disks.Add(new DiskViewModel(disk, this));
+        }
+
+        PlannedSteps.Clear();
+        foreach (var step in _plan.Steps)
+        {
+            PlannedSteps.Add(step);
+        }
+
+        OnPropertyChanged(nameof(IsPlanning));
+        OnPropertyChanged(nameof(PlanSummary));
+        OnPropertyChanged(nameof(ApplyPlanText));
+        ApplyPlanCommand.RaiseCanExecuteChanged();
+        DiscardPlanCommand.RaiseCanExecuteChanged();
+    }
+
+    /// <summary>Adds steps to the queue as if a form had queued them (also used by the screenshot aid).</summary>
+    public void Plan(params PlannedOperation[] steps) => AddToPlan(steps);
+
+    private void AddToPlan(IReadOnlyList<PlannedOperation> steps)
+    {
+        Error = null;
+        foreach (var step in steps)
+        {
+            var issues = _plan.TryAdd(step);
+            if (issues.Any(i => i.IsError))
+            {
+                Error = Localization.Format("Queue_Refused", string.Join(" ", issues.Where(i => i.IsError).Select(i => i.Message)));
+                break;
+            }
+        }
+
+        ShowDisks();
+    }
+
+    private void RemoveStep(QueuedStep step)
+    {
+        var index = _plan.Steps.ToList().IndexOf(step);
+        if (index < 0)
+        {
+            return;
+        }
+
+        var removed = _plan.RemoveAt(index);
+        Error = removed.Count > 1
+            ? Localization.Format("Queue_RemovedDependents", string.Join("; ", removed.Skip(1).Select(s => s.Description)))
+            : null;
+        ShowDisks();
+    }
+
+    private void DiscardPlan()
+    {
+        _plan.Clear();
+        Error = null;
+        ShowDisks();
+    }
+
+    /// <summary>
+    /// One confirmation for the whole plan, listing every step and every warning, then the steps
+    /// run in order. Whatever did not run stays in the queue, checked again against the disks.
+    /// </summary>
+    private async Task ApplyPlanAsync()
+    {
+        var steps = _plan.Steps.ToList();
+        var warnings = steps.SelectMany(s => s.Warnings).Select(w => w.Message).Distinct().ToList();
+        var prompt = Localization.Format("Queue_ConfirmTitle", steps.Count) + "\n\n"
+                     + string.Join("\n", steps.Select((s, i) => $"{i + 1}. {s.Description}"))
+                     + (warnings.Count > 0 ? "\n\n" + string.Join("\n", warnings.Select(w => "• " + w)) : string.Empty)
+                     + "\n\n" + Localization.Get("Queue_ConfirmBody");
+        if (!_confirm(prompt))
+        {
+            return;
+        }
+
+        IsBusy = true;
+        Error = null;
+        PlanRunResult result;
+        try
+        {
+            var start = await _storage.GetDisksAsync();
+            var progress = new Progress<PlanProgress>(p => Status = Localization.Format("Queue_Running", p.Step, p.TotalSteps, p.Detail ?? p.Description));
+            result = await PlanRunner.RunAsync(start, [.. steps.Select(s => s.Operation)], _storage, _operations, progress);
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            result = new PlanRunResult(0, steps.Count, ex.Message);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+
+        // What ran is now real; what did not stays planned and is checked against the new layout.
+        _plan.Clear();
+        await RefreshAsync();
+        foreach (var step in steps.Skip(result.CompletedSteps))
+        {
+            _plan.TryAdd(step.Operation);
+        }
+
+        ShowDisks();
+        Status = result.Succeeded
+            ? Localization.Format("Queue_Done", steps.Count)
+            : Localization.Format("Queue_Stopped", result.CompletedSteps, steps.Count);
+        Error = result.Error;
+    }
+
+    private static HashSet<char> OtherLetters(IReadOnlyList<Disk> disks)
+    {
+        var partitionLetters = PartitionPlanner.LettersInUse(disks);
+        var letters = new HashSet<char>();
+        foreach (var root in Environment.GetLogicalDrives())
+        {
+            if (root.Length > 0 && char.IsLetter(root[0]) && !partitionLetters.Contains(char.ToUpperInvariant(root[0])))
+            {
+                letters.Add(char.ToUpperInvariant(root[0]));
+            }
+        }
+
+        return letters;
+    }
+
     private ShrinkAnalysisViewModel CreateAnalysis(SegmentRow row)
         => new(_inspector, _supportedSizes, _unblock, _confirm, row.DriveLetter!.Value, row.DiskNumber, row.PartitionNumber!.Value);
 
     private NewPartitionViewModel CreateNewPartition(SegmentRow row)
     {
         var region = new FreeRegion(row.Segment.OffsetBytes, row.Segment.SizeBytes);
-        var form = new NewPartitionViewModel(_operations, _power, row.Disk, region, LettersInUse(), _confirm);
+        var form = new NewPartitionViewModel(_operations, _power, row.Disk, region, LettersInUse(), _confirm) { CanApplyNow = !IsPlanning };
         form.AttemptFinished += (_, _) => _ = RefreshAsync();
+        form.Queued += (_, steps) => AddToPlan(steps);
         return form;
     }
 
     private ResizePartitionViewModel CreateResize(SegmentRow row)
     {
-        var form = new ResizePartitionViewModel(_operations, _supportedSizes, _power, row.Disk, row.Partition!, LettersInUse(), _confirm);
+        var form = new ResizePartitionViewModel(_operations, _supportedSizes, _power, row.Disk, row.Partition!, LettersInUse(), _confirm)
+        {
+            CanApplyNow = !IsPlanning,
+            SkipWindowsLimits = IsPlanning,
+        };
         form.AttemptFinished += (_, _) => _ = RefreshAsync();
+        form.Queued += (_, steps) => AddToPlan(steps);
         return form;
     }
 

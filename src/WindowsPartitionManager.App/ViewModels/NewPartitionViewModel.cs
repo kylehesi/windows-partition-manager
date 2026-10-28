@@ -32,6 +32,7 @@ public sealed class NewPartitionViewModel : INotifyPropertyChanged
     private bool _isDone;
     private string _status = string.Empty;
     private string? _error;
+    private bool _canApplyNow = true;
 
     public NewPartitionViewModel(IStorageOperations operations, IPowerStatusProvider power, Disk disk, FreeRegion region, IReadOnlySet<char> lettersInUse, Func<string, bool> confirm)
     {
@@ -48,7 +49,16 @@ public sealed class NewPartitionViewModel : INotifyPropertyChanged
         Letters = [AutomaticLetter, .. Enumerable.Range('D', 'Z' - 'D' + 1).Select(c => (char)c).Where(c => !lettersInUse.Contains(c)).Select(c => $"{c}:")];
         _selectedLetter = Letters.Count > 1 ? Letters[1] : AutomaticLetter;
 
-        CreateCommand = new RelayCommand(() => _ = CreateAsync(), () => CanCreate);
+        CreateCommand = new RelayCommand(() => _ = CreateAsync(), () => CanCreate && CanApplyNow);
+        QueueCommand = new RelayCommand(
+            () =>
+            {
+                if (BuildRequest(out _) is { } r)
+                {
+                    Queue([new PlannedCreate(r.DiskNumber, r.OffsetBytes, r.SizeBytes, r.FileSystem, r.Label, r.DriveLetter, r.QuickFormat)]);
+                }
+            },
+            () => CanQueue);
         UseAllCommand = new RelayCommand(() => SizeText = (MaximumSizeBytes / MiB).ToString(CultureInfo.InvariantCulture) + " MB");
         Revalidate();
     }
@@ -191,6 +201,35 @@ public sealed class NewPartitionViewModel : INotifyPropertyChanged
 
     public bool CanCreate => !IsBusy && !IsDone && !HasBlockingIssue;
 
+    /// <summary>
+    /// False while other changes wait in the queue: the form then shows the planned layout, so
+    /// the change can only be added to the plan, not applied on its own.
+    /// </summary>
+    public bool CanApplyNow
+    {
+        get => _canApplyNow;
+        set
+        {
+            _canApplyNow = value;
+            OnPropertyChanged(nameof(CanApplyNow));
+            OnPropertyChanged(nameof(CanCreate));
+        }
+    }
+
+    /// <summary>Raised with the planned steps when the user adds this change to the queue instead of applying it.</summary>
+    public event EventHandler<IReadOnlyList<PlannedOperation>>? Queued;
+
+    public RelayCommand QueueCommand { get; }
+
+    public bool CanQueue => !IsBusy && !IsDone && !HasBlockingIssue;
+
+    private void Queue(IReadOnlyList<PlannedOperation> steps)
+    {
+        Queued?.Invoke(this, steps);
+        Status = Localization.Get("Queue_Added");
+        IsDone = true;
+    }
+
     public string Summary { get; private set; } = string.Empty;
 
     private CreatePartitionRequest? BuildRequest(out string? parseError)
@@ -254,6 +293,7 @@ public sealed class NewPartitionViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(HasBlockingIssue));
         OnPropertyChanged(nameof(CanCreate));
         CreateCommand.RaiseCanExecuteChanged();
+        QueueCommand.RaiseCanExecuteChanged();
     }
 
     private async Task CreateAsync()

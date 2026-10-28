@@ -27,6 +27,7 @@ public sealed class DestructiveActionViewModel : INotifyPropertyChanged
     private bool _isDone;
     private string _status = string.Empty;
     private string? _error;
+    private bool _canApplyNow = true;
 
     public DestructiveActionViewModel(IStorageOperations operations, IPowerStatusProvider power, Disk disk, Partition partition, bool isFormat)
     {
@@ -37,7 +38,12 @@ public sealed class DestructiveActionViewModel : INotifyPropertyChanged
         IsFormat = isFormat;
         _label = partition.Volume?.Label ?? string.Empty;
 
-        ExecuteCommand = new RelayCommand(() => _ = ExecuteAsync(), () => CanExecute);
+        ExecuteCommand = new RelayCommand(() => _ = ExecuteAsync(), () => CanExecute && CanApplyNow);
+        QueueCommand = new RelayCommand(
+            () => Queue([IsFormat
+                ? new PlannedFormat(_disk.Number, _partition.OffsetBytes, FileSystem, Label.Trim(), QuickFormat)
+                : new PlannedDelete(_disk.Number, _partition.OffsetBytes)]),
+            () => CanQueue && ConfirmationMatches);
         Revalidate();
     }
 
@@ -91,6 +97,7 @@ public sealed class DestructiveActionViewModel : INotifyPropertyChanged
             {
                 OnPropertyChanged(nameof(CanExecute));
                 ExecuteCommand.RaiseCanExecuteChanged();
+                QueueCommand.RaiseCanExecuteChanged();
             }
         }
     }
@@ -188,6 +195,35 @@ public sealed class DestructiveActionViewModel : INotifyPropertyChanged
 
     public bool CanExecute => !IsBusy && !IsDone && !HasBlockingIssue && ConfirmationMatches;
 
+    /// <summary>
+    /// False while other changes wait in the queue: the form then shows the planned layout, so
+    /// the change can only be added to the plan, not applied on its own.
+    /// </summary>
+    public bool CanApplyNow
+    {
+        get => _canApplyNow;
+        set
+        {
+            _canApplyNow = value;
+            OnPropertyChanged(nameof(CanApplyNow));
+            OnPropertyChanged(nameof(CanExecute));
+        }
+    }
+
+    /// <summary>Raised with the planned steps when the user adds this change to the queue instead of applying it.</summary>
+    public event EventHandler<IReadOnlyList<PlannedOperation>>? Queued;
+
+    public RelayCommand QueueCommand { get; }
+
+    public bool CanQueue => !IsBusy && !IsDone && !HasBlockingIssue;
+
+    private void Queue(IReadOnlyList<PlannedOperation> steps)
+    {
+        Queued?.Invoke(this, steps);
+        Status = Localization.Get("Queue_Added");
+        IsDone = true;
+    }
+
     private FormatPartitionRequest FormatRequest => new()
     {
         DiskNumber = _disk.Number,
@@ -213,6 +249,7 @@ public sealed class DestructiveActionViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(HasBlockingIssue));
         OnPropertyChanged(nameof(CanExecute));
         ExecuteCommand.RaiseCanExecuteChanged();
+        QueueCommand.RaiseCanExecuteChanged();
     }
 
     private async Task ExecuteAsync()

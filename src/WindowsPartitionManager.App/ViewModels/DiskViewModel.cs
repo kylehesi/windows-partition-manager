@@ -44,14 +44,14 @@ public sealed class DiskViewModel
 
         // Health is read-only, so it is offered for every disk, Windows' own included.
         var actions = new List<DiskAction> { new(Localization.Get("DiskAction_Health"), owner.HealthCommand, disk) };
-        actions.AddRange(DiskStatePlanner.Available(disk)
+        actions.AddRange(owner.IsPlanning ? [] : DiskStatePlanner.Available(disk)
             .Select(change => new DiskAction(Localization.Get($"DiskAction_{change}"), owner.DiskStateCommand, new DiskStateTarget(disk, change))));
-        if (ConvertDiskPlanner.Target(disk) is { } convertTo)
+        if (!owner.IsPlanning && ConvertDiskPlanner.Target(disk) is { } convertTo)
         {
             actions.Add(new DiskAction(Localization.Get($"DiskAction_ConvertTo{convertTo}"), owner.ConvertCommand, new ConvertTarget(disk, convertTo)));
         }
 
-        if (VirtualDiskPlanner.CanDetach(disk))
+        if (!owner.IsPlanning && VirtualDiskPlanner.CanDetach(disk))
         {
             actions.Add(new DiskAction(Localization.Get("DiskAction_Detach"), owner.DetachVirtualDiskCommand, disk));
         }
@@ -100,7 +100,7 @@ public sealed class SegmentRow
             Type = Localization.Get("Segment_FreeSpace");
             // A RAW disk must be initialized before anything can be created on it.
             CanCreate = disk.Style is PartitionStyle.Gpt or PartitionStyle.Mbr && !disk.IsReadOnly && !disk.IsOffline;
-            CanInitialize = disk.Style is PartitionStyle.Raw or PartitionStyle.Unknown && !disk.IsReadOnly && !disk.IsOffline;
+            CanInitialize = disk.Style is PartitionStyle.Raw or PartitionStyle.Unknown && !disk.IsReadOnly && !disk.IsOffline && !owner.IsPlanning;
 
             if (CanInitialize) actions.Add(new RowAction(Localization.Get("Segment_InitializeGpt"), owner.InitializeCommand));
             if (CanCreate) actions.Add(new RowAction(Localization.Get("Segment_NewPartition"), owner.NewPartitionCommand));
@@ -113,13 +113,20 @@ public sealed class SegmentRow
         DriveLetter = partition.DriveLetter;
         Name = partition.DriveLetter is { } letter ? $"{letter}:" : Localization.Format("Segment_Partition", partition.Number);
         Type = CoreText.PartitionType(partition.TypeDescription);
+        IsPlanned = LayoutSimulator.IsPlanned(partition);
+        if (IsPlanned)
+        {
+            Type = Localization.Format("Queue_PlannedType", Type);
+        }
 
         CanResize = ResizePlanner.CanResize(partition) && !disk.IsReadOnly && !disk.IsOffline;
         CanDelete = !PartitionPlanner.ValidateDelete(disk, partition).Any(i => i.IsError);
         CanFormat = FormatPlanner.CanFormat(disk, partition);
-        CanEditProperties = DriveLetterPlanner.CanChange(disk, partition) || LabelPlanner.CanRename(disk, partition);
-        CanCheck = CheckPlanner.Available(disk, partition).Count > 0;
-        CanOptimize = OptimizePlanner.Available(disk, partition).Count > 0;
+        // These act on the disk right away, so they wait until the queue has been applied or discarded.
+        var immediate = !owner.IsPlanning;
+        CanEditProperties = immediate && (DriveLetterPlanner.CanChange(disk, partition) || LabelPlanner.CanRename(disk, partition));
+        CanCheck = immediate && CheckPlanner.Available(disk, partition).Count > 0;
+        CanOptimize = immediate && OptimizePlanner.Available(disk, partition).Count > 0;
 
         if (partition.Volume is { } volume)
         {
@@ -127,7 +134,7 @@ public sealed class SegmentRow
             Label = volume.Label ?? string.Empty;
             Used = ByteSize.Format(volume.UsedBytes);
             Free = ByteSize.Format(volume.FreeBytes);
-            CanAnalyze = partition.DriveLetter is not null &&
+            CanAnalyze = immediate && partition.DriveLetter is not null &&
                          volume.FileSystem.Equals("NTFS", StringComparison.OrdinalIgnoreCase);
             EncryptionText = DescribeEncryption(volume.BitLocker);
         }
@@ -198,6 +205,9 @@ public sealed class SegmentRow
     public string EncryptionText { get; } = string.Empty;
 
     public bool IsEncrypted => EncryptionText.Length > 0;
+
+    /// <summary>A partition the queue will create; it does not exist yet.</summary>
+    public bool IsPlanned { get; }
 
     /// <summary>Shared with the disk map tooltip.</summary>
     public static string DescribeEncryption(BitLockerStatus? bitLocker) => bitLocker switch

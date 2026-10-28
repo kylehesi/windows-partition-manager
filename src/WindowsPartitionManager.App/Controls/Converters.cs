@@ -14,6 +14,9 @@ public static class Converters
     /// </summary>
     public static readonly IValueConverter Localized = new LocalizedConverter();
 
+    /// <summary>A zero-based index shown as a step number: 0 becomes "1.".</summary>
+    public static readonly IValueConverter Ordinal = new OrdinalConverter();
+
     private sealed class BoolToVisibilityConverter : IValueConverter
     {
         public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -21,6 +24,15 @@ public static class Converters
 
         public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
             => value is Visibility.Visible;
+    }
+
+    private sealed class OrdinalConverter : IValueConverter
+    {
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+            => value is int index ? (index + 1).ToString(CultureInfo.InvariantCulture) + "." : string.Empty;
+
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+            => Binding.DoNothing;
     }
 
     private sealed class LocalizedConverter : IValueConverter

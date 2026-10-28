@@ -94,7 +94,8 @@
 
         <StackPanel Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
             <Button Content="{DynamicResource Common_Close}" Click="Close_Click" Margin="0,0,8,0" />
-            <Button Content="{Binding ActionText}" Command="{Binding ExecuteCommand}" FontWeight="SemiBold" Foreground="{DynamicResource Danger}" />
+            <Button Content="{DynamicResource Queue_AddButton}" Command="{Binding QueueCommand}" Margin="0,0,8,0" ToolTip="{DynamicResource Queue_AddTip}" />
+            <Button Content="{Binding ActionText}" Command="{Binding ExecuteCommand}" FontWeight="SemiBold" Foreground="{DynamicResource Danger}" Visibility="{Binding CanApplyNow, Converter={x:Static controls:Converters.BoolToVisibility}}" />
         </StackPanel>
     </Grid>
 </Window>

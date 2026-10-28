@@ -6,6 +6,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using WindowsPartitionManager.App.Theming;
 using WindowsPartitionManager.App.ViewModels;
+using WindowsPartitionManager.Core.Operations;
 using WindowsPartitionManager.Platform.Windows;
 
 namespace WindowsPartitionManager.App;
@@ -147,7 +148,7 @@ public partial class App : Application
 
     /// <summary>
     /// Developer aid: <c>--screenshot file.png [--size 1120x700] [--theme Dark] [--language Turkish]
-    /// [--dialog settings|history|health|vhd|new|resize|properties|check|optimize|space|format|delete]</c> renders the main window (or the named dialog,
+    /// [--dialog settings|history|health|plan|vhd|new|resize|properties|check|optimize|space|format|delete]</c> renders the main window (or the named dialog,
     /// opened for the first row that allows it) once the disks are loaded, saves it as PNG and exits.
     /// Used to check layout without a human. Dialogs only open; nothing is ever applied.
     /// </summary>
@@ -176,6 +177,10 @@ public partial class App : Application
         var rows = viewModel.Disks.SelectMany(d => d.Rows).ToList();
         switch (dialog.ToLowerInvariant())
         {
+            case "plan" when rows.FirstOrDefault(r => r.CanCreate) is { } row:
+                // Paper only: shows the queue panel and the projected layout; nothing is applied.
+                viewModel.Plan(new PlannedCreate(row.DiskNumber, PartitionPlanner.Normalize(new CreatePartitionRequest { DiskNumber = row.DiskNumber, OffsetBytes = row.Segment.OffsetBytes, SizeBytes = 512UL * 1024 * 1024 }).OffsetBytes, 512UL * 1024 * 1024, "NTFS", "Planned", null));
+                break;
             case "health" when viewModel.Disks.FirstOrDefault() is { } disk:
                 viewModel.HealthCommand.Execute(disk.Disk);
                 break;

@@ -114,6 +114,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -191,8 +192,41 @@
             </Grid>
         </Border>
 
+        <!-- The queue: shown while changes are planned; the disk list below then shows their result. -->
+        <Border Grid.Row="1" Background="{DynamicResource HeaderBackground}" BorderBrush="{DynamicResource Accent}" BorderThickness="0,0,0,2" Padding="16,10"
+                Visibility="{Binding IsPlanning, Converter={x:Static controls:Converters.BoolToVisibility}}">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top" Margin="12,0,0,0">
+                    <Button Content="{DynamicResource Queue_DiscardButton}" Command="{Binding DiscardPlanCommand}" Margin="0,0,8,0" />
+                    <Button Content="{Binding ApplyPlanText}" Command="{Binding ApplyPlanCommand}" FontWeight="SemiBold" BorderBrush="{DynamicResource Accent}" />
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource Queue_Title}" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding PlanSummary}" Style="{StaticResource Secondary}" FontSize="12" TextWrapping="Wrap" Margin="0,2,0,6" />
+                    <ScrollViewer MaxHeight="150" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding PlannedSteps}" AlternationCount="1000">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <DockPanel Margin="0,1">
+                                        <Button DockPanel.Dock="Left" Padding="6,0" MinHeight="22" Margin="0,0,8,0" ToolTip="{DynamicResource Queue_RemoveTip}"
+                                                Command="{Binding DataContext.RemoveStepCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}">
+                                            <TextBlock Text="&#xE711;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="10" />
+                                        </Button>
+                                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap">
+                                            <Run Text="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=ContentPresenter}, Mode=OneWay, Converter={x:Static controls:Converters.Ordinal}}" FontWeight="SemiBold" />
+                                            <Run Text="{Binding Description, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
         <!-- Disk list -->
-        <ScrollViewer x:Name="DiskScroller" Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="16,12">
+        <ScrollViewer x:Name="DiskScroller" Grid.Row="2" VerticalScrollBarVisibility="Auto" Padding="16,12">
             <StackPanel>
                 <Border Background="{DynamicResource ErrorBackground}" BorderBrush="{DynamicResource ErrorBorder}" BorderThickness="1" CornerRadius="4" Padding="12,8" Margin="0,0,0,12"
                         Visibility="{Binding HasError, Converter={x:Static controls:Converters.BoolToVisibility}}">
@@ -351,7 +385,7 @@
         </ScrollViewer>
 
         <!-- Status bar with a coloured indicator: green idle, amber busy, red error. -->
-        <Border Grid.Row="2" Background="{DynamicResource CardBackground}" BorderBrush="{DynamicResource CardBorder}" BorderThickness="0,1,0,0" Padding="16,6">
+        <Border Grid.Row="3" Background="{DynamicResource CardBackground}" BorderBrush="{DynamicResource CardBorder}" BorderThickness="0,1,0,0" Padding="16,6">
             <StackPanel Orientation="Horizontal">
                 <Ellipse Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,8,0">
                     <Ellipse.Style>
