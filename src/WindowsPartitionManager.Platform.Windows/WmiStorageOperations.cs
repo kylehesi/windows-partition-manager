@@ -228,7 +228,7 @@ public sealed class WmiStorageOperations : IStorageOperations
             progress?.Report(CoreText.Get("Ops_WaitingForVolume"));
             using var volume = WaitForVolume(scope, request.DiskNumber, (int)partitionNumber, accessPaths, cancellationToken);
 
-            progress?.Report($"Formatting {request.FileSystem}\u2026");
+            progress?.Report(CoreText.Format("Ops_Formatting", request.FileSystem));
             FormatVolume(volume, request.FileSystem, request.Label, request.QuickFormat);
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
@@ -319,7 +319,7 @@ public sealed class WmiStorageOperations : IStorageOperations
         progress?.Report(CoreText.Get("Ops_LocatingVolume"));
         using var volume = WaitForVolume(scope, request.DiskNumber, request.PartitionNumber, accessPaths, cancellationToken);
 
-        progress?.Report($"Formatting {request.FileSystem}\u2026");
+        progress?.Report(CoreText.Format("Ops_Formatting", request.FileSystem));
         FormatVolume(volume, request.FileSystem, request.Label, request.QuickFormat);
 
         progress?.Report(CoreText.Get("Ops_ReadingBack"));
@@ -549,7 +549,7 @@ public sealed class WmiStorageOperations : IStorageOperations
         }
 
         return WmiStorageProvider.GetDisks(cancellationToken).FirstOrDefault(d => d.Number == request.DiskNumber)
-               ?? throw new StorageOperationException("ConvertDisk", 0, $"Disk {request.DiskNumber} could not be read.");
+               ?? throw new StorageOperationException("ConvertDisk", 0, CoreText.Format("Ops_DiskUnreadable", request.DiskNumber));
     }
 
     private static Disk SetDiskState(SetDiskStateRequest request, CancellationToken cancellationToken)
@@ -576,23 +576,23 @@ public sealed class WmiStorageOperations : IStorageOperations
         }
 
         return WmiStorageProvider.GetDisks(cancellationToken).FirstOrDefault(d => d.Number == request.DiskNumber)
-               ?? throw new StorageOperationException("SetDiskState", 0, $"Disk {request.DiskNumber} could not be read.");
+               ?? throw new StorageOperationException("SetDiskState", 0, CoreText.Format("Ops_DiskUnreadable", request.DiskNumber));
     }
 
     private static Partition ReadBack(int diskNumber, int partitionNumber, string operation, CancellationToken cancellationToken)
     {
         var disks = WmiStorageProvider.GetDisks(cancellationToken);
         return disks.FirstOrDefault(d => d.Number == diskNumber)?.Partitions.FirstOrDefault(p => p.Number == partitionNumber)
-            ?? throw new StorageOperationException(operation, 0, $"Partition {partitionNumber} on disk {diskNumber} could not be read.");
+            ?? throw new StorageOperationException(operation, 0, CoreText.Format("Ops_PartitionUnreadable", partitionNumber, diskNumber));
     }
 
     private static ManagementObject GetDisk(ManagementScope scope, int diskNumber)
         => Wmi.QuerySingle(scope, $"SELECT * FROM MSFT_Disk WHERE Number = {diskNumber}")
-           ?? throw new StorageOperationException("GetDisk", 0, $"Disk {diskNumber} was not found.");
+           ?? throw new StorageOperationException("GetDisk", 0, CoreText.Format("Ops_DiskNotFound", diskNumber));
 
     private static ManagementObject GetPartition(ManagementScope scope, int diskNumber, int partitionNumber)
         => Wmi.QuerySingle(scope, $"SELECT * FROM MSFT_Partition WHERE DiskNumber = {diskNumber} AND PartitionNumber = {partitionNumber}")
-           ?? throw new StorageOperationException("GetPartition", 0, $"Partition {partitionNumber} on disk {diskNumber} was not found.");
+           ?? throw new StorageOperationException("GetPartition", 0, CoreText.Format("Ops_PartitionNotFound", partitionNumber, diskNumber, string.Empty).TrimEnd());
 
     /// <summary>The mount manager registers the new volume asynchronously; poll until it shows up.</summary>
     private static ManagementObject WaitForVolume(ManagementScope scope, int diskNumber, int partitionNumber, string[] accessPaths, CancellationToken cancellationToken)

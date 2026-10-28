@@ -280,4 +280,8 @@
   <data name="Queue_Format" xml:space="preserve"><value>Format {0} on disk {1} as {2}{3}</value></data>
   <data name="Queue_TargetGone" xml:space="preserve"><value>The partition this step refers to will no longer be there at this point of the plan.</value></data>
   <data name="Queue_LayoutDiffers" xml:space="preserve"><value>Step {0} stopped: the disk no longer looks the way the plan expected ({1}). Nothing more was changed; refresh and plan again.</value></data>
+  <data name="Ops_Formatting" xml:space="preserve"><value>Formatting {0}…</value></data>
+  <data name="Ops_DiskUnreadable" xml:space="preserve"><value>Disk {0} could not be read afterwards; refresh to see its state.</value></data>
+  <data name="Ops_PartitionUnreadable" xml:space="preserve"><value>Partition {0} on disk {1} could not be read afterwards; refresh to see its state.</value></data>
+  <data name="Ops_DiskNotFound" xml:space="preserve"><value>Disk {0} was not found.</value></data>
 </root>

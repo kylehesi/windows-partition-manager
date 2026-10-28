@@ -280,4 +280,8 @@
   <data name="Queue_Format" xml:space="preserve"><value>Disk {1} üzerindeki {0} bölümünü {2}{3} olarak biçimlendir</value></data>
   <data name="Queue_TargetGone" xml:space="preserve"><value>Bu adımın işaret ettiği bölüm, planın bu noktasında artık bulunmayacak.</value></data>
   <data name="Queue_LayoutDiffers" xml:space="preserve"><value>{0}. adım durduruldu: disk planın beklediği gibi görünmüyor ({1}). Başka hiçbir şey değiştirilmedi; yenileyip yeniden planlayın.</value></data>
+  <data name="Ops_Formatting" xml:space="preserve"><value>{0} olarak biçimlendiriliyor…</value></data>
+  <data name="Ops_DiskUnreadable" xml:space="preserve"><value>Disk {0} işlemden sonra okunamadı; durumunu görmek için yenileyin.</value></data>
+  <data name="Ops_PartitionUnreadable" xml:space="preserve"><value>Disk {1} üzerindeki {0} numaralı bölüm işlemden sonra okunamadı; durumunu görmek için yenileyin.</value></data>
+  <data name="Ops_DiskNotFound" xml:space="preserve"><value>Disk {0} bulunamadı.</value></data>
 </root>
