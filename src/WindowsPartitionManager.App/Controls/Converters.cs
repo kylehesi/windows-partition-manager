@@ -8,6 +8,15 @@ public static class Converters
 {
     public static readonly IValueConverter BoolToVisibility = new BoolToVisibilityConverter();
 
+    /// <summary>Visible when the value is false: "nothing here" hints.</summary>
+    public static readonly IValueConverter FalseToVisibility = new FalseToVisibilityConverter();
+
+    /// <summary>Visible when the value is set, collapsed when it is null.</summary>
+    public static readonly IValueConverter NotNullToVisibility = new NullToVisibilityConverter(visibleWhenNull: false);
+
+    /// <summary>Visible when the value is null: placeholders for an empty selection.</summary>
+    public static readonly IValueConverter NullToVisibility = new NullToVisibilityConverter(visibleWhenNull: true);
+
     /// <summary>
     /// Shows a value through the string table: the key is the converter parameter (a prefix such
     /// as <c>Theme_</c>) followed by the value. Values without an entry are shown as they are.
@@ -24,6 +33,24 @@ public static class Converters
 
         public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
             => value is Visibility.Visible;
+    }
+
+    private sealed class FalseToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+            => value is false ? Visibility.Visible : Visibility.Collapsed;
+
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+            => Binding.DoNothing;
+    }
+
+    private sealed class NullToVisibilityConverter(bool visibleWhenNull) : IValueConverter
+    {
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+            => (value is null) == visibleWhenNull ? Visibility.Visible : Visibility.Collapsed;
+
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+            => Binding.DoNothing;
     }
 
     private sealed class OrdinalConverter : IValueConverter

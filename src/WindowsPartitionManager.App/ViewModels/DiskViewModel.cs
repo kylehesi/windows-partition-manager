@@ -11,10 +11,8 @@ namespace WindowsPartitionManager.App.ViewModels;
 
 /// <summary>One entry of a row's Actions menu.</summary>
 /// <param name="Glyph">Segoe Fluent Icons character shown before the name.</param>
-public sealed record RowAction(string Name, ICommand Command, bool IsDestructive = false, string Glyph = "")
-{
-    public bool HasGlyph => Glyph.Length > 0;
-}
+/// <param name="Shortcut">The key that does the same in the main window, shown at the end of the menu item.</param>
+public sealed record RowAction(string Name, ICommand Command, bool IsDestructive = false, string Glyph = "", string Shortcut = "");
 
 /// <summary>A disk state change the user picked from a disk's menu.</summary>
 public sealed record DiskStateTarget(Disk Disk, DiskStateChange Change);
@@ -23,7 +21,7 @@ public sealed record DiskStateTarget(Disk Disk, DiskStateChange Change);
 public sealed record ConvertTarget(Disk Disk, PartitionStyle Style);
 
 /// <summary>One entry of a disk's menu; unlike a row action it carries its own parameter.</summary>
-public sealed record DiskAction(string Name, ICommand Command, object Parameter);
+public sealed record DiskAction(string Name, ICommand Command, object Parameter, string Glyph = "");
 
 public sealed class DiskViewModel
 {
@@ -42,22 +40,24 @@ public sealed class DiskViewModel
 
         var style = disk.Style == PartitionStyle.Raw ? Localization.Get("Disk_NotInitialized") : disk.Style.ToString().ToUpperInvariant();
         Title = $"Disk {disk.Number} \u2022 {disk.FriendlyName}";
-        Header = $"{Title} ({ByteSize.Format(disk.SizeBytes)}, {style}, {disk.BusType})";
+        Details = $"{ByteSize.Format(disk.SizeBytes)}, {style}, {disk.BusType}";
+        Header = $"{Title} ({Details})";
         HasFlags = flags.Count > 0;
         Subtitle = HasFlags ? string.Join(", ", flags) : string.Empty;
 
         // Health is read-only, so it is offered for every disk, Windows' own included.
-        var actions = new List<DiskAction> { new(Localization.Get("DiskAction_Health"), owner.HealthCommand, disk) };
+        var actions = new List<DiskAction> { new(Localization.Get("DiskAction_Health"), owner.HealthCommand, disk, "\uE95E") };
         actions.AddRange(owner.IsPlanning ? [] : DiskStatePlanner.Available(disk)
-            .Select(change => new DiskAction(Localization.Get($"DiskAction_{change}"), owner.DiskStateCommand, new DiskStateTarget(disk, change))));
+            .Select(change => new DiskAction(Localization.Get($"DiskAction_{change}"), owner.DiskStateCommand, new DiskStateTarget(disk, change),
+                change is DiskStateChange.Online or DiskStateChange.Offline ? "\uE7E8" : "\uE72E")));
         if (!owner.IsPlanning && ConvertDiskPlanner.Target(disk) is { } convertTo)
         {
-            actions.Add(new DiskAction(Localization.Get($"DiskAction_ConvertTo{convertTo}"), owner.ConvertCommand, new ConvertTarget(disk, convertTo)));
+            actions.Add(new DiskAction(Localization.Get($"DiskAction_ConvertTo{convertTo}"), owner.ConvertCommand, new ConvertTarget(disk, convertTo), "\uE8AB"));
         }
 
         if (!owner.IsPlanning && VirtualDiskPlanner.CanDetach(disk))
         {
-            actions.Add(new DiskAction(Localization.Get("DiskAction_Detach"), owner.DetachVirtualDiskCommand, disk));
+            actions.Add(new DiskAction(Localization.Get("DiskAction_Detach"), owner.DetachVirtualDiskCommand, disk, "\uE711"));
         }
 
         Actions = actions;
@@ -73,6 +73,9 @@ public sealed class DiskViewModel
 
     /// <summary>"1.82 TB · NVMe", the short line under the disk's name in a list.</summary>
     public string ShortInfo => $"{ByteSize.Format(Disk.SizeBytes)} \u00b7 {Disk.BusType}";
+
+    /// <summary>"1.82 TB, GPT, NVMe".</summary>
+    public string Details { get; }
 
     /// <summary>Group-box header: "Disk 0 • Model (1.82 TB, GPT, NVMe)".</summary>
     public string Header { get; }
@@ -146,6 +149,7 @@ public sealed class SegmentRow
             Free = ByteSize.Format(volume.FreeBytes);
             UsedFraction = volume.UsedFraction;
             UsageText = Localization.Format("Segment_Usage", Used, ByteSize.Format(volume.SizeBytes));
+            UsageShort = $"{Used} / {ByteSize.Format(volume.SizeBytes)}";
             CanAnalyze = immediate && partition.DriveLetter is not null &&
                          volume.FileSystem.Equals("NTFS", StringComparison.OrdinalIgnoreCase);
             EncryptionText = DescribeEncryption(volume.BitLocker);
@@ -156,9 +160,9 @@ public sealed class SegmentRow
         if (CanResize) actions.Add(new RowAction(Localization.Get("Segment_Resize"), owner.ResizeCommand, Glyph: "\uE740"));
         if (CanCheck) actions.Add(new RowAction(Localization.Get("Segment_Check"), owner.CheckCommand, Glyph: "\uE9F5"));
         if (CanOptimize) actions.Add(new RowAction(Localization.Get("Segment_Optimize"), owner.OptimizeCommand, Glyph: "\uE945"));
-        if (CanEditProperties) actions.Add(new RowAction(Localization.Get("Segment_Properties"), owner.PropertiesCommand, Glyph: "\uE8EC"));
+        if (CanEditProperties) actions.Add(new RowAction(Localization.Get("Segment_Properties"), owner.PropertiesCommand, Glyph: "\uE8EC", Shortcut: "F2"));
         if (CanFormat) actions.Add(new RowAction(Localization.Get("Segment_Format"), owner.FormatCommand, IsDestructive: true, Glyph: "\uE74E"));
-        if (CanDelete) actions.Add(new RowAction(Localization.Get("Segment_Delete"), owner.DeleteCommand, IsDestructive: true, Glyph: "\uE74D"));
+        if (CanDelete) actions.Add(new RowAction(Localization.Get("Segment_Delete"), owner.DeleteCommand, IsDestructive: true, Glyph: "\uE74D", Shortcut: "Del"));
         Actions = actions;
     }
 
@@ -249,7 +253,27 @@ public sealed class SegmentRow
     /// <summary>"447 GB of 1.67 TB used", or empty without a volume.</summary>
     public string UsageText { get; } = string.Empty;
 
+    /// <summary>"447 GB / 1.67 TB", for places with little room.</summary>
+    public string UsageShort { get; } = string.Empty;
+
     public bool HasUsage => UsageText.Length > 0;
+
+    /// <summary>"Basic data \u00b7 NTFS \u00b7 Data": type, file system and label, whichever are known.</summary>
+    public string Summary => string.Join(" \u00b7 ", new[] { Type, FileSystem, Label }.Where(s => s.Length > 0));
+
+    /// <summary>Name/value lines for a details panel; empty values are left out.</summary>
+    public IReadOnlyList<KeyValuePair<string, string>> Details =>
+        new KeyValuePair<string, string>[]
+        {
+            new(Localization.Get("Col_Type"), Type),
+            new(Localization.Get("Col_FileSystem"), FileSystem),
+            new(Localization.Get("Col_Label"), Label),
+            new(Localization.Get("Col_Size"), Size),
+            new(Localization.Get("Col_Offset"), Offset),
+            new(Localization.Get("Col_Used"), Used),
+            new(Localization.Get("Col_Free"), Free),
+            new("BitLocker", EncryptionText),
+        }.Where(d => d.Value.Length > 0).ToList();
 
     public string Free { get; } = string.Empty;
 }

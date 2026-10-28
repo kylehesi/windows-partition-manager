@@ -341,4 +341,13 @@
   <data name="Queue_Done" xml:space="preserve"><value>All {0} planned changes were applied.</value></data>
   <data name="Queue_Stopped" xml:space="preserve"><value>Stopped after {0} of {1} changes. The rest is still in the queue.</value></data>
   <data name="Segment_Usage" xml:space="preserve"><value>{0} of {1} used</value></data>
+  <data name="Settings_Layout" xml:space="preserve"><value>Layout</value></data>
+  <data name="Settings_LayoutTip" xml:space="preserve"><value>Modern: a disk list, the map and a details panel. Classic: every disk with its partition table. Applied when Settings closes.</value></data>
+  <data name="Layout_Modern" xml:space="preserve"><value>Modern</value></data>
+  <data name="Layout_Classic" xml:space="preserve"><value>Classic</value></data>
+  <data name="Modern_Disks" xml:space="preserve"><value>Disks</value></data>
+  <data name="Modern_DiskMenu" xml:space="preserve"><value>Disk</value></data>
+  <data name="Modern_Details" xml:space="preserve"><value>Details</value></data>
+  <data name="Modern_NoSelection" xml:space="preserve"><value>Select a partition or free space, in the list or on the map, to see its details and what you can do with it.</value></data>
+  <data name="Modern_NoActions" xml:space="preserve"><value>Nothing can be done with this partition here.</value></data>
 </root>

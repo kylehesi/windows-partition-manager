@@ -5,6 +5,7 @@ using System.Windows.Media;
 using WindowsPartitionManager.Core.Formatting;
 using WindowsPartitionManager.Core.Localization;
 using WindowsPartitionManager.Core.Model;
+using WindowsPartitionManager.Core.Operations;
 
 namespace WindowsPartitionManager.App.Controls;
 
@@ -22,11 +23,22 @@ public sealed class DiskMapControl : FrameworkElement
         typeof(DiskMapControl),
         new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
 
+    public static readonly DependencyProperty SelectedSegmentProperty = DependencyProperty.Register(
+        nameof(SelectedSegment),
+        typeof(DiskSegment),
+        typeof(DiskMapControl),
+        new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
+
+    public static readonly DependencyProperty BarHeightProperty = DependencyProperty.Register(
+        nameof(BarHeight),
+        typeof(double),
+        typeof(DiskMapControl),
+        new FrameworkPropertyMetadata(56.0, FrameworkPropertyMetadataOptions.AffectsMeasure));
+
     private const double Gap = 2;
     private const double TextInset = 6;
     private const double TitleSize = 12;
     private const double DetailSize = 11;
-    private const double BarHeight = 56;
 
     private static readonly Brush TextBrush = CreateTextBrush();
     private static readonly Typeface TitleTypeface = new(new FontFamily("Segoe UI"), FontStyles.Normal, FontWeights.SemiBold, FontStretches.Normal);
@@ -39,6 +51,22 @@ public sealed class DiskMapControl : FrameworkElement
         get => (IReadOnlyList<DiskSegment>?)GetValue(SegmentsProperty);
         set => SetValue(SegmentsProperty, value);
     }
+
+    /// <summary>The segment outlined in the accent colour; null outlines none.</summary>
+    public DiskSegment? SelectedSegment
+    {
+        get => (DiskSegment?)GetValue(SelectedSegmentProperty);
+        set => SetValue(SelectedSegmentProperty, value);
+    }
+
+    public double BarHeight
+    {
+        get => (double)GetValue(BarHeightProperty);
+        set => SetValue(BarHeightProperty, value);
+    }
+
+    /// <summary>Raised when the user clicks a segment; the layout decides what selecting it means.</summary>
+    public event EventHandler<DiskSegment>? SegmentClicked;
 
     /// <summary>The two lines written inside a segment.</summary>
     public static (string Title, string Detail) LabelFor(DiskSegment segment)
@@ -89,6 +117,7 @@ public sealed class DiskMapControl : FrameworkElement
         {
             var segment = segments[i];
             var rect = new Rect(x + Gap / 2, 0.5, Math.Max(0, widths[i] - Gap), height - 1);
+            var planned = segment.Partition is { } candidate && LayoutSimulator.IsPlanned(candidate);
 
             if (segment.Partition is not { } partition)
             {
@@ -97,7 +126,8 @@ public sealed class DiskMapControl : FrameworkElement
             else
             {
                 var (fill, accent) = PartitionColors.For(partition.Kind);
-                dc.DrawRectangle(fill, PartitionColors.PartitionBorder, rect);
+                // A partition that only exists in the queue is drawn with a dashed outline, like free space.
+                dc.DrawRectangle(fill, planned ? PartitionColors.PlannedBorder : PartitionColors.PartitionBorder, rect);
 
                 if (partition.Volume is { } volume && volume.UsedFraction > 0)
                 {
@@ -107,8 +137,44 @@ public sealed class DiskMapControl : FrameworkElement
             }
 
             DrawLabel(dc, rect, labels[i].Title, labels[i].Detail, pixelsPerDip);
+            if (ReferenceEquals(segment, SelectedSegment) && TryFindResource("Accent") is Brush selection)
+            {
+                dc.DrawRectangle(null, new Pen(selection, 3), new Rect(rect.X + 1.5, rect.Y + 1, Math.Max(0, rect.Width - 3), Math.Max(0, rect.Height - 2)));
+            }
+
             x += widths[i];
         }
+    }
+
+    protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+    {
+        base.OnMouseLeftButtonUp(e);
+        if (SegmentAt(e.GetPosition(this).X) is { } segment)
+        {
+            SegmentClicked?.Invoke(this, segment);
+        }
+    }
+
+    private DiskSegment? SegmentAt(double x)
+    {
+        var segments = Segments;
+        if (segments is null || _lastWidths.Length != segments.Count)
+        {
+            return null;
+        }
+
+        double start = 0;
+        for (var i = 0; i < segments.Count; i++)
+        {
+            if (x >= start && x < start + _lastWidths[i])
+            {
+                return segments[i];
+            }
+
+            start += _lastWidths[i];
+        }
+
+        return null;
     }
 
     /// <summary>On a very small window a label may still be trimmed, so the hovered segment is described in a tooltip.</summary>
@@ -116,36 +182,22 @@ public sealed class DiskMapControl : FrameworkElement
     {
         base.OnMouseMove(e);
 
-        var segments = Segments;
-        if (segments is null || _lastWidths.Length != segments.Count)
+        if (SegmentAt(e.GetPosition(this).X) is not { } segment)
         {
             return;
         }
 
-        var x = e.GetPosition(this).X;
-        double start = 0;
-        for (var i = 0; i < segments.Count; i++)
+        var text = segment.Partition is { } p
+            ? $"{(p.DriveLetter is { } l ? $"{l}: " : string.Empty)}{CoreText.PartitionType(p.TypeDescription)}" +
+              (p.Volume is { } v ? $" ({v.FileSystem}{(v.Label is { Length: > 0 } label ? $" \"{label}\"" : string.Empty)})" : string.Empty) +
+              "\n" + Localization.Format("Map_Location", ByteSize.Format(segment.SizeBytes), ByteSize.Format(segment.OffsetBytes)) +
+              (p.Volume is { } vol ? "\n" + Localization.Format("Map_UsedFree", ByteSize.Format(vol.UsedBytes), ByteSize.Format(vol.FreeBytes)) : string.Empty) +
+              (ViewModels.SegmentRow.DescribeEncryption(p.Volume?.BitLocker) is { Length: > 0 } encryption ? "\n" + encryption : string.Empty)
+            : $"{Localization.Get("Common_Unallocated")}\n" + Localization.Format("Map_Location", ByteSize.Format(segment.SizeBytes), ByteSize.Format(segment.OffsetBytes));
+
+        if (!Equals(ToolTip, text))
         {
-            if (x >= start && x < start + _lastWidths[i])
-            {
-                var segment = segments[i];
-                var text = segment.Partition is { } p
-                    ? $"{(p.DriveLetter is { } l ? $"{l}: " : string.Empty)}{CoreText.PartitionType(p.TypeDescription)}" +
-                      (p.Volume is { } v ? $" ({v.FileSystem}{(v.Label is { Length: > 0 } label ? $" \"{label}\"" : string.Empty)})" : string.Empty) +
-                      "\n" + Localization.Format("Map_Location", ByteSize.Format(segment.SizeBytes), ByteSize.Format(segment.OffsetBytes)) +
-                      (p.Volume is { } vol ? "\n" + Localization.Format("Map_UsedFree", ByteSize.Format(vol.UsedBytes), ByteSize.Format(vol.FreeBytes)) : string.Empty) +
-                      (ViewModels.SegmentRow.DescribeEncryption(p.Volume?.BitLocker) is { Length: > 0 } encryption ? "\n" + encryption : string.Empty)
-                    : $"{Localization.Get("Common_Unallocated")}\n" + Localization.Format("Map_Location", ByteSize.Format(segment.SizeBytes), ByteSize.Format(segment.OffsetBytes));
-
-                if (!Equals(ToolTip, text))
-                {
-                    ToolTip = text;
-                }
-
-                return;
-            }
-
-            start += _lastWidths[i];
+            ToolTip = text;
         }
     }
 

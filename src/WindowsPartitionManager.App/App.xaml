@@ -152,14 +152,19 @@
             </Setter>
         </Style>
 
-        <!-- Menus and tooltips open in their own popup windows, so they need themed brushes too. -->
+        <!-- Menus and tooltips open in their own popup windows, so they need themed brushes too.
+             Rounded, with a soft shadow; the margin leaves the shadow room inside the popup. -->
         <Style TargetType="ContextMenu">
             <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
             <Setter Property="FontFamily" Value="{DynamicResource UiFontFamily}" />
+            <Setter Property="HasDropShadow" Value="False" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ContextMenu">
-                        <Border Background="{DynamicResource CardBackground}" BorderBrush="{DynamicResource CardBorder}" BorderThickness="1" CornerRadius="4" Padding="2">
+                        <Border Background="{DynamicResource CardBackground}" BorderBrush="{DynamicResource CardBorder}" BorderThickness="1" CornerRadius="8" Padding="4" Margin="0,0,10,10">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="14" ShadowDepth="3" Direction="300" Opacity="0.22" />
+                            </Border.Effect>
                             <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Cycle" />
                         </Border>
                     </ControlTemplate>
@@ -167,13 +172,25 @@
             </Setter>
         </Style>
 
+        <!-- A menu item has an icon column (MenuItem.Icon, a glyph string), the header and the
+             shortcut (InputGestureText) on the right. -->
         <Style TargetType="MenuItem">
             <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="MenuItem">
-                        <Border x:Name="Bd" Background="Transparent" CornerRadius="3" Padding="12,6" MinWidth="140">
-                            <ContentPresenter ContentSource="Header" RecognizesAccessKey="True" />
+                        <Border x:Name="Bd" Background="Transparent" CornerRadius="4" Padding="10,7" MinWidth="200">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="28" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{Binding Icon, RelativeSource={RelativeSource TemplatedParent}}" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="14" VerticalAlignment="Center"
+                                           Foreground="{TemplateBinding Foreground}" />
+                                <ContentPresenter Grid.Column="1" ContentSource="Header" RecognizesAccessKey="True" VerticalAlignment="Center" TextElement.Foreground="{TemplateBinding Foreground}" />
+                                <TextBlock Grid.Column="2" Text="{TemplateBinding InputGestureText}" Margin="24,0,0,0" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextSecondary}" />
+                            </Grid>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsHighlighted" Value="True">
@@ -183,6 +200,141 @@
                                 <Setter Property="Opacity" Value="0.5" />
                             </Trigger>
                         </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- One menu per row: every item is a RowAction; the row itself is the command parameter.
+             Shared by both main window layouts. -->
+        <ContextMenu x:Key="RowActionsMenu" x:Shared="False" ItemsSource="{Binding Actions}">
+            <ContextMenu.ItemContainerStyle>
+                <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                    <Setter Property="Header" Value="{Binding Name}" />
+                    <Setter Property="Icon" Value="{Binding Glyph}" />
+                    <Setter Property="InputGestureText" Value="{Binding Shortcut}" />
+                    <Setter Property="Command" Value="{Binding Command}" />
+                    <Setter Property="CommandParameter" Value="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                    <Style.Triggers>
+                        <!-- Destructive items stay red, icon and text. -->
+                        <DataTrigger Binding="{Binding IsDestructive}" Value="True">
+                            <Setter Property="Foreground" Value="{DynamicResource Danger}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContextMenu.ItemContainerStyle>
+        </ContextMenu>
+
+        <!-- The disk's own menu: every item carries its parameter (the disk and the change). -->
+        <ContextMenu x:Key="DiskActionsMenu" x:Shared="False" ItemsSource="{Binding Actions}">
+            <ContextMenu.ItemContainerStyle>
+                <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                    <Setter Property="Header" Value="{Binding Name}" />
+                    <Setter Property="Icon" Value="{Binding Glyph}" />
+                    <Setter Property="Command" Value="{Binding Command}" />
+                    <Setter Property="CommandParameter" Value="{Binding Parameter}" />
+                </Style>
+            </ContextMenu.ItemContainerStyle>
+        </ContextMenu>
+
+        <!-- Thin, themed scroll bars without arrow buttons; the stock ones stay light in dark themes. -->
+        <Style x:Key="ScrollPageButton" TargetType="RepeatButton">
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border Background="Transparent" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ScrollThumbStyle" TargetType="Thumb">
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Border x:Name="Bar" Background="{DynamicResource ScrollThumb}" CornerRadius="3" Margin="3" />
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bar" Property="Background" Value="{DynamicResource ScrollThumbHover}" />
+                            </Trigger>
+                            <Trigger Property="IsDragging" Value="True">
+                                <Setter TargetName="Bar" Property="Background" Value="{DynamicResource ScrollThumbHover}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ScrollBar">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Width" Value="12" />
+            <Setter Property="MinWidth" Value="12" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid Background="{TemplateBinding Background}">
+                            <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Style="{StaticResource ScrollPageButton}" Command="ScrollBar.PageUpCommand" />
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource ScrollThumbStyle}" />
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Style="{StaticResource ScrollPageButton}" Command="ScrollBar.PageDownCommand" />
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Horizontal">
+                    <Setter Property="Width" Value="Auto" />
+                    <Setter Property="MinWidth" Value="0" />
+                    <Setter Property="Height" Value="12" />
+                    <Setter Property="MinHeight" Value="12" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ScrollBar">
+                                <Grid Background="{TemplateBinding Background}">
+                                    <Track x:Name="PART_Track">
+                                        <Track.DecreaseRepeatButton>
+                                            <RepeatButton Style="{StaticResource ScrollPageButton}" Command="ScrollBar.PageLeftCommand" />
+                                        </Track.DecreaseRepeatButton>
+                                        <Track.Thumb>
+                                            <Thumb Style="{StaticResource ScrollThumbStyle}" />
+                                        </Track.Thumb>
+                                        <Track.IncreaseRepeatButton>
+                                            <RepeatButton Style="{StaticResource ScrollPageButton}" Command="ScrollBar.PageRightCommand" />
+                                        </Track.IncreaseRepeatButton>
+                                    </Track>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- A thin rounded bar for used space; Value is a fraction between 0 and 1. -->
+        <Style x:Key="UsageBar" TargetType="ProgressBar">
+            <Setter Property="Minimum" Value="0" />
+            <Setter Property="Maximum" Value="1" />
+            <Setter Property="Height" Value="6" />
+            <Setter Property="Foreground" Value="{DynamicResource Accent}" />
+            <Setter Property="Background" Value="{DynamicResource CardBorder}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Grid>
+                            <Border x:Name="PART_Track" Background="{TemplateBinding Background}" CornerRadius="3" />
+                            <Border x:Name="PART_Indicator" Background="{TemplateBinding Foreground}" CornerRadius="3" HorizontalAlignment="Left" />
+                        </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>

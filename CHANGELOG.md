@@ -15,6 +15,18 @@ All notable changes to Windows Partition Manager. The format follows
   "Add to queue", see the resulting layout before anything is written, then apply them with one
   confirmation. Before every step the disk is read again and compared with the plan; the first
   difference or failure stops the run and leaves the rest queued.
+- **Modern layout**, now the default: disks in a sidebar, the selected disk with a larger map
+  and partition cards, and a details panel with the partition's properties and actions. Click
+  a block in the map to select it. The previous window stays available as **Classic**
+  (Settings > Theme > Layout).
+- Keyboard shortcuts in both layouts: F5 refreshes, F2 opens drive letter and label, Del
+  deletes the selected partition (each still asks for confirmation).
+
+### Changed
+
+- Menus are rounded, with icons and shortcuts; destructive items stay red.
+- Scroll bars follow the theme instead of staying light in Dark and Night.
+- Partitions that are only planned are drawn with a dashed outline in the disk map.
 
 ### Fixed
 

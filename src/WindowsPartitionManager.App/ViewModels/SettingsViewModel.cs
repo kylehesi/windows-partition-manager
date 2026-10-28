@@ -17,6 +17,7 @@ public sealed class SettingsViewModel : INotifyPropertyChanged
     private string _selectedTheme;
     private string _selectedFont;
     private string _selectedLanguage;
+    private string _selectedLayout;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -34,6 +35,7 @@ public sealed class SettingsViewModel : INotifyPropertyChanged
         _selectedTheme = current.Theme;
         _selectedFont = current.Font;
         _selectedLanguage = current.Language;
+        _selectedLayout = current.Layout;
 
         OpenLogCommand = new RelayCommand(() => Open(LogPath), () => File.Exists(LogPath));
         OpenLogFolderCommand = new RelayCommand(() => Open(Path.GetDirectoryName(LogPath)!), () => Directory.Exists(Path.GetDirectoryName(LogPath)));
@@ -59,6 +61,8 @@ public sealed class SettingsViewModel : INotifyPropertyChanged
 
     public static IReadOnlyList<string> AvailableLanguages => SettingsStore.AvailableLanguages;
 
+    public static IReadOnlyList<string> AvailableLayouts => SettingsStore.AvailableLayouts;
+
     public string SelectedTheme
     {
         get => _selectedTheme;
@@ -67,7 +71,7 @@ public sealed class SettingsViewModel : INotifyPropertyChanged
             if (SetField(ref _selectedTheme, value))
             {
                 ThemeManager.ApplyTheme(value);
-                SettingsStore.Save(new AppSettings(SelectedTheme, SelectedFont, SelectedLanguage));
+                Save();
             }
         }
     }
@@ -80,7 +84,7 @@ public sealed class SettingsViewModel : INotifyPropertyChanged
             if (SetField(ref _selectedFont, value))
             {
                 ThemeManager.ApplyFont(value);
-                SettingsStore.Save(new AppSettings(SelectedTheme, SelectedFont, SelectedLanguage));
+                Save();
             }
         }
     }
@@ -93,12 +97,27 @@ public sealed class SettingsViewModel : INotifyPropertyChanged
             if (SetField(ref _selectedLanguage, value))
             {
                 ThemeManager.ApplyLanguage(value);
-                SettingsStore.Save(new AppSettings(SelectedTheme, SelectedFont, SelectedLanguage));
+                Save();
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RestoreText)));
                 Changed?.Invoke(this, EventArgs.Empty);
             }
         }
     }
+
+    /// <summary>The main window layout; the app switches to it when Settings closes.</summary>
+    public string SelectedLayout
+    {
+        get => _selectedLayout;
+        set
+        {
+            if (SetField(ref _selectedLayout, value))
+            {
+                Save();
+            }
+        }
+    }
+
+    private void Save() => SettingsStore.Save(new AppSettings(SelectedTheme, SelectedFont, SelectedLanguage, SelectedLayout));
 
     public bool HasPendingRestore => _unblock.LoadState() is { HasSomethingToRestore: true };
 

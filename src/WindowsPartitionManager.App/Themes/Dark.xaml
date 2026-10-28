@@ -14,4 +14,6 @@
     <SolidColorBrush x:Key="RowSelectedBackground" Color="#2F4A66" />
     <SolidColorBrush x:Key="ErrorBackground" Color="#3A2024" />
     <SolidColorBrush x:Key="ErrorBorder" Color="#6E3A40" />
+    <SolidColorBrush x:Key="ScrollThumb" Color="#5A5A5A" />
+    <SolidColorBrush x:Key="ScrollThumbHover" Color="#808080" />
 </ResourceDictionary>

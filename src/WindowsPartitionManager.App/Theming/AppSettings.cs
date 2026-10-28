@@ -4,8 +4,8 @@ using WindowsPartitionManager.Platform.Windows;
 
 namespace WindowsPartitionManager.App.Theming;
 
-/// <summary>The persisted appearance choices: a colour theme, a UI font family and a language.</summary>
-public sealed record AppSettings(string Theme, string Font, string Language);
+/// <summary>The persisted appearance choices: a colour theme, a UI font family, a language and the main window layout.</summary>
+public sealed record AppSettings(string Theme, string Font, string Language, string Layout = SettingsStore.DefaultLayout);
 
 /// <summary>
 /// Loads and saves the appearance settings to %LOCALAPPDATA%\WindowsPartitionManager\settings.json.
@@ -16,10 +16,14 @@ public static class SettingsStore
     public const string DefaultTheme = "White";
     public const string DefaultFont = "Segoe UI";
     public const string DefaultLanguage = LanguagePreference.DefaultLanguage;
+    public const string DefaultLayout = "Modern";
 
     public static readonly IReadOnlyList<string> AvailableThemes = ["White", "Dark", "Night"];
     public static readonly IReadOnlyList<string> AvailableFonts = ["Segoe UI", "Arial", "Calibri", "Consolas", "Times New Roman"];
     public static readonly IReadOnlyList<string> AvailableLanguages = LanguagePreference.AvailableLanguages;
+
+    /// <summary>Modern: disk list, map and details panel. Classic: every disk with its table, as before 0.3.</summary>
+    public static readonly IReadOnlyList<string> AvailableLayouts = ["Modern", "Classic"];
 
     public static string Path { get; } = LanguagePreference.SettingsPath;
 
@@ -30,6 +34,7 @@ public static class SettingsStore
         var theme = DefaultTheme;
         var font = DefaultFont;
         var language = DefaultLanguage;
+        var layout = DefaultLayout;
 
         try
         {
@@ -61,6 +66,14 @@ public static class SettingsStore
                 {
                     language = candidateLanguage;
                 }
+
+                if (root.TryGetProperty("layout", out var layoutElement)
+                    && layoutElement.ValueKind == JsonValueKind.String
+                    && layoutElement.GetString() is { } candidateLayout
+                    && AvailableLayouts.Contains(candidateLayout))
+                {
+                    layout = candidateLayout;
+                }
             }
         }
         catch (JsonException)
@@ -73,7 +86,7 @@ public static class SettingsStore
         {
         }
 
-        return new AppSettings(theme, font, language);
+        return new AppSettings(theme, font, language, layout);
     }
 
     public static void Save(AppSettings settings) => Save(settings, Path);
@@ -84,7 +97,7 @@ public static class SettingsStore
         {
             Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path)!);
             var temporary = path + ".tmp";
-            File.WriteAllText(temporary, JsonSerializer.Serialize(new { theme = settings.Theme, font = settings.Font, language = settings.Language }));
+            File.WriteAllText(temporary, JsonSerializer.Serialize(new { theme = settings.Theme, font = settings.Font, language = settings.Language, layout = settings.Layout }));
             File.Move(temporary, path, overwrite: true);
         }
         catch (IOException)

@@ -23,23 +23,46 @@ public partial class App : Application
         // Developer aid for screenshots: try a theme or language without saving it.
         if (ArgumentAfter(e.Args, "--theme") is { } theme) settings = settings with { Theme = theme };
         if (ArgumentAfter(e.Args, "--language") is { } language) settings = settings with { Language = language };
+        if (ArgumentAfter(e.Args, "--layout") is { } layout) settings = settings with { Layout = layout };
         ThemeManager.ApplyTheme(settings.Theme);
         ThemeManager.ApplyFont(settings.Font);
         ThemeManager.ApplyLanguage(settings.Language);
         ThemeManager.InitializeFrameworkLanguage();
 
         var storage = new WmiStorageProvider();
-        MainWindow? window = null;
 
-        bool Confirm(string message) => MessageBox.Show(window, message, ProductName, MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.Yes;
+        bool Confirm(string message) => MessageBox.Show(MainWindow, message, ProductName, MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.Yes;
 
         var operations = new WmiStorageOperations();
         var viewModel = new MainViewModel(storage, new NtfsVolumeInspector(), storage, operations, new PowerStatusProvider(), new UnblockOperations(), new VirtualDiskOperations(operations), new WmiDiskHealthProvider(), new NtfsSpaceReader(), Confirm);
-        window = new MainWindow { DataContext = viewModel };
+        var currentLayout = settings.Layout;
+
+        // Both layouts are views of the same view model; switching one for the other keeps the
+        // disks, the selection and the queue.
+        Window CreateMainWindow(string layout) => layout == "Classic"
+            ? new MainWindow { DataContext = viewModel }
+            : new ModernMainWindow { DataContext = viewModel };
+
+        void SwitchLayout(string layout)
+        {
+            var old = MainWindow;
+            var next = CreateMainWindow(layout);
+            next.Language = old.Language;
+            viewModel.SelectedRow = null;
+            MainWindow = next;
+            next.Show();
+            old.Close();
+            if (next is MainWindow classic)
+            {
+                _ = classic.LockWidthToContentAsync(Task.CompletedTask);
+            }
+        }
+
+        var window = CreateMainWindow(currentLayout);
 
         viewModel.AnalysisRequested += (_, analysis) =>
         {
-            var dialog = new ShrinkAnalysisWindow { DataContext = analysis, Owner = window };
+            var dialog = new ShrinkAnalysisWindow { DataContext = analysis, Owner = MainWindow };
             dialog.Closed += (_, _) => analysis.Dispose();
             analysis.UnblockRequested += (_, wizard) =>
             {
@@ -52,7 +75,7 @@ public partial class App : Application
 
         viewModel.NewPartitionRequested += (_, form) =>
         {
-            var dialog = new NewPartitionWindow { DataContext = form, Owner = window };
+            var dialog = new NewPartitionWindow { DataContext = form, Owner = MainWindow };
             dialog.ShowDialog();
         };
 
@@ -61,33 +84,38 @@ public partial class App : Application
             var settings = new SettingsViewModel(OperationLog.Path, UnblockOperations.StatePath, new UnblockOperations(), Confirm);
             // A language change rebuilds the rows (their strings are read when the view models are built).
             settings.Changed += (_, _) => _ = viewModel.RefreshAsync();
-            var dialog = new SettingsWindow { DataContext = settings, Owner = window };
+            var dialog = new SettingsWindow { DataContext = settings, Owner = MainWindow };
             dialog.ShowDialog();
+            if (settings.SelectedLayout != currentLayout)
+            {
+                currentLayout = settings.SelectedLayout;
+                SwitchLayout(currentLayout);
+            }
         };
 
         viewModel.DestructiveRequested += (_, form) =>
         {
-            var dialog = new DestructiveActionWindow { DataContext = form, Owner = window };
+            var dialog = new DestructiveActionWindow { DataContext = form, Owner = MainWindow };
             dialog.ShowDialog();
         };
 
         viewModel.HealthRequested += (_, health) =>
         {
-            var dialog = new DiskHealthWindow { DataContext = health, Owner = window };
+            var dialog = new DiskHealthWindow { DataContext = health, Owner = MainWindow };
             _ = health.LoadAsync();
             dialog.ShowDialog();
         };
 
         viewModel.CreateVirtualDiskRequested += (_, form) =>
         {
-            var dialog = new CreateVirtualDiskWindow { DataContext = form, Owner = window };
+            var dialog = new CreateVirtualDiskWindow { DataContext = form, Owner = MainWindow };
             dialog.ShowDialog();
         };
 
         viewModel.AttachVirtualDiskRequested += (_, _) =>
         {
             var picker = new Microsoft.Win32.OpenFileDialog { Filter = Localization.Get("Vhd_FileFilterAll"), CheckFileExists = true };
-            if (picker.ShowDialog(window) == true && Confirm(Localization.Format("Vhd_AttachPrompt", picker.FileName)))
+            if (picker.ShowDialog(MainWindow) == true && Confirm(Localization.Format("Vhd_AttachPrompt", picker.FileName)))
             {
                 _ = viewModel.AttachVirtualDiskAsync(picker.FileName);
             }
@@ -95,32 +123,32 @@ public partial class App : Application
 
         viewModel.SpaceRequested += (_, space) =>
         {
-            var dialog = new SpaceAnalysisWindow { DataContext = space, Owner = window };
+            var dialog = new SpaceAnalysisWindow { DataContext = space, Owner = MainWindow };
             _ = space.LoadAsync();
             dialog.Show(); // not modal: it can stay open next to the main window
         };
 
         viewModel.OptimizeRequested += (_, form) =>
         {
-            var dialog = new OptimizeVolumeWindow { DataContext = form, Owner = window };
+            var dialog = new OptimizeVolumeWindow { DataContext = form, Owner = MainWindow };
             dialog.ShowDialog();
         };
 
         viewModel.CheckRequested += (_, form) =>
         {
-            var dialog = new CheckVolumeWindow { DataContext = form, Owner = window };
+            var dialog = new CheckVolumeWindow { DataContext = form, Owner = MainWindow };
             dialog.ShowDialog();
         };
 
         viewModel.PropertiesRequested += (_, form) =>
         {
-            var dialog = new VolumePropertiesWindow { DataContext = form, Owner = window };
+            var dialog = new VolumePropertiesWindow { DataContext = form, Owner = MainWindow };
             dialog.ShowDialog();
         };
 
         viewModel.ResizeRequested += (_, form) =>
         {
-            var dialog = new ResizePartitionWindow { DataContext = form, Owner = window };
+            var dialog = new ResizePartitionWindow { DataContext = form, Owner = MainWindow };
             _ = form.LoadLimitsAsync();
             dialog.ShowDialog();
         };
@@ -139,7 +167,7 @@ public partial class App : Application
         window.Show();
 
         var refresh = viewModel.RefreshAsync();
-        var layoutReady = fixedSize ? refresh : window.LockWidthToContentAsync(refresh);
+        var layoutReady = !fixedSize && window is MainWindow classicWindow ? classicWindow.LockWidthToContentAsync(refresh) : refresh;
         if (screenshotPath is not null)
         {
             _ = CaptureAndExitAsync(window, viewModel, layoutReady, Path.GetFullPath(screenshotPath), ArgumentAfter(e.Args, "--dialog"));
@@ -147,8 +175,8 @@ public partial class App : Application
     }
 
     /// <summary>
-    /// Developer aid: <c>--screenshot file.png [--size 1120x700] [--theme Dark] [--language Turkish]
-    /// [--dialog settings|history|health|plan|vhd|new|resize|properties|check|optimize|space|format|delete]</c> renders the main window (or the named dialog,
+    /// Developer aid: <c>--screenshot file.png [--size 1120x700] [--theme Dark] [--language Turkish] [--layout Classic]
+    /// [--dialog select|settings|history|health|plan|vhd|new|resize|properties|check|optimize|space|format|delete]</c> renders the main window (or the named dialog,
     /// opened for the first row that allows it) once the disks are loaded, saves it as PNG and exits.
     /// Used to check layout without a human. Dialogs only open; nothing is ever applied.
     /// </summary>
@@ -180,6 +208,10 @@ public partial class App : Application
             case "plan" when rows.FirstOrDefault(r => r.CanCreate) is { } row:
                 // Paper only: shows the queue panel and the projected layout; nothing is applied.
                 viewModel.Plan(new PlannedCreate(row.DiskNumber, PartitionPlanner.Normalize(new CreatePartitionRequest { DiskNumber = row.DiskNumber, OffsetBytes = row.Segment.OffsetBytes, SizeBytes = 512UL * 1024 * 1024 }).OffsetBytes, 512UL * 1024 * 1024, "NTFS", "Planned", null));
+                break;
+            case "select" when rows.FirstOrDefault(r => r.CanResize) is { } row:
+                // Not a dialog: selects a partition so the details panel shows.
+                viewModel.SelectedRow = row;
                 break;
             case "health" when viewModel.Disks.FirstOrDefault() is { } disk:
                 viewModel.HealthCommand.Execute(disk.Disk);

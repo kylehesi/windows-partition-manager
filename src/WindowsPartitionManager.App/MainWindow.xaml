@@ -10,6 +10,12 @@
         Title="Windows Partition Manager" Height="700" MinHeight="460" SizeToContent="Width" WindowStartupLocation="CenterScreen"
         Background="{DynamicResource WindowBackground}"
         FontFamily="{DynamicResource UiFontFamily}" FontSize="13">
+    <Window.InputBindings>
+        <KeyBinding Key="F5" Command="{Binding RefreshCommand}" />
+        <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedRow}" />
+        <KeyBinding Key="F2" Command="{Binding PropertiesCommand}" CommandParameter="{Binding SelectedRow}" />
+    </Window.InputBindings>
+
     <Window.Resources>
         <!-- Numeric cells are right-aligned so the units line up. -->
         <Style x:Key="NumericCell" TargetType="TextBlock">
@@ -75,44 +81,6 @@
             <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
         </Style>
 
-        <!-- One menu per row: every item is a RowAction; the row itself is the command parameter. -->
-        <ContextMenu x:Key="RowActionsMenu" x:Shared="False" ItemsSource="{Binding Actions}">
-            <ContextMenu.ItemContainerStyle>
-                <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
-                    <Setter Property="Header" Value="{Binding Name}" />
-                    <!-- The header text follows the item's Foreground, so destructive items stay red. -->
-                    <Setter Property="HeaderTemplate">
-                        <Setter.Value>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding DataContext.Glyph, RelativeSource={RelativeSource AncestorType=MenuItem}}" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Width="22" VerticalAlignment="Center"
-                                               Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=MenuItem}}" />
-                                    <TextBlock Text="{Binding}" VerticalAlignment="Center" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=MenuItem}}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </Setter.Value>
-                    </Setter>
-                    <Setter Property="Command" Value="{Binding Command}" />
-                    <Setter Property="CommandParameter" Value="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsDestructive}" Value="True">
-                            <Setter Property="Foreground" Value="{DynamicResource Danger}" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </ContextMenu.ItemContainerStyle>
-        </ContextMenu>
-
-        <!-- The disk's own menu: every item carries its parameter (the disk and the change). -->
-        <ContextMenu x:Key="DiskActionsMenu" x:Shared="False" ItemsSource="{Binding Actions}">
-            <ContextMenu.ItemContainerStyle>
-                <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
-                    <Setter Property="Header" Value="{Binding Name}" />
-                    <Setter Property="Command" Value="{Binding Command}" />
-                    <Setter Property="CommandParameter" Value="{Binding Parameter}" />
-                </Style>
-            </ContextMenu.ItemContainerStyle>
-        </ContextMenu>
     </Window.Resources>
 
     <Grid>
@@ -177,8 +145,8 @@
                     <Button Style="{StaticResource ToolbarButton}" Click="Actions_Click" ToolTip="{DynamicResource Main_VirtualDiskTip}">
                         <Button.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="{DynamicResource Vhd_MenuCreate}" Command="{Binding CreateVirtualDiskCommand}" />
-                                <MenuItem Header="{DynamicResource Vhd_MenuAttach}" Command="{Binding AttachVirtualDiskCommand}" />
+                                <MenuItem Header="{DynamicResource Vhd_MenuCreate}" Icon="&#xE710;" Command="{Binding CreateVirtualDiskCommand}" />
+                                <MenuItem Header="{DynamicResource Vhd_MenuAttach}" Icon="&#xE8E5;" Command="{Binding AttachVirtualDiskCommand}" />
                             </ContextMenu>
                         </Button.ContextMenu>
                         <StackPanel>
@@ -197,37 +165,7 @@
         </Border>
 
         <!-- The queue: shown while changes are planned; the disk list below then shows their result. -->
-        <Border Grid.Row="1" Background="{DynamicResource HeaderBackground}" BorderBrush="{DynamicResource Accent}" BorderThickness="0,0,0,2" Padding="16,10"
-                Visibility="{Binding IsPlanning, Converter={x:Static controls:Converters.BoolToVisibility}}">
-            <DockPanel>
-                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top" Margin="12,0,0,0">
-                    <Button Content="{DynamicResource Queue_DiscardButton}" Command="{Binding DiscardPlanCommand}" Margin="0,0,8,0" />
-                    <Button Content="{Binding ApplyPlanText}" Command="{Binding ApplyPlanCommand}" FontWeight="SemiBold" BorderBrush="{DynamicResource Accent}" />
-                </StackPanel>
-                <StackPanel>
-                    <TextBlock Text="{DynamicResource Queue_Title}" FontWeight="SemiBold" />
-                    <TextBlock Text="{Binding PlanSummary}" Style="{StaticResource Secondary}" FontSize="12" TextWrapping="Wrap" Margin="0,2,0,6" />
-                    <ScrollViewer MaxHeight="150" VerticalScrollBarVisibility="Auto">
-                        <ItemsControl ItemsSource="{Binding PlannedSteps}" AlternationCount="1000">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <DockPanel Margin="0,1">
-                                        <Button DockPanel.Dock="Left" Padding="6,0" MinHeight="22" Margin="0,0,8,0" ToolTip="{DynamicResource Queue_RemoveTip}"
-                                                Command="{Binding DataContext.RemoveStepCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}">
-                                            <TextBlock Text="&#xE711;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="10" />
-                                        </Button>
-                                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap">
-                                            <Run Text="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=ContentPresenter}, Mode=OneWay, Converter={x:Static controls:Converters.Ordinal}}" FontWeight="SemiBold" />
-                                            <Run Text="{Binding Description, Mode=OneWay}" />
-                                        </TextBlock>
-                                    </DockPanel>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
-                </StackPanel>
-            </DockPanel>
-        </Border>
+        <controls:PlanPanel Grid.Row="1" />
 
         <!-- Disk list -->
         <ScrollViewer x:Name="DiskScroller" Grid.Row="2" VerticalScrollBarVisibility="Auto" Padding="16,12">

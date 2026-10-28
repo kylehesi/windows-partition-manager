@@ -15,6 +15,7 @@ public static class PartitionColors
     public static readonly Brush FreeAccent = Solid(0x2E, 0xA0, 0x43);
     public static readonly Pen FreeBorder = Freeze(new Pen(FreeAccent, 1.5) { DashStyle = DashStyles.Dash });
     public static readonly Pen PartitionBorder = Freeze(new Pen(Solid(0x9A, 0xA4, 0xB2), 1));
+    public static readonly Pen PlannedBorder = Freeze(new Pen(Solid(0x2F, 0x80, 0xED), 1.5) { DashStyle = DashStyles.Dash });
 
     private static readonly (Brush Fill, Brush Accent) Basic = (Solid(0xC9, 0xE2, 0xFB), Solid(0x2F, 0x80, 0xED));
     private static readonly (Brush Fill, Brush Accent) Efi = (Solid(0xFF, 0xE8, 0xC7), Solid(0xF3, 0x9C, 0x12));

@@ -341,4 +341,13 @@
   <data name="Queue_Done" xml:space="preserve"><value>Planlanan {0} değişikliğin tümü uygulandı.</value></data>
   <data name="Queue_Stopped" xml:space="preserve"><value>{1} değişiklikten {0} tanesinden sonra durdu. Kalanlar hâlâ kuyrukta.</value></data>
   <data name="Segment_Usage" xml:space="preserve"><value>{1} alanın {0} kadarı kullanılıyor</value></data>
+  <data name="Settings_Layout" xml:space="preserve"><value>Arayüz</value></data>
+  <data name="Settings_LayoutTip" xml:space="preserve"><value>Modern: disk listesi, harita ve ayrıntı paneli. Klasik: her disk bölüm tablosuyla birlikte. Ayarlar kapanınca uygulanır.</value></data>
+  <data name="Layout_Modern" xml:space="preserve"><value>Modern</value></data>
+  <data name="Layout_Classic" xml:space="preserve"><value>Klasik</value></data>
+  <data name="Modern_Disks" xml:space="preserve"><value>Diskler</value></data>
+  <data name="Modern_DiskMenu" xml:space="preserve"><value>Disk</value></data>
+  <data name="Modern_Details" xml:space="preserve"><value>Ayrıntılar</value></data>
+  <data name="Modern_NoSelection" xml:space="preserve"><value>Ayrıntılarını ve yapabileceklerinizi görmek için listeden ya da haritadan bir bölüm veya boş alan seçin.</value></data>
+  <data name="Modern_NoActions" xml:space="preserve"><value>Bu bölümle burada yapılabilecek bir işlem yok.</value></data>
 </root>

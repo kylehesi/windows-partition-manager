@@ -64,6 +64,40 @@ public sealed class SettingsStoreTests
     }
 
     [Fact]
+    public void SaveThenLoad_RoundTripsLayout()
+    {
+        var path = NewSettingsPath();
+        try
+        {
+            SettingsStore.Save(new AppSettings("White", "Segoe UI", "English", "Classic"), path);
+
+            Assert.Equal("Classic", SettingsStore.Load(path).Layout);
+        }
+        finally
+        {
+            Cleanup(path);
+        }
+    }
+
+    [Theory]
+    [InlineData("{\"theme\":\"Dark\"}")]
+    [InlineData("{\"layout\":\"Ribbon\"}")]
+    public void Load_MissingOrUnknownLayout_FallsBackToModern(string json)
+    {
+        var path = NewSettingsPath();
+        try
+        {
+            File.WriteAllText(path, json);
+
+            Assert.Equal("Modern", SettingsStore.Load(path).Layout);
+        }
+        finally
+        {
+            Cleanup(path);
+        }
+    }
+
+    [Fact]
     public void Load_MalformedJson_FallsBackToDefaults()
     {
         var path = NewSettingsPath();
