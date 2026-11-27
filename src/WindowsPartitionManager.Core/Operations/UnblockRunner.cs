@@ -77,7 +77,11 @@ public sealed class UnblockRunner(IUnblockOperations operations)
         if (state.HibernationWasEnabled)
         {
             progress?.Report(CoreText.Get("Unblock_HibernationOn"));
-            await operations.SetHibernationAsync(true, cancellationToken).ConfigureAwait(false);
+            if (!operations.IsHibernationEnabled())
+            {
+                await operations.SetHibernationAsync(true, cancellationToken).ConfigureAwait(false);
+            }
+
             state = Record(state with { HibernationWasEnabled = false });
         }
 

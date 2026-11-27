@@ -26,6 +26,8 @@ public sealed record Disk
 
     public required string FriendlyName { get; init; }
 
+    public string? UniqueId { get; init; }
+
     public string? SerialNumber { get; init; }
 
     /// <summary>Human readable bus type, e.g. "SATA", "NVMe", "USB".</summary>

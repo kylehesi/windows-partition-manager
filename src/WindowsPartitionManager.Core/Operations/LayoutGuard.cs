@@ -11,16 +11,19 @@ namespace WindowsPartitionManager.Core.Operations;
 /// </summary>
 public sealed record DiskFingerprint(int Number, ulong SizeBytes, string FriendlyName, string? SerialNumber)
 {
+    public string? UniqueId { get; init; }
+
     public static DiskFingerprint Of(Disk disk)
     {
         ArgumentNullException.ThrowIfNull(disk);
-        return new DiskFingerprint(disk.Number, disk.SizeBytes, disk.FriendlyName, disk.SerialNumber);
+        return new DiskFingerprint(disk.Number, disk.SizeBytes, disk.FriendlyName, disk.SerialNumber) { UniqueId = disk.UniqueId };
     }
 
     public bool Matches(Disk disk)
     {
         ArgumentNullException.ThrowIfNull(disk);
         return disk.Number == Number
+               && (UniqueId is null || string.Equals(UniqueId, disk.UniqueId, StringComparison.Ordinal))
                && disk.SizeBytes == SizeBytes
                && string.Equals(disk.FriendlyName, FriendlyName, StringComparison.Ordinal)
                && string.Equals(disk.SerialNumber ?? string.Empty, SerialNumber ?? string.Empty, StringComparison.Ordinal);

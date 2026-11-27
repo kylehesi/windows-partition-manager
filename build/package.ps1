@@ -20,7 +20,7 @@
 
 .PARAMETER CertificateThumbprint
     Thumbprint of a code-signing certificate in the current user's or local machine's store.
-    Defaults to $env:WPM_SIGN_THUMBPRINT. Without one the build is unsigned (see README).
+    Defaults to $env:WPM_SIGN_THUMBPRINT. Local unsigned builds require -AllowUnsigned.
 
 .EXAMPLE
     powershell -ExecutionPolicy Bypass -File build\package.ps1
@@ -29,11 +29,15 @@
 param(
     [string]$CertificateThumbprint = $env:WPM_SIGN_THUMBPRINT,
     [string]$TimestampUrl = 'http://timestamp.digicert.com',
+    [switch]$AllowUnsigned,
     [switch]$SkipTests,
     [switch]$SkipScan
 )
 
 $ErrorActionPreference = 'Stop'
+if (-not $CertificateThumbprint -and -not $AllowUnsigned) {
+    throw 'Release packages require a code-signing certificate. For local testing, pass -AllowUnsigned.'
+}
 $root = Split-Path -Parent $PSScriptRoot
 $artifacts = Join-Path $root 'artifacts'
 $runtime = 'win-x64'
@@ -83,6 +87,13 @@ if (-not $SkipTests) {
 Step 'Publish: installer folder'
 Invoke-Checked $dotnet (@('publish', $app, '-o', $install) + $common)
 Invoke-Checked $dotnet (@('publish', $cli, '-o', $install) + $common)
+
+# Reject SDKs that would ship the vulnerable runtime in a self-contained installer.
+$runtimeConfig = Get-Content (Join-Path $install 'WindowsPartitionManager.runtimeconfig.json') -Raw | ConvertFrom-Json
+$coreRuntime = $runtimeConfig.runtimeOptions.includedFrameworks | Where-Object name -eq 'Microsoft.NETCore.App'
+if (-not $coreRuntime -or [version]$coreRuntime.version -lt [version]'10.0.15') {
+    throw 'Install an updated .NET 10 SDK. Release packages require runtime 10.0.15 or later.'
+}
 
 Step 'Publish: portable single-file executables'
 $single = @('-p:PublishSingleFile=true', '-p:IncludeNativeLibrariesForSelfExtract=false', '-p:EnableCompressionInSingleFile=false')
