@@ -179,7 +179,11 @@ public static class ShrinkAnalyzer
             return (BlockerKind.NtfsMetadata, CoreText.Get("Analysis_ReasonMetadata"));
         }
 
-        if (path.StartsWith("System Volume Information\\", StringComparison.OrdinalIgnoreCase))
+        if (separator == "System Volume Information".Length
+            && path.StartsWith("System Volume Information\\", StringComparison.OrdinalIgnoreCase)
+            && name.Length == 76
+            && Guid.TryParseExact(name.AsSpan(0, 38), "B", out _)
+            && name.EndsWith("{3808876b-c176-4e48-b7ae-04046e6cc752}", StringComparison.OrdinalIgnoreCase))
         {
             return (BlockerKind.ShadowCopyStorage, CoreText.Get("Analysis_ReasonShadow"));
         }

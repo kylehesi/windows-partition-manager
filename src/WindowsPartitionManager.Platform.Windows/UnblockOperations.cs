@@ -18,10 +18,10 @@ public sealed class UnblockOperations : IUnblockOperations
     private const string Cimv2 = @"\\.\root\cimv2";
     private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
 
-    public static string StatePath { get; } = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "WindowsPartitionManager",
-        "unblock-state.json");
+    private const string RecoveryKey = @"SOFTWARE\WindowsPartitionManager\Recovery";
+    private const string RecoveryValue = "UnblockState";
+
+    public static string StatePath => $@"HKEY_LOCAL_MACHINE\{RecoveryKey}\{RecoveryValue}";
 
     public bool IsHibernationEnabled()
     {
@@ -124,12 +124,23 @@ public sealed class UnblockOperations : IUnblockOperations
         var scope = new ManagementScope(Cimv2);
         scope.Connect();
 
+        var current = GetPageFiles();
+        if (IsPageFileAutomatic() || (removed is not null && current.Any(p => p.Volume == removed.Volume)))
+        {
+            throw new InvalidOperationException("Paging configuration changed since the unblock operation. Review it before restoring.");
+        }
+
         if (temporaryVolume is { } temp)
         {
             foreach (var setting in Wmi.Query(scope, "SELECT * FROM Win32_PageFileSetting"))
             {
-                if (Wmi.Get<string>(setting, "Name") is { Length: >= 1 } name && char.ToUpperInvariant(name[0]) == char.ToUpperInvariant(temp))
+                if (string.Equals(Wmi.Get<string>(setting, "Name"), $@"{temp}:\pagefile.sys", StringComparison.OrdinalIgnoreCase))
                 {
+                    if (Wmi.Get<uint>(setting, "InitialSize") != 0 || Wmi.Get<uint>(setting, "MaximumSize") != 0)
+                    {
+                        throw new InvalidOperationException("The temporary paging file has been reconfigured.");
+                    }
+
                     setting.Delete();
                 }
             }
@@ -151,7 +162,7 @@ public sealed class UnblockOperations : IUnblockOperations
             instance["Name"] = $@"{char.ToUpperInvariant(removed.Volume)}:\pagefile.sys";
             instance["InitialSize"] = removed.InitialMb;
             instance["MaximumSize"] = removed.MaximumMb;
-            instance.Put();
+            instance.Put(new PutOptions { Type = PutType.CreateOnly });
         }
 
         var what = automatic ? "automatic management" : removed is not null ? $"volume={removed.Volume} {removed.InitialMb}-{removed.MaximumMb} MB" : "nothing to put back";
@@ -215,30 +226,22 @@ public sealed class UnblockOperations : IUnblockOperations
 
     public UnblockState? LoadState()
     {
-        try
-        {
-            return File.Exists(StatePath) ? JsonSerializer.Deserialize<UnblockState>(File.ReadAllText(StatePath), JsonOptions) : null;
-        }
-        catch (JsonException)
-        {
-            return null;
-        }
-        catch (IOException)
-        {
-            return null;
-        }
+        using var key = Registry.LocalMachine.OpenSubKey(RecoveryKey);
+        return key?.GetValue(RecoveryValue) is string json
+            ? JsonSerializer.Deserialize<UnblockState>(json, JsonOptions)
+            : null;
     }
 
     public void SaveState(UnblockState? state)
     {
-        Directory.CreateDirectory(Path.GetDirectoryName(StatePath)!);
+        using var key = Registry.LocalMachine.CreateSubKey(RecoveryKey);
         if (state is null)
         {
-            File.Delete(StatePath);
+            key.DeleteValue(RecoveryValue, throwOnMissingValue: false);
             return;
         }
 
-        File.WriteAllText(StatePath, JsonSerializer.Serialize(state, JsonOptions));
+        key.SetValue(RecoveryValue, JsonSerializer.Serialize(state, JsonOptions), RegistryValueKind.String);
     }
 
     /// <summary>Win32_ShadowCopy.VolumeName is the volume GUID path; map a drive letter to it.</summary>

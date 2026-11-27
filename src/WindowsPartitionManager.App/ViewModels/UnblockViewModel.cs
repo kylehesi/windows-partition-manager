@@ -9,7 +9,7 @@ namespace WindowsPartitionManager.App.ViewModels;
 
 public sealed class UnblockStepViewModel(UnblockStep step) : INotifyPropertyChanged
 {
-    private bool _isSelected = true;
+    private bool _isSelected = step.Reversible;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

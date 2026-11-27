@@ -289,7 +289,8 @@ The script runs the unit tests, publishes the self-contained app and CLI, writes
 `WindowsPartitionManager-Setup.msi` to the repository root and the versioned MSI, the portable
 zip and `SHA256SUMS.txt` to `artifacts\`, and scans everything with Microsoft Defender. Set
 `WPM_SIGN_THUMBPRINT` to a code-signing certificate's thumbprint to sign the executables and the
-installer.
+installer. Local test builds without a certificate require `-AllowUnsigned`. Packaging requires
+a .NET 10 SDK that bundles runtime 10.0.15 or later.
 
 </details>
 

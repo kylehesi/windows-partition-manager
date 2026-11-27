@@ -106,6 +106,7 @@ public sealed class WmiStorageProvider : IStorageProvider, ISupportedSizeProvide
         {
             Number = number,
             FriendlyName = Wmi.Get<string>(mo, "FriendlyName")?.Trim() is { Length: > 0 } name ? name : $"Disk {number}",
+            UniqueId = Wmi.Get<string>(mo, "UniqueId"),
             SerialNumber = Wmi.Get<string>(mo, "SerialNumber")?.Trim(),
             BusType = PartitionTypes.BusTypeName(Wmi.Get<ushort>(mo, "BusType")),
             SizeBytes = Wmi.Get<ulong>(mo, "Size"),

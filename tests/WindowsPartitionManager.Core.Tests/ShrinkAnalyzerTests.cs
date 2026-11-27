@@ -47,7 +47,7 @@ public class ShrinkAnalyzerTests
     {
         var volume = new FakeVolume(1000)
             .AddDirectory(20, "System Volume Information", FakeVolume.Root)
-            .AddFile(21, "{guid}{3808876b-c176-4e48-b7ae-04046e6cc752}", 20, [new ClusterExtent(800, 50)]);
+            .AddFile(21, "{645da907-e9cb-49e5-8627-95a46a184277}{3808876b-c176-4e48-b7ae-04046e6cc752}", 20, [new ClusterExtent(800, 50)]);
 
         var report = await ShrinkAnalyzer.AnalyzeAsync(volume, targetSizeBytes: 100 * ClusterSize);
 
@@ -57,6 +57,20 @@ public class ShrinkAnalyzerTests
         Assert.Equal(850UL * ClusterSize, report.MinimumSizeWithBlockersBytes);
         // Shadow copies can be deleted, so they do not raise the metadata-only limit.
         Assert.True(report.MinimumSizeMetadataOnlyBytes < 850UL * ClusterSize);
+    }
+
+    [Theory]
+    [InlineData("tracking.log")]
+    [InlineData("{invalid}{3808876b-c176-4e48-b7ae-04046e6cc752}")]
+    public async Task UnrelatedSystemVolumeFileDoesNotRecommendDeletingSnapshots(string name)
+    {
+        var volume = new FakeVolume(1000)
+            .AddDirectory(20, "System Volume Information", FakeVolume.Root)
+            .AddFile(21, name, 20, [new ClusterExtent(800, 50)]);
+
+        var report = await ShrinkAnalyzer.AnalyzeAsync(volume, targetSizeBytes: 100 * ClusterSize);
+
+        Assert.DoesNotContain(report.BlockersPastTarget, b => b.Kind == BlockerKind.ShadowCopyStorage);
     }
 
     [Fact]

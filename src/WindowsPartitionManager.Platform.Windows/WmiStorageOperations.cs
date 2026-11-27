@@ -191,6 +191,8 @@ public sealed class WmiStorageOperations : IStorageOperations
         var isGpt = Wmi.Get<ushort>(disk, "PartitionStyle") == 2;
 
         progress?.Report(CoreText.Get("Ops_CreatingPartition"));
+        var diskId = Wmi.Get<string>(disk, "UniqueId");
+        string? partitionGuid;
         uint partitionNumber;
         string[] accessPaths;
         using (var result = Wmi.Invoke(disk, "CreatePartition", p =>
@@ -216,6 +218,7 @@ public sealed class WmiStorageOperations : IStorageOperations
 
             using (created)
             {
+                partitionGuid = Wmi.Get<string>(created, "Guid");
                 partitionNumber = Wmi.Get<uint>(created, "PartitionNumber");
                 accessPaths = Wmi.GetRaw(created, "AccessPaths") as string[] ?? [];
             }
@@ -233,7 +236,7 @@ public sealed class WmiStorageOperations : IStorageOperations
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
-            var cleanup = TryDeleteJustCreated(scope, request, (int)partitionNumber)
+            var cleanup = TryDeleteJustCreated(scope, request, (int)partitionNumber, diskId, partitionGuid)
                 ? CoreText.Get("Ops_CleanedUp")
                 : CoreText.Format("Ops_CleanupFailed", partitionNumber);
             throw new StorageOperationException("CreatePartition", (ex as StorageOperationException)?.ReturnValue ?? 0, $"{ex.Message} {cleanup}");
@@ -275,12 +278,17 @@ public sealed class WmiStorageOperations : IStorageOperations
     }
 
     /// <summary>Deletes the partition only if it is still exactly the one this call created.</summary>
-    private static bool TryDeleteJustCreated(ManagementScope scope, CreatePartitionRequest request, int partitionNumber)
+    private static bool TryDeleteJustCreated(ManagementScope scope, CreatePartitionRequest request, int partitionNumber, string? diskId, string? partitionGuid)
     {
         try
         {
             using var partition = GetPartition(scope, request.DiskNumber, partitionNumber);
-            if (Wmi.Get<ulong>(partition, "Offset") != request.OffsetBytes)
+            using var disk = GetDisk(scope, request.DiskNumber);
+            if (string.IsNullOrWhiteSpace(diskId) || diskId != Wmi.Get<string>(disk, "UniqueId")
+                || !Guid.TryParse(partitionGuid, out var expected) || expected == Guid.Empty
+                || !Guid.TryParse(Wmi.Get<string>(partition, "Guid"), out var actual) || actual != expected
+                || Wmi.Get<ulong>(partition, "Size") != request.SizeBytes
+                || Wmi.Get<ulong>(partition, "Offset") != request.OffsetBytes)
             {
                 return false;
             }
@@ -534,10 +542,15 @@ public sealed class WmiStorageOperations : IStorageOperations
         var scope = Wmi.Connect();
         using (var disk = GetDisk(scope, request.DiskNumber))
         {
+            if (string.IsNullOrWhiteSpace(fresh!.UniqueId) || fresh.UniqueId != Wmi.Get<string>(disk, "UniqueId"))
+            {
+                throw new StorageOperationException("ConvertDisk", 0, LayoutGuard.RefreshHint);
+            }
+
             Wmi.Invoke(disk, "Clear", p =>
             {
-                p["RemoveData"] = true;
-                p["RemoveOEM"] = true;
+                p["RemoveData"] = false;
+                p["RemoveOEM"] = false;
                 p["ZeroOutEntireDisk"] = false;
             }).Dispose();
         }
@@ -545,10 +558,15 @@ public sealed class WmiStorageOperations : IStorageOperations
         // Clear leaves the disk RAW; read it again before writing the new table.
         using (var disk = GetDisk(scope, request.DiskNumber))
         {
+            if (fresh.UniqueId != Wmi.Get<string>(disk, "UniqueId") || Wmi.Get<ushort>(disk, "PartitionStyle") != 0)
+            {
+                throw new StorageOperationException("ConvertDisk", 0, LayoutGuard.RefreshHint);
+            }
+
             Wmi.Invoke(disk, "Initialize", p => p["PartitionStyle"] = (ushort)(request.Style == PartitionStyle.Gpt ? 2 : 1)).Dispose();
         }
 
-        return WmiStorageProvider.GetDisks(cancellationToken).FirstOrDefault(d => d.Number == request.DiskNumber)
+        return WmiStorageProvider.GetDisks(cancellationToken).FirstOrDefault(d => d.Number == request.DiskNumber && d.UniqueId == fresh.UniqueId)
                ?? throw new StorageOperationException("ConvertDisk", 0, CoreText.Format("Ops_DiskUnreadable", request.DiskNumber));
     }
 

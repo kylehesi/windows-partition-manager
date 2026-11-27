@@ -417,9 +417,13 @@ All under `%LOCALAPPDATA%\WindowsPartitionManager\`:
 | File | Content |
 |---|---|
 | `operations.log` | One line per write attempt: time, operation, parameters, outcome. Written through to disk. |
-| `unblock-state.json` | What the unblock wizard changed, until it is restored. |
 | `settings.json` | The selected theme, UI font, language and layout. |
 | `test-trace.log` | Integration tests only: a write-through breadcrumb per step, for diagnosing crashes. |
+
+The unblock wizard stores its machine-wide recovery record in
+`HKLM\SOFTWARE\WindowsPartitionManager\Recovery` under the value `UnblockState`.
+Before upgrading with pending changes, review the paging and hibernation settings and record any
+changes that need to be restored manually. Elevated restore ignores the legacy per-user JSON file.
 
 ## Testing
 
